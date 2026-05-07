@@ -115,15 +115,13 @@
         width: 80px;
         height: 80px;
         position: relative;
-        animation: blobFloat var(--speed, 3s) ease-in-out infinite;
     }
 
     .blob-body {
         width: 100%;
         height: 100%;
         border-radius: 50%;
-        background: radial-gradient(circle at 35% 30%, var(--light), var(--base));
-        animation: blobMorph var(--speed, 3s) ease-in-out infinite alternate;
+        background: var(--base);
     }
 
     .blob-face {
@@ -1098,18 +1096,18 @@
         
         const SK='#3a2d22';
         const FACES=[
-          {e:'happy',    c:'#E2CD6D',s:3,  sc:9},
-          {e:'excited',  c:'#F2DA7D',s:7,  sc:9},
-          {e:'grateful', c:'#D5A18E',s:11, sc:8},
-          {e:'hopeful',  c:'#88A090',s:15, sc:7},
-          {e:'calm',     c:'#6A8D73',s:19, sc:7},
-          {e:'neutral',  c:'#B0A07A',s:23, sc:5},
-          {e:'confused', c:'#B08898',s:27, sc:4},
-          {e:'tired',    c:'#9880B8',s:31, sc:3},
-          {e:'anxious',  c:'#A8C4E4',s:35, sc:3},
-          {e:'sad',      c:'#8AAAB8',s:39, sc:2},
-          {e:'lonely',   c:'#8090BE',s:43, sc:2},
-          {e:'angry',    c:'#C07068',s:47, sc:1},
+          {e:'happy',    c:'#9AD6A0',s:3,  sc:9},
+          {e:'excited',  c:'#F2DD66',s:7,  sc:9},
+          {e:'grateful', c:'#FFB4D1',s:11, sc:8},
+          {e:'hopeful',  c:'#85D0E8',s:15, sc:7},
+          {e:'calm',     c:'#A8DADC',s:19, sc:7},
+          {e:'neutral',  c:'#DFDAC9',s:23, sc:5},
+          {e:'confused', c:'#C5C6D0',s:27, sc:4},
+          {e:'tired',    c:'#CDB3DF',s:31, sc:3},
+          {e:'anxious',  c:'#B6AEE6',s:35, sc:3},
+          {e:'sad',      c:'#A8C1ED',s:39, sc:2},
+          {e:'lonely',   c:'#839BCC',s:43, sc:2},
+          {e:'angry',    c:'#FF9AA2',s:47, sc:1},
         ];
 
         const FEATS={
@@ -1134,8 +1132,7 @@
               const cell=document.createElement('div');
               cell.className='fc';
               cell.innerHTML=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <defs><filter id="${id}"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="${f.s}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.8" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
-                <g filter="url(#${id})"><ellipse cx="50" cy="52" rx="44" ry="43" fill="${f.c}"/>${FEATS[f.e]}</g>
+                <circle cx="50" cy="50" r="45" fill="${f.c}"/>${FEATS[f.e]}
               </svg><span class="fl">${f.e}</span>`;
               grid.appendChild(cell);
             });
@@ -1167,12 +1164,7 @@
               return p;
             }
 
-            let h=`<defs>`;
-            DATA.forEach((d,i)=>{
-              const fd=fD(d.e);
-              h+=`<filter id="cm${i}"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="${fd.s}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="8" xChannelSelector="R" yChannelSelector="G"/></filter>`;
-            });
-            h+=`</defs>`;
+            let h='';
 
             [{sc:9,l:'great'},{sc:5,l:'okay'},{sc:1,l:'low'}].forEach(({sc,l})=>{
               const y=gY(sc);
@@ -1188,11 +1180,9 @@
             DATA.forEach((d,i)=>{
               const fd=fD(d.e);
               const cx=pts[i].x,cy=pts[i].y;
-              h+=`<g transform="translate(${cx-50*FSC},${cy-52*FSC}) scale(${FSC})">
-                <g filter="url(#cm${i})">
-                  <ellipse cx="50" cy="52" rx="44" ry="43" fill="${fd.c}"/>
-                  ${FEATS[fd.e]}
-                </g>
+              h+=`<g transform="translate(${cx-50*FSC},${cy-50*FSC}) scale(${FSC})">
+                <circle cx="50" cy="50" r="45" fill="${fd.c}"/>
+                ${FEATS[fd.e]}
               </g>`;
               h+=`<text id="etl${i}" x="${cx}" y="${cy-22}" font-size="10" fill="${fd.c}" text-anchor="middle" font-family="var(--font-sans)" font-weight="500" opacity="0" style="transition:opacity .15s">${d.e}</text>`;
               h+=`<circle cx="${cx}" cy="${cy}" r="20" fill="transparent" style="cursor:pointer"

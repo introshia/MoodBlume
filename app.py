@@ -380,15 +380,15 @@ def archive():
     chart_points = []
     # Map 1-9 score to the 12 specific faces based on subtle randomization or exact mapping
     config_map = {
-        9: {"c": "#F2DA7D", "label": "excited"},
-        8: {"c": "#D5A18E", "label": "grateful"},
-        7: {"c": "#88A090", "label": "hopeful"},
-        6: {"c": "#6A8D73", "label": "calm"},
-        5: {"c": "#B0A07A", "label": "neutral"},
-        4: {"c": "#B08898", "label": "confused"},
-        3: {"c": "#A8C4E4", "label": "anxious"},
-        2: {"c": "#8AAAB8", "label": "sad"},
-        1: {"c": "#C07068", "label": "angry"}
+        9: {"c": "#F2DD66", "label": "excited"},
+        8: {"c": "#FFB4D1", "label": "grateful"},
+        7: {"c": "#85D0E8", "label": "hopeful"},
+        6: {"c": "#A8DADC", "label": "calm"},
+        5: {"c": "#DFDAC9", "label": "neutral"},
+        4: {"c": "#C5C6D0", "label": "confused"},
+        3: {"c": "#B6AEE6", "label": "anxious"},
+        2: {"c": "#A8C1ED", "label": "sad"},
+        1: {"c": "#FF9AA2", "label": "angry"}
     }
     for i, e in enumerate(reversed(all_entries[:15])):
         d_str = e['entry_date'].strftime("%b %d")
