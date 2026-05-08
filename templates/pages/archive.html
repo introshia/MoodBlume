@@ -56,21 +56,9 @@
     .insight-card {
         background: var(--surface);
         border: 1px solid var(--rule);
-        border-radius: 16px;
+        border-radius: 12px;
         padding: 24px;
         position: relative;
-        overflow: hidden;
-    }
-
-    .insight-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #C8A2C8, #A8DADC, #F2DD66);
-        border-radius: 16px 16px 0 0;
     }
 
     .insight-label {
@@ -175,42 +163,40 @@
     /* Chart */
     .chart-container {
         background: var(--surface);
-        border-radius: 22px;
+        border-radius: 16px;
         border: 1px solid var(--rule);
         padding: 0;
         position: relative;
-        min-height: 290px;
-        box-shadow: 0 12px 40px rgba(45, 51, 42, 0.04);
+        box-shadow: 0 4px 20px rgba(45, 51, 42, 0.04);
         display: flex;
         flex-direction: column;
         overflow: hidden;
     }
 
     .mood-map-header {
-        background: linear-gradient(135deg, #E8D5E8 0%, #D5E5EE 40%, #F4E6A6 100%);
-        padding: 28px 28px 20px;
-        position: relative;
+        padding: 22px 28px 14px;
+        border-bottom: 1px solid var(--rule);
     }
 
     .mood-map-header .mm-title {
         font-family: 'Lora', serif;
-        font-size: 28px;
+        font-size: 22px;
         font-weight: 400;
         color: var(--text);
         margin: 0;
-        line-height: 1.1;
+        line-height: 1.2;
     }
 
     .mood-map-header .mm-subtitle {
-        font-size: 11px;
+        font-size: 10px;
         letter-spacing: .08em;
         color: var(--muted);
         text-transform: uppercase;
-        margin-top: 4px;
+        margin-top: 2px;
     }
 
     .mood-map-body {
-        padding: 20px 28px 28px;
+        padding: 20px 28px 24px;
     }
 
     .cal-day {
@@ -219,18 +205,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 500;
         position: relative;
         transition: transform 0.15s ease;
     }
 
     .cal-day:hover {
-        transform: scale(1.12);
+        transform: scale(1.1);
     }
 
     .cal-day--empty {
-        background: rgba(0,0,0,0.03);
+        background: transparent;
         color: var(--muted);
         cursor: default;
     }
@@ -238,15 +224,15 @@
     .cal-day--mood {
         cursor: pointer;
         color: #fff;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        text-shadow: 0 1px 2px rgba(0,0,0,0.12);
     }
 
     .cal-day--today {
-        box-shadow: 0 0 0 2.5px var(--text), 0 0 0 4.5px rgba(75,46,31,0.12);
+        box-shadow: 0 0 0 2px var(--text);
     }
 
     .cal-day--today-empty {
-        background: rgba(75,46,31,0.06);
+        background: var(--butter);
         color: var(--text);
         font-weight: 600;
     }
@@ -257,11 +243,11 @@
         justify-content: center;
         gap: 8px;
         margin-top: 16px;
-        padding: 10px 20px;
-        background: linear-gradient(135deg, #E8D5E8, #D5E5EE);
+        padding: 8px 18px;
+        background: var(--butter);
         border: none;
         border-radius: 50px;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 500;
         color: var(--text);
         cursor: pointer;
@@ -274,7 +260,7 @@
 
     .write-today-cta:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
     .mbw{font-family:inherit;width: 100%;}
@@ -879,20 +865,24 @@
         </div>
 
         <div class="chart-container" id="aw">
-              <button id="emotion-set-toggle" onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';" style="background:var(--surface); border:0.5px solid var(--rule); border-radius:20px; padding:6px 16px; font-size:11px; color:var(--text); cursor:pointer; margin:16px 28px 0; display:inline-flex; align-items:center; gap:6px; width:fit-content;"><i class="fas fa-smile"></i> View Emotion Legend</button>
-              
-              <div class="mbc" id="emotion-set-container" style="display:none; margin:16px 28px 0; border-radius:12px;">
-                <div class="mbr" style="margin-bottom:12px;">
-                  <span class="mbs" style="margin:0;">AI-detected emotion set</span>
-                  <button onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';" style="background:none; border:none; cursor:pointer; font-size:12px; color:var(--muted);"><i class="fas fa-times"></i></button>
+              <div class="mood-map-header" style="display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                  <p class="mm-title" id="mm-month-title">Mood Map</p>
+                  <p class="mm-subtitle">Your emotional chronicle</p>
                 </div>
-                <div class="fg" id="fg"></div>
+                <button id="emotion-set-toggle" onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';" style="background:var(--bg); border:1px solid var(--rule); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;"><i class="fas fa-smile"></i> Legend</button>
               </div>
 
-              <div class="mood-map-header">
-                <p class="mm-title" id="mm-month-title">Mood Map</p>
-                <p class="mm-subtitle">Your emotional chronicle</p>
+              <div id="emotion-set-container" style="display:none; padding:0 28px;">
+                <div style="background:var(--bg); border-radius:10px; padding:16px; margin-bottom:4px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span class="mbs" style="margin:0;">AI-detected emotion set</span>
+                    <button onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';" style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--muted);">✕</button>
+                  </div>
+                  <div class="fg" id="fg"></div>
+                </div>
               </div>
+
               <div class="mood-map-body">
                 <script id="chart-labels" type="application/json">{{ chart_labels | tojson | safe }}</script>
                 <script id="chart-scores" type="application/json">{{ chart_scores | tojson | safe }}</script>
