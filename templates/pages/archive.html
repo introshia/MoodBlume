@@ -776,8 +776,13 @@
 
         <div class="chart-container" id="aw">
             <div class="mbw">
-              <div class="mbc">
-                <p class="mbs">AI-detected emotion set</p>
+              <button id="emotion-set-toggle" onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';" style="background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:20px; padding:6px 16px; font-size:11px; color:var(--text); cursor:pointer; margin-bottom:14px; display:inline-flex; align-items:center; gap:6px;"><i class="fas fa-smile"></i> View Emotion Legend</button>
+              
+              <div class="mbc" id="emotion-set-container" style="display:none;">
+                <div class="mbr" style="margin-bottom:12px;">
+                  <span class="mbs" style="margin:0;">AI-detected emotion set</span>
+                  <button onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';" style="background:none; border:none; cursor:pointer; font-size:12px; color:var(--muted);"><i class="fas fa-times"></i></button>
+                </div>
                 <div class="fg" id="fg"></div>
               </div>
               <div class="mbc">
@@ -1161,7 +1166,8 @@
             
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             
-            let html = `<div style="text-align:center; font-weight:500; font-size:14px; color:var(--text); margin-bottom: 16px;">${monthNames[month]} ${year}</div>`;
+            let html = `<div style="max-width: 380px; margin: 0 auto;">`;
+            html += `<div style="text-align:center; font-weight:500; font-size:14px; color:var(--text); margin-bottom: 16px;">${monthNames[month]} ${year}</div>`;
             html += `<div style="display:grid; grid-template-columns:repeat(7, 1fr); text-align:center; font-size:10px; color:var(--muted); text-transform:uppercase; margin-bottom:8px;">
                 <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
             </div>`;
@@ -1193,7 +1199,7 @@
                 }
             }
             
-            html += `</div>`;
+            html += `</div></div>`;
             calContainer.innerHTML = html;
         }
     }, 100);
