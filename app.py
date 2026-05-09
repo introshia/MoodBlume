@@ -257,6 +257,23 @@ def sanctuary():
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT content FROM journal_entries WHERE user_id = %s ORDER BY entry_date DESC LIMIT 30", (user_id,))
     recent_entries = cursor.fetchall()
+    
+    # Determine the "current journal" style based on the latest entry's collection
+    cursor.execute("""
+        SELECT c.cover_color, c.art_style 
+        FROM journal_entries e 
+        LEFT JOIN collections c ON e.collection_id = c.id 
+        WHERE e.user_id = %s AND e.collection_id IS NOT NULL
+        ORDER BY e.entry_date DESC LIMIT 1
+    """, (user_id,))
+    latest_journal = cursor.fetchone()
+    
+    active_bg = "#C8D898"
+    active_art = "botanical"
+    if latest_journal:
+        active_bg = latest_journal['cover_color'] or active_bg
+        active_art = latest_journal['art_style'] or active_art
+        
     conn.close()
     
     processed_entries = []
@@ -265,7 +282,7 @@ def sanctuary():
         processed_entries.append({"text": text, "location": "", "cats": [], "fav": False})
         
     processed_entries.reverse()
-    return render_template('pages/sanctuary.html', streak_days=streak, recent_entries=processed_entries)
+    return render_template('pages/sanctuary.html', streak_days=streak, recent_entries=processed_entries, active_bg=active_bg, active_art=active_art)
 
 @app.route('/archive')
 def archive():

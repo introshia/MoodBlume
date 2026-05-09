@@ -217,19 +217,9 @@
 
     <!-- CLOSED JOURNAL -->
     <div id="j-closed" onclick="startOpenJournal()">
-      <div class="j-cover-body">
+      <div class="j-cover-body" id="j-closed-body">
         <div class="j-spine-edge"></div>
-        <div class="j-cover-art">
-            <!-- Botanical art injection -->
-            <svg viewBox="0 0 170 240" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="44" cy="107" rx="26" ry="46" fill="#6A9040" transform="rotate(-18 44 107)" />
-                <ellipse cx="77" cy="82" rx="20" ry="38" fill="#8AAA58" transform="rotate(12 77 82)" />
-                <ellipse cx="112" cy="118" rx="23" ry="42" fill="#6A9040" transform="rotate(-8 112 118)" />
-                <line x1="44" y1="140" x2="44" y2="190" stroke="#4A7028" stroke-width="1.8" />
-                <line x1="77" y1="115" x2="77" y2="190" stroke="#4A7028" stroke-width="1.8" />
-                <line x1="112" y1="152" x2="112" y2="190" stroke="#4A7028" stroke-width="1.8" />
-            </svg>
-        </div>
+        <div class="j-cover-art" id="j-closed-art"></div>
         <div class="j-open-hint">&#10022; open journal</div>
       </div>
     </div>
@@ -329,6 +319,81 @@
     // ═══════════════════════════════════════════════════════════
     // JOURNAL COMPONENT LOGIC
     // ═══════════════════════════════════════════════════════════
+    var ACTIVE_BG = "{{ active_bg|default('#C8D898') }}";
+    var ACTIVE_ART = "{{ active_art|default('botanical') }}";
+
+    function generateDynamicCover(art, bg) {
+        function darken(color, percent) {
+            var num = parseInt(color.replace("#", ""), 16),
+                amt = Math.round(2.55 * percent),
+                R = (num >> 16) - amt,
+                G = (num >> 8 & 0x00FF) - amt,
+                B = (num & 0x0000FF) - amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+        var darkBg = darken(bg, 20);
+        var BW = 170, BH = 240;
+
+        var linenLines = '';
+        for (var i = 0; i < BW; i += 6) { linenLines += `<line x1="${i}" y1="0" x2="${i}" y2="${BH}" stroke="rgba(0,0,0,0.03)" stroke-width="1.5" />`; }
+        for (var i = 0; i < BH; i += 6) { linenLines += `<line x1="0" y1="${i}" x2="${BW}" y2="${i}" stroke="rgba(0,0,0,0.03)" stroke-width="1.5" />`; }
+
+        var woodPaths = '';
+        var y = 0;
+        while (y < BH) {
+            y += 15 + Math.random() * 20;
+            var w = Math.random() * 8;
+            woodPaths += `<path d="M0,${y} C52,${y + w} 102,${y - w} ${BW},${y + w / 2}" stroke="#2C1C0A" stroke-width="2.5" fill="none" opacity="0.75" />`;
+        }
+
+        const svgs = {
+            'botanical': `
+                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="44" cy="107" rx="26" ry="46" fill="#6A9040" transform="rotate(-18 44 107)" />
+                    <ellipse cx="77" cy="82" rx="20" ry="38" fill="#8AAA58" transform="rotate(12 77 82)" />
+                    <ellipse cx="112" cy="118" rx="23" ry="42" fill="#6A9040" transform="rotate(-8 112 118)" />
+                    <line x1="44" y1="140" x2="44" y2="190" stroke="#4A7028" stroke-width="1.8" />
+                    <line x1="77" y1="115" x2="77" y2="190" stroke="#4A7028" stroke-width="1.8" />
+                    <line x1="112" y1="152" x2="112" y2="190" stroke="#4A7028" stroke-width="1.8" />
+                </svg>`,
+            'linen': `
+                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                    ${linenLines}
+                </svg>`,
+            'face': `
+                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="77" cy="100" rx="44" ry="50" fill="#1E0E06" />
+                    <ellipse cx="77" cy="180" rx="38" ry="44" fill="#E07828" />
+                    <circle cx="60" cy="85" r="8" fill="#B84818" />
+                    <circle cx="94" cy="88" r="8" fill="#B84818" />
+                    <path d="M58 115 Q77 130 96 115" stroke="#3C1808" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                </svg>`,
+            'wood': `
+                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                    ${woodPaths}
+                </svg>`,
+            'clouds': `
+                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8E4F8" /><stop offset="100%" stop-color="#88B8E0" /></linearGradient>
+                    <rect width="${BW}" height="${BH}" fill="url(#skyGrad)" />
+                    <ellipse cx="52" cy="88" rx="46" ry="26" fill="white" opacity="0.72" />
+                    <ellipse cx="70" cy="78" rx="36" ry="24" fill="white" opacity="0.82" />
+                    <ellipse cx="112" cy="156" rx="42" ry="24" fill="white" opacity="0.65" />
+                </svg>`
+        };
+        return svgs[art] || svgs['linen'];
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var closedBody = document.getElementById('j-closed-body');
+        var closedArt = document.getElementById('j-closed-art');
+        var coverFlap = document.getElementById('j-cover-flap');
+        
+        if (closedBody) closedBody.style.backgroundColor = ACTIVE_BG;
+        if (coverFlap) coverFlap.style.backgroundColor = ACTIVE_BG;
+        if (closedArt) closedArt.innerHTML = generateDynamicCover(ACTIVE_ART, ACTIVE_BG);
+    });
+
     var TOTAL_SPREADS = 35;
     var journalIsOpen = false;
     var isFlipping = false;
