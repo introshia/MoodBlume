@@ -1151,6 +1151,8 @@
 <script>
     // ── 3D SHELF LOGIC ───────────────────────────────────────
     const FEATURED = JSON.parse(document.getElementById('featured-data').textContent);
+    const ENTRIES_DATA = JSON.parse(document.getElementById('entries-data').textContent);
+    let COLLECTIONS = JSON.parse(document.getElementById('collections-data').textContent);
     const BW = 170, BH = 240, SW = 18;
 
     function darken(hex, n) {
@@ -1444,7 +1446,6 @@
             renderCalendar();
         };
 
-        const ENTRIES_DATA = JSON.parse(document.getElementById('entries-data').textContent);
         const entriesByDate = {};
         ENTRIES_DATA.forEach(e => {
             if (e.iso_date) entriesByDate[e.iso_date] = e;
@@ -1542,8 +1543,6 @@
     }, 100);
 
     // ── VIEW SWITCHER ───────────────────────────────────────────────────
-    let ENTRIES = JSON.parse(document.getElementById('entries-data').textContent);
-    let COLLECTIONS = JSON.parse(document.getElementById('collections-data').textContent);
     const libGrid = document.getElementById('library-grid');
     const btnNewVol = document.getElementById('btn-new-vol');
 
@@ -1592,7 +1591,7 @@
     }
 
     function renderMonthDrilldown(monthLabel) {
-        const entries = ENTRIES.filter(e => e.month_label === monthLabel);
+        const entries = ENTRIES_DATA.filter(e => e.month_label === monthLabel);
         libGrid.innerHTML = `
             <div class="lib-breadcrumb">
                 <button onclick="renderView('monthly')">&#8592; All Months</button>
@@ -1608,15 +1607,15 @@
         let html = '';
 
         if (mode === 'all') {
-            const cards = ENTRIES.map((e, idx) => cardHTML(e, idx)).join('');
-            html = ENTRIES.length
+            const cards = ENTRIES_DATA.map((e, idx) => cardHTML(e, idx)).join('');
+            html = ENTRIES_DATA.length
                 ? `<div class="shelf-books" style="margin-top:0">${cards}</div>`
                 : `<div class="lib-empty">No entries yet — start writing in the Sanctuary.</div>`;
 
         } else if (mode === 'monthly') {
             // ONE book per month, not one card per entry
             const groups = {};
-            ENTRIES.forEach(e => { (groups[e.month_label] = groups[e.month_label] || []).push(e); });
+            ENTRIES_DATA.forEach(e => { (groups[e.month_label] = groups[e.month_label] || []).push(e); });
             const monthCards = Object.keys(groups).map((month, idx) => {
                 const entries = groups[month];
                 // Reuse 3D book style for the month book too
@@ -1659,27 +1658,19 @@
         } else if (mode === 'mood') {
             const ORDER = ['Happy', 'Calm', 'Neutral', 'Sad', 'Stressed'];
             const groups = {};
-            ENTRIES.forEach(e => { (groups[e.mood_label] = groups[e.mood_label] || []).push(e); });
+            ENTRIES_DATA.forEach(e => { (groups[e.mood_label] = groups[e.mood_label] || []).push(e); });
             html = ORDER.filter(o => groups[o]).map(o => groupHTML(o, groups[o])).join('') ||
                 `<div class="lib-empty">No entries yet.</div>`;
 
         } else if (mode === 'volumes') {
             if (!COLLECTIONS.length) {
-                html = `<div class="lib-empty">No volumes yet — <a onclick="document.getElementById('btn-new-vol').click()">create your first one</a>.</div>`;
+                html = `<div class="lib-empty">No collection volumes found.</div>`;
             } else {
                 COLLECTIONS.forEach(col => {
-                    const entries = ENTRIES.filter(e => e.collection_id === col.id);
-                    if (entries.length) {
-                        html += `<div class="shelf-row">
-                            <div class="shelf-header">
-                                <span class="shelf-label">${col.name}</span>
-                                <span class="shelf-count">${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}</span>
-                            </div>
-                            <div class="shelf-books">${entries.map((e, idx) => cardHTML(e, idx)).join('')}</div>
-                        </div>`;
-                    }
+                    const entries = ENTRIES_DATA.filter(e => e.collection_id === col.id);
+                    html += groupHTML(col.name, entries);
                 });
-                const uncollected = ENTRIES.filter(e => !e.collection_id);
+                const uncollected = ENTRIES_DATA.filter(e => !e.collection_id);
                 if (uncollected.length) html += groupHTML('Uncollected', uncollected);
                 if (!html) html = `<div class="lib-empty">Assign entries to a volume to see them here.</div>`;
             }
