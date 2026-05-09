@@ -983,29 +983,76 @@
         ctx.fillStyle = 'rgba(0,0,0,0.30)';
         ctx.beginPath(); ctx.ellipse(0, py(0.005 * sc), px(jW * 0.52), py(jD * 0.52), 0, 0, Math.PI * 2); ctx.fill();
 
-        // Journal Body (Forest Green Leather)
+        // Journal Body (Active Theme)
+        var activeBg = "{{ active_bg|default('#C8D898') }}";
+        var activeArt = "{{ active_art|default('botanical') }}";
+        
         var jX = -jW * 0.5, jY = -jD * 0.5;
+        
+        // Base color
+        ctx.fillStyle = activeBg; 
+        ctx.fillRect(px(jX), py(jY), px(jW), py(jD));
+        
+        // Inner shadow for depth
         var lg = ctx.createLinearGradient(px(jX), py(jY), px(jX + jW), py(jY + jD));
-        lg.addColorStop(0, '#2A3A1F'); lg.addColorStop(0.5, '#1E2B16'); lg.addColorStop(1, '#141D0E');
+        lg.addColorStop(0, 'rgba(0,0,0,0.0)'); lg.addColorStop(1, 'rgba(0,0,0,0.15)');
         ctx.fillStyle = lg; ctx.fillRect(px(jX), py(jY), px(jW), py(jD));
 
-        // Spine
-        ctx.fillStyle = linG(jX, jY, jX + 0.015 * sc, jY, [[0, '#080C04'], [0.4, '#0F1608'], [1, 'rgba(0,0,0,0)']]);
-        ctx.fillRect(px(jX), py(jY), px(0.010 * sc), py(jD));
+        // Art patterns
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(px(jX), py(jY), px(jW), py(jD));
+        ctx.clip(); // Clip art to book cover
 
-        // Page volume
+        if (activeArt === 'botanical') {
+            ctx.fillStyle = '#6A9040';
+            ctx.beginPath(); ctx.ellipse(px(jX + jW*0.3), py(jY + jD*0.45), px(jW*0.15), py(jD*0.2), -18*Math.PI/180, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#8AAA58';
+            ctx.beginPath(); ctx.ellipse(px(jX + jW*0.5), py(jY + jD*0.35), px(jW*0.12), py(jD*0.16), 12*Math.PI/180, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#6A9040';
+            ctx.beginPath(); ctx.ellipse(px(jX + jW*0.7), py(jY + jD*0.5), px(jW*0.13), py(jD*0.18), -8*Math.PI/180, 0, Math.PI*2); ctx.fill();
+            
+            ctx.strokeStyle = '#4A7028'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(px(jX + jW*0.3), py(jY + jD*0.6)); ctx.lineTo(px(jX + jW*0.3), py(jY + jD*0.8)); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(px(jX + jW*0.5), py(jY + jD*0.5)); ctx.lineTo(px(jX + jW*0.5), py(jY + jD*0.8)); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(px(jX + jW*0.7), py(jY + jD*0.65)); ctx.lineTo(px(jX + jW*0.7), py(jY + jD*0.8)); ctx.stroke();
+        } 
+        else if (activeArt === 'face') {
+            ctx.fillStyle = '#1E0E06';
+            ctx.beginPath(); ctx.ellipse(px(jX + jW*0.5), py(jY + jD*0.4), px(jW*0.25), py(jD*0.2), 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#E07828';
+            ctx.beginPath(); ctx.ellipse(px(jX + jW*0.5), py(jY + jD*0.75), px(jW*0.22), py(jD*0.18), 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#B84818';
+            ctx.beginPath(); ctx.arc(px(jX + jW*0.38), py(jY + jD*0.35), px(jW*0.05), 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(px(jX + jW*0.62), py(jY + jD*0.36), px(jW*0.05), 0, Math.PI*2); ctx.fill();
+        }
+        else if (activeArt === 'clouds') {
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.beginPath(); ctx.ellipse(px(jX + jW*0.3), py(jY + jD*0.35), px(jW*0.25), py(jD*0.1), 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(px(jX + jW*0.45), py(jY + jD*0.3), px(jW*0.2), py(jD*0.1), 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(px(jX + jW*0.7), py(jY + jD*0.6), px(jW*0.25), py(jD*0.1), 0, 0, Math.PI*2); ctx.fill();
+        }
+        else if (activeArt === 'linen') {
+            ctx.strokeStyle = 'rgba(0,0,0,0.04)'; ctx.lineWidth = 1;
+            for(var i=0; i<1; i+=0.05) {
+                ctx.beginPath(); ctx.moveTo(px(jX + jW*i), py(jY)); ctx.lineTo(px(jX + jW*i), py(jY+jD)); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(px(jX), py(jY + jD*i)); ctx.lineTo(px(jX+jW), py(jY+jD*i)); ctx.stroke();
+            }
+        }
+        ctx.restore();
+
+        // Spine edge shadow
+        ctx.fillStyle = linG(jX, jY, jX + 0.015 * sc, jY, [[0, 'rgba(0,0,0,0.3)'], [0.4, 'rgba(0,0,0,0.15)'], [1, 'rgba(0,0,0,0)']]);
+        ctx.fillRect(px(jX), py(jY), px(0.015 * sc), py(jD));
+
+        // Page volume (right and bottom edges)
         ctx.fillStyle = '#E2D2B0';
         fr(jX + jW, jY + 0.005 * sc, 0.004 * sc, jD - 0.010 * sc, '#E2D2B0');
         fr(jX + 0.010 * sc, jY + jD, jW - 0.010 * sc, 0.004 * sc, '#E2D2B0');
 
-        // Gold clasp
-        var clW = 0.007 * sc, clH = 0.018 * sc;
-        fr(jX + jW - clW * 0.5, py(jD * 0.45) - clH * 0.5, clW, clH, '#C09030');
-        fr(jX + jW - clW * 0.5, py(jD * 0.45) - clH * 0.5, clW * 0.3, clH, '#E0C060');
-
-        // Debossed detailing
-        ctx.strokeStyle = 'rgba(0,0,0,0.22)'; ctx.lineWidth = 1;
-        ctx.strokeRect(px(jX + 0.014 * sc), py(jY + 0.010 * sc), px(jW - 0.028 * sc), py(jD - 0.020 * sc));
+        // Elegant border line instead of gold clasp
+        ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.lineWidth = 1;
+        ctx.strokeRect(px(jX + 0.008 * sc), py(jY + 0.008 * sc), px(jW - 0.016 * sc), py(jD - 0.016 * sc));
 
         ctx.restore();
       })();
