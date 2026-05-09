@@ -27,8 +27,8 @@
     .insights-section {
         padding: 40px 52px 20px;
         display: grid;
-        grid-template-columns: 1fr 1.8fr;
-        gap: 60px;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
         align-items: flex-start;
     }
 
@@ -162,21 +162,26 @@
 
     /* Chart */
     .chart-container {
-        background: transparent;
-        border-radius: 0;
-        border: none;
-        padding: 0;
+        background: var(--surface);
+        border-radius: 24px;
+        border: 1px solid var(--rule);
+        padding: 32px;
         position: relative;
-        box-shadow: none;
+        box-shadow: 0 12px 36px rgba(45, 51, 42, 0.03);
         display: flex;
         flex-direction: column;
+        width: 100%;
+        max-width: 540px;
+        margin: 0 auto;
     }
 
     .mood-map-header {
-        padding: 0 0 16px;
         display: flex;
-        align-items: flex-end;
+        align-items: center;
         justify-content: space-between;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--rule);
     }
 
     .mood-map-header .mm-title {
@@ -348,10 +353,7 @@
         font-weight: 500;
     }
 
-    .cal-max-wrapper {
-        max-width: 480px;
-        margin: 0 auto;
-    }
+
 
     .mbw{font-family:inherit;width: 100%;}
     .mbc{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:18px 22px;margin-bottom:14px}
@@ -1359,8 +1361,7 @@
             const today = new Date();
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             
-            let html = `<div class="cal-max-wrapper">`;
-            html += `<div class="cal-weekdays">
+            let html = `<div class="cal-weekdays">
                 <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
             </div>`;
             
@@ -1429,7 +1430,6 @@
                 html += `<a href="/writing" class="write-today-cta"><i class="fas fa-feather-alt"></i> Write today's entry</a>`;
             }
             
-            html += `</div>`;
             calContainer.innerHTML = html;
         }
 
