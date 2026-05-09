@@ -358,110 +358,77 @@
         transform: translateY(-8px);
     }
 
-    .book-pages {
-        position: absolute;
-        top: 2px;
-        left: calc((var(--sw) + 2px) * var(--scale));
-        width: calc((var(--bw) - var(--sw) - 4px) * var(--scale));
-        height: calc((var(--bh) - 4px) * var(--scale));
-        background: #F8F4EE;
-        border-radius: 0 3px 3px 0;
-        z-index: 1;
-        box-shadow: inset 20px 0 30px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-    }
-
-    .book-pages::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: repeating-linear-gradient(to bottom, transparent, transparent 15px, #E8E2D5 15px, #E8E2D5 16px);
-    }
-
-    .book-cover {
-        position: absolute;
-        inset: 0;
-        transform-style: preserve-3d;
-        transform-origin: calc(var(--sw) * var(--scale)) 50%;
-        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 2;
-    }
-
-    .book-cover.open {
-        transform: rotateY(-165deg);
-    }
-
-    .cover-front,
-    .cover-back {
-        position: absolute;
-        inset: 0;
-        backface-visibility: hidden;
-        border-radius: 2px 4px 4px 2px;
-    }
-
-    .cover-front {
-        z-index: 2;
-        box-shadow: 4px 10px 25px rgba(0, 0, 0, 0.12);
-    }
-
-    .cover-front svg {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-
-    .cover-back {
-        transform: rotateY(180deg);
-        background: #ECE5D8;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .elastic-band {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 18%;
-        width: 5px;
-        z-index: 3;
-        box-shadow: -1px 0 4px rgba(0, 0, 0, 0.15);
-        opacity: 0.9;
-        transition: opacity 0.3s;
-    }
-
-    .book-cover.open .elastic-band {
-        opacity: 0;
-    }
-
     /* ── CAROUSEL SPECIFIC ─────────────────────── */
     .featured-archive {
         padding: 40px 0 60px;
         display: flex;
         flex-direction: column;
-        align-items: center;
     }
     .journal-track {
         display: flex;
-        gap: 32px;
+        gap: 20px;
         overflow-x: auto;
+        padding: 10px 52px 40px;
         scroll-snap-type: x mandatory;
-        padding: 40px 0;
         width: 100%;
-        scrollbar-width: none;
-        padding-left: calc(50% - (var(--bw) / 2));
-        padding-right: calc(50% - (var(--bw) / 2));
+        box-sizing: border-box;
     }
     .journal-track::-webkit-scrollbar { display: none; }
-    .journal-item {
-        scroll-snap-align: center;
-        flex-shrink: 0;
-        cursor: pointer;
-        transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-        transform-origin: center bottom;
+    
+    .journal-card {
+        flex: 0 0 300px;
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 16px;
+        padding: 24px;
+        scroll-snap-align: start;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        text-decoration: none;
+    }
+    .journal-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(45, 51, 42, 0.05);
+    }
+    .journal-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    .journal-card-date {
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .journal-card-mood {
+        font-size: 10px;
+        background: rgba(75, 46, 31, 0.05);
+        color: var(--text);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    .journal-card-title {
+        font-family: 'Lora', serif;
+        font-size: 18px;
+        font-weight: 400;
+        color: var(--text);
+        margin: 0;
+        line-height: 1.3;
+    }
+    .journal-card-preview {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     /* ── UI ELEMENTS ────────────────────────── */
@@ -960,55 +927,25 @@
         </div>
     </div>
 
-    <!-- SECTION 2: 3D FEATURED CAROUSEL -->
+    <!-- SECTION 2: RECENT MEMORIES -->
     <section class="featured-archive">
-        <div class="archive-header" id="header">
-            <h1 class="archive-title" id="active-title">Loading...</h1>
-            <p class="archive-subtitle" id="active-pages">-- Pages</p>
+        <div class="archive-header" style="margin-bottom: 24px; text-align: center;">
+            <h1 class="archive-title">Recent Memories</h1>
+            <p class="archive-subtitle">Your latest journal entries</p>
         </div>
 
-        <div class="journal-track" id="track">
+        <div class="journal-track">
             {% for j in featured_journals %}
-            <div class="journal-item" data-id="{{ j.id }}" data-title="{{ j.title }}" data-pages="{{ j.pages }}"
-                data-index="{{ loop.index0 }}">
-                <div class="premium-book">
-                    <div class="book-pages">
-                        <div
-                            style="padding: 24px; font-family: 'Lora', serif; font-size: 11px; color: var(--text); line-height: 1.8; opacity: 0.8;">
-                            {{ j.content_preview }}
-                        </div>
-                    </div>
-                    <div class="book-cover" id="cover-{{ j.id }}">
-                        <div class="cover-front" id="svg-container-{{ j.id }}"></div>
-                        <div class="cover-back">
-                            <span
-                                style="font-family: 'Lora', serif; font-size: 10px; color: #B0A090; letter-spacing: 0.2em; text-transform: uppercase;">Ex
-                                Libris</span>
-                            <div style="width: 30px; height: 1px; background: #C8C0B0; margin-top: 8px;"></div>
-                        </div>
-                        <div class="elastic-band" id="band-{{ j.id }}"></div>
-                    </div>
+            <a href="{{ url_for('writing', edit_id=j.id) }}" class="journal-card">
+                <div class="journal-card-header">
+                    <span class="journal-card-date">{{ j.title }}</span>
+                    <span class="journal-card-mood">{{ j.mood_label }}</span>
                 </div>
-            </div>
+                <h3 class="journal-card-title">{{ j.pages }}</h3>
+                <p class="journal-card-preview">{{ j.content_preview }}</p>
+            </a>
             {% endfor %}
         </div>
-
-        <div class="dot-nav">
-            {% for j in featured_journals %}
-            <div class="dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></div>
-            {% endfor %}
-        </div>
-
-        <div class="action-bar">
-            <button class="action-btn" title="Share"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-            <button class="action-btn" title="Add" style="background: var(--text); color: var(--bg);"><i
-                    class="fa-solid fa-plus"></i></button>
-        </div>
-
-        <p
-            style="margin-top: 24px; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6;">
-            Swipe to Browse · Tap Center to Open
-        </p>
     </section>
 
     <!-- SECTION 3: LIBRARY -->
@@ -1028,39 +965,7 @@
         <div id="library-grid"></div>
     </section>
 
-    <!-- OPEN BOOK OVERLAY -->
-    <div id="obo-modal" class="obo-wrap">
-        <button class="obo-close" id="obo-close-btn">&times;</button>
-        <div class="obo-content">
-            <div class="obo-header">
-                <h2 class="obo-title" id="obo-dyn-title">--</h2>
-                <p class="obo-pages" id="obo-dyn-pages">--</p>
-            </div>
-            <div class="obo-spread-wrap">
-                <div class="obo-book-body">
-                    <div class="obo-left">
-                        <span class="obo-left-text">EX LIBRIS</span>
-                        <div class="obo-left-hr"></div>
-                    </div>
-                    <div class="obo-right">
-                        <div class="obo-lines"></div>
-                        <div class="obo-crease"></div>
-                        <div class="obo-shadow"></div>
-                        <span class="obo-right-title" id="obo-dyn-writ">--</span>
-                    </div>
-                </div>
-                <div class="obo-fanned">
-                    <div class="fpage" style="left:0px; width:6px; background:#F2EDE5; opacity:0.45;"></div>
-                    <div class="fpage" style="left:5px; width:7px; background:#EDE8DF; opacity:0.515;"></div>
-                    <div class="fpage" style="left:10px; width:8px; background:#F2EDE5; opacity:0.58;"></div>
-                    <div class="fpage" style="left:15px; width:9px; background:#EDE8DF; opacity:0.645;"></div>
-                    <div class="fpage" style="left:20px; width:10px; background:#F2EDE5; opacity:0.71;"></div>
-                    <div class="fpage" style="left:25px; width:11px; background:#EDE8DF; opacity:0.775;"></div>
-                    <div class="fpage" style="left:30px; width:12px; background:#F2EDE5; opacity:0.84;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 </main>
 
 <!-- COLLECTION CREATOR MODAL -->
@@ -1095,164 +1000,7 @@
 <script id="collections-data" type="application/json">{{ user_collections_json | tojson | safe }}</script>
 
 <script>
-    // ── 3D SHELF LOGIC ───────────────────────────────────────
-    const FEATURED = JSON.parse(document.getElementById('featured-data').textContent);
-    const BW = 170, BH = 240, SW = 18;
 
-    function darken(hex, n) {
-        const x = parseInt(hex.replace("#", ""), 16);
-        const r = Math.max(0, (x >> 16) - n);
-        const g = Math.max(0, ((x >> 8) & 0xff) - n);
-        const b = Math.max(0, (x & 0xff) - n);
-        return `rgb(${r},${g},${b})`;
-    }
-
-    function generateSVG(art, bg) {
-        const darkBg = darken(bg, 40);
-        const linenLines = Array.from({ length: 26 }, (_, i) => `<line x1="0" y1="${i * 8 + 6}" x2="${BW}" y2="${i * 8 + 6}" stroke="#D4CCBA" stroke-width="0.6" opacity="0.6" />`).join('');
-        const woodPaths = Array.from({ length: 14 }, (_, i) => {
-            const y = i * 16 + 8;
-            const w = Math.sin(i * 0.78) * 5;
-            return `<path d="M0,${y} C52,${y + w} 102,${y - w} ${BW},${y + w / 2}" stroke="#2C1C0A" stroke-width="2.5" fill="none" opacity="0.75" />`;
-        }).join('');
-
-        const switchCase = {
-            'botanical': `
-                <svg width="${BW}" height="${BH}" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="${BW}" height="${BH}" fill="${bg}" />
-                    <rect width="${SW}" height="${BH}" fill="${darkBg}" />
-                    <ellipse cx="44" cy="107" rx="26" ry="46" fill="#6A9040" transform="rotate(-18 44 107)" />
-                    <ellipse cx="77" cy="82" rx="20" ry="38" fill="#8AAA58" transform="rotate(12 77 82)" />
-                    <ellipse cx="112" cy="118" rx="23" ry="42" fill="#6A9040" transform="rotate(-8 112 118)" />
-                    <line x1="44" y1="140" x2="44" y2="190" stroke="#4A7028" stroke-width="1.8" />
-                    <line x1="77" y1="115" x2="77" y2="190" stroke="#4A7028" stroke-width="1.8" />
-                    <line x1="112" y1="152" x2="112" y2="190" stroke="#4A7028" stroke-width="1.8" />
-                </svg>`,
-            'linen': `
-                <svg width="${BW}" height="${BH}" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="${BW}" height="${BH}" fill="${bg}" />
-                    <rect width="${SW}" height="${BH}" fill="${darken(bg, 35)}" />
-                    ${linenLines}
-                </svg>`,
-            'face': `
-                <svg width="${BW}" height="${BH}" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="${BW}" height="${BH}" fill="${bg}" />
-                    <rect width="${SW}" height="${BH}" fill="${darkBg}" />
-                    <ellipse cx="77" cy="80" rx="34" ry="40" fill="#1E0E06" />
-                    <ellipse cx="77" cy="148" rx="28" ry="34" fill="#E07828" />
-                    <circle cx="64" cy="68" r="6" fill="#B84818" />
-                    <circle cx="90" cy="71" r="6" fill="#B84818" />
-                    <path d="M63 92 Q77 104 91 92" stroke="#3C1808" stroke-width="2.5" fill="none" stroke-linecap="round" />
-                </svg>`,
-            'wood': `
-                <svg width="${BW}" height="${BH}" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="${BW}" height="${BH}" fill="${bg}" />
-                    ${woodPaths}
-                </svg>`,
-            'clouds': `
-                <svg width="${BW}" height="${BH}" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8E4F8" /><stop offset="100%" stop-color="#88B8E0" /></linearGradient>
-                    <rect width="${BW}" height="${BH}" fill="url(#skyGrad)" />
-                    <rect width="${SW}" height="${BH}" fill="${darken(bg, 38)}" />
-                    <ellipse cx="52" cy="78" rx="36" ry="20" fill="white" opacity="0.72" />
-                    <ellipse cx="70" cy="68" rx="26" ry="18" fill="white" opacity="0.82" />
-                    <ellipse cx="112" cy="136" rx="32" ry="18" fill="white" opacity="0.65" />
-                </svg>`
-        };
-        return switchCase[art] || switchCase['linen'];
-    }
-
-    FEATURED.forEach(j => {
-        const container = document.getElementById(`svg-container-${j.id}`);
-        if (container) container.innerHTML = generateSVG(j.art, j.bg);
-        const band = document.getElementById(`band-${j.id}`);
-        if (band) band.style.backgroundColor = j.elastic;
-    });
-
-    const track = document.getElementById('track');
-    const items = document.querySelectorAll('.journal-item');
-    const dots = document.querySelectorAll('.dot');
-    const titleEl = document.getElementById('active-title');
-    const pagesEl = document.getElementById('active-pages');
-    const headerEl = document.getElementById('header');
-
-    let activeIndex = 0;
-
-    function updateActive(index) {
-        activeIndex = index;
-        const active = items[index];
-        const title = active.dataset.title;
-        const pages = active.dataset.pages;
-
-        headerEl.style.opacity = '0';
-        setTimeout(() => {
-            titleEl.textContent = title;
-            pagesEl.textContent = pages;
-            headerEl.style.opacity = '1';
-        }, 150);
-
-        dots.forEach((d, i) => d.classList.toggle('active', i === index));
-
-        // Dynamic 3D Scale Falloff
-        items.forEach((item, i) => {
-            const dist = Math.abs(i - index);
-            const scale = Math.max(0.72, 1 - dist * 0.1);
-            const translateY = (i === index) ? -14 : 0;
-            item.style.transform = `scale(${scale}) translateY(${translateY}px)`;
-        });
-    }
-
-    // Swipe / Scroll Sync
-    track.addEventListener('scroll', () => {
-        const scrollLeft = track.scrollLeft;
-        const itemWidth = items[0].offsetWidth + 32;
-        const index = Math.round(scrollLeft / itemWidth);
-        if (index !== activeIndex && items[index]) {
-            updateActive(index);
-        }
-    });
-
-    // Opening Interaction - Overlay Modal
-    const oboModal = document.getElementById('obo-modal');
-    const oboCloseBtn = document.getElementById('obo-close-btn');
-    
-    function openOverlay(title, pages) {
-        document.getElementById('obo-dyn-title').textContent = title;
-        document.getElementById('obo-dyn-pages').textContent = pages;
-        document.getElementById('obo-dyn-writ').textContent = title;
-        oboModal.classList.add('visible');
-    }
-
-    function closeOverlay() {
-        oboModal.classList.remove('visible');
-    }
-
-    oboCloseBtn.addEventListener('click', closeOverlay);
-    oboModal.addEventListener('click', (e) => {
-        if (e.target === oboModal) closeOverlay();
-    });
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeOverlay();
-    });
-
-    items.forEach((item, i) => {
-        item.addEventListener('click', () => {
-            if (i !== activeIndex) {
-                item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            } else {
-                openOverlay(item.dataset.title, item.dataset.pages);
-            }
-        });
-    });
-
-    dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            const idx = parseInt(dot.dataset.index);
-            items[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        });
-    });
-
-    updateActive(0);
 
     // ── NEW ATMOSPHERE MAP LOGIC ─────────────────────────────────
     setTimeout(() => {
@@ -1349,9 +1097,12 @@
                 if (entry) {
                     const eLower = entry.mood_label.toLowerCase();
                     const fD = FACES.find(f => f.e === eLower) || FACES[5];
-                    out = `<div class="cal-day cal-day--mood${todayCls}" style="background:${fD.c};" title="${entry.mood_label}">
+                    out = `<div class="cal-day cal-day--mood${todayCls}" style="background:${fD.c}; overflow:hidden;" title="${entry.mood_label}">
+                        <svg viewBox="0 0 100 100" style="position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; opacity:0.65;">
+                           ${FEATS[fD.e] || FEATS['neutral']}
+                        </svg>
+                        <span style="position:relative; z-index:1; font-weight:600; text-shadow:0 1px 3px rgba(0,0,0,0.25);">${d}</span>
                         <span class="cal-tooltip">${fD.e}</span>
-                        ${d}
                     </div>`;
                 } else {
                     if (isTodayCell) {
