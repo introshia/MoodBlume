@@ -328,8 +328,7 @@ def archive():
                 "elastic": elastics[i % len(elastics)],
                 "bg": bgs[i % len(bgs)],
                 "art": arts[i % len(arts)],
-                "content_preview": entry['display_text'],
-                "mood_label": entry['mood_label']
+                "content_preview": entry['display_text']
             })
 
     # Build JSON-serialisable snapshots for the client-side view switcher
