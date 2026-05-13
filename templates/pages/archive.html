@@ -6,13 +6,17 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
     :root {
-        --bg: #F6F3EE;      /* Old Lace     */
+        --bg: #F6F3EE;
+        /* Old Lace     */
         --surface: #FFFFFF;
-        --text: #4B2E1F;    /* Freshly Roasted */
+        --text: #4B2E1F;
+        /* Freshly Roasted */
         --muted: rgba(75, 46, 31, 0.55);
         --rule: rgba(75, 46, 31, 0.09);
-        --butter: #F4E6A6;  /* Butter       */
-        --oyster: #DCECEF;  /* Oyster Bay   */
+        --butter: #F4E6A6;
+        /* Butter       */
+        --oyster: #DCECEF;
+        /* Oyster Bay   */
         --nav-height: 52px;
         --bw: 170px;
         --bh: 240px;
@@ -20,7 +24,8 @@
     }
 
     main {
-        padding-top: 30px; /* Refined offset for fixed navbar */
+        padding-top: 30px;
+        /* Refined offset for fixed navbar */
     }
 
     /* ── INSIGHTS SECTION ────────────────────── */
@@ -76,18 +81,18 @@
         margin-top: 8px;
         animation: fadeIn 0.8s ease-out;
     }
-    
+
     .streak-icon {
         font-size: 18px;
         color: #D97706;
         filter: drop-shadow(0 2px 4px rgba(217, 119, 6, 0.2));
     }
-    
+
     .streak-text {
         display: flex;
         flex-direction: column;
     }
-    
+
     .streak-count {
         font-family: 'Lora', serif;
         font-size: 15px;
@@ -95,7 +100,7 @@
         color: var(--text);
         line-height: 1.2;
     }
-    
+
     .streak-label {
         font-size: 9px;
         color: var(--muted);
@@ -104,8 +109,15 @@
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Blob Card */
@@ -265,13 +277,13 @@
     .cal-day--mood {
         cursor: pointer;
         color: #fff;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.12);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
     .cal-day--mood:hover {
         transform: scale(1.15);
-        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
         z-index: 2;
     }
 
@@ -342,7 +354,7 @@
 
     .write-today-cta:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     }
 
     .cal-toggle {
@@ -366,27 +378,82 @@
     .cal-tab.active {
         background: var(--surface);
         color: var(--text);
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         font-weight: 500;
     }
 
 
 
-    .mbw{font-family:inherit;width: 100%;}
-    .mbc{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:18px 22px;margin-bottom:14px}
-    .mbr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
-    .mbt{font-size:15px;font-weight:500;color:var(--text);margin:0}
-    .mbs{font-size:10px;letter-spacing:.09em;color:var(--muted);text-transform:uppercase;margin:0 0 14px}
-    .fg{display:grid;grid-template-columns:repeat(6,1fr);gap:8px 6px}
-    .fc{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:default}
-    .fc svg{width:100%;aspect-ratio:1;display:block}
-    .fl{font-size:10px;color:var(--muted);text-align:center;line-height:1.3}
+    .mbw {
+        font-family: inherit;
+        width: 100%;
+    }
+
+    .mbc {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 12px;
+        padding: 18px 22px;
+        margin-bottom: 14px
+    }
+
+    .mbr {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 16px
+    }
+
+    .mbt {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--text);
+        margin: 0
+    }
+
+    .mbs {
+        font-size: 10px;
+        letter-spacing: .09em;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin: 0 0 14px
+    }
+
+    .fg {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px 6px
+    }
+
+    .fc {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: default
+    }
+
+    .fc svg {
+        width: 100%;
+        aspect-ratio: 1;
+        display: block
+    }
+
+    .fl {
+        font-size: 10px;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.3
+    }
 
     /* ── PREMIUM 3D BOOK SYSTEM ─────────────────── */
     :root {
-        --bw: 170px; /* Base Width */
-        --bh: 240px; /* Base Height */
-        --sw: 18px;  /* Base Spine */
+        --bw: 170px;
+        /* Base Width */
+        --bh: 240px;
+        /* Base Height */
+        --sw: 18px;
+        /* Base Spine */
     }
 
     .premium-book {
@@ -488,6 +555,7 @@
         flex-direction: column;
         align-items: center;
     }
+
     .journal-track {
         display: flex;
         gap: 32px;
@@ -499,7 +567,11 @@
         padding-left: calc(50% - (var(--bw) / 2));
         padding-right: calc(50% - (var(--bw) / 2));
     }
-    .journal-track::-webkit-scrollbar { display: none; }
+
+    .journal-track::-webkit-scrollbar {
+        display: none;
+    }
+
     .journal-item {
         scroll-snap-align: center;
         flex-shrink: 0;
@@ -613,27 +685,34 @@
 
     .journal-spotlight .spine-bar {
         position: absolute;
-        left: 306px; top: 0; width: 18px; height: 100%; z-index: 5;
+        left: 306px;
+        top: 0;
+        width: 18px;
+        height: 100%;
+        z-index: 5;
         background: linear-gradient(to right, #0e0905 0%, #20110a 18%, #3d2610 42%, #4c3218 50%, #3d2610 58%, #20110a 82%, #0e0905 100%);
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
 
     .journal-spotlight .wing {
         position: absolute;
-        top: 0; width: 306px; height: 100%;
+        top: 0;
+        width: 306px;
+        height: 100%;
         transform-style: preserve-3d;
         transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1.000);
     }
 
     .journal-spotlight .left-half {
         left: 0;
-        transform-origin: right center;
-        transform: rotateY(180deg);
+        transform-origin: calc(100% + 9px) center;
+        /* Pivots exactly at the spine center (315px) */
+        transform: rotateY(180deg) translateZ(-2px);
         z-index: 6;
     }
 
     .journal-spotlight .left-half.wing-open {
-        transform: rotateY(0deg);
+        transform: rotateY(0deg) translateZ(-2px);
     }
 
     .journal-spotlight .right-wing {
@@ -647,7 +726,8 @@
         transform: rotateY(-35deg);
     }
 
-    .journal-spotlight .left-page, .journal-spotlight .right-page {
+    .journal-spotlight .left-page,
+    .journal-spotlight .right-page {
         position: absolute;
         inset: 0;
         background: #fdfaf3;
@@ -655,34 +735,88 @@
         overflow: hidden;
     }
 
-    .journal-spotlight .left-page { border-radius: 6px 0 0 6px; box-shadow: inset -10px 0 30px rgba(0,0,0,0.05); }
-    .journal-spotlight .right-page { border-radius: 0 6px 6px 0; box-shadow: inset 10px 0 30px rgba(0,0,0,0.05); }
+    .journal-spotlight .left-page {
+        border-radius: 6px 0 0 6px;
+        box-shadow: inset -10px 0 30px rgba(0, 0, 0, 0.05);
+    }
 
-    .journal-spotlight .style-lined { background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(150, 128, 96, 0.15) 31px, rgba(150, 128, 96, 0.15) 32px); background-size: 100% 32px; background-position: 0 10px; }
-    .journal-spotlight .style-grid { background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 23px, rgba(150, 128, 96, 0.15) 23px, rgba(150, 128, 96, 0.15) 24px), repeating-linear-gradient(to right, transparent 0px, transparent 23px, rgba(150, 128, 96, 0.1) 23px, rgba(150, 128, 96, 0.1) 24px); background-size: 24px 24px; }
+    .journal-spotlight .right-page {
+        border-radius: 0 6px 6px 0;
+        box-shadow: inset 10px 0 30px rgba(0, 0, 0, 0.05);
+    }
 
-    .journal-spotlight .cover {
+    .journal-spotlight .page-flip {
+        left: 324px;
+        transform-origin: -9px center;
+        /* Pivots exactly at the spine center (315px) */
+        z-index: 5;
+        transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+        transform-style: preserve-3d;
+        transform: translateZ(0px);
+    }
+
+    .journal-spotlight .page-flip.flipped {
+        transform: rotateY(-180deg) translateZ(0px);
+        z-index: 10;
+        /* Pop to the top when flipped over the left side */
+    }
+
+    .journal-spotlight .flip-front,
+    .journal-spotlight .flip-back {
         position: absolute;
         inset: 0;
-        transform-style: preserve-3d;
-        transform-origin: left center;
-        transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-        z-index: 10;
+        background: #fdfaf3;
+        backface-visibility: hidden;
+        overflow: hidden;
     }
 
-    .journal-spotlight .cover.wing-open {
-        transform: rotateY(-176deg);
+    .journal-spotlight .flip-front {
+        border-radius: 0 6px 6px 0;
+        box-shadow: inset 10px 0 30px rgba(0, 0, 0, 0.05);
     }
 
-    .journal-spotlight .cover-front {
+    .journal-spotlight .flip-back {
+        border-radius: 6px 0 0 6px;
+        box-shadow: inset -10px 0 30px rgba(0, 0, 0, 0.05);
+        transform: rotateY(180deg);
+    }
+
+    .journal-spotlight .style-lined {
+        background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(150, 128, 96, 0.15) 31px, rgba(150, 128, 96, 0.15) 32px);
+        background-size: 100% 32px;
+        background-position: 0 10px;
+    }
+
+    .journal-spotlight .style-grid {
+        background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 23px, rgba(150, 128, 96, 0.15) 23px, rgba(150, 128, 96, 0.15) 24px), repeating-linear-gradient(to right, transparent 0px, transparent 23px, rgba(150, 128, 96, 0.1) 23px, rgba(150, 128, 96, 0.1) 24px);
+        background-size: 24px 24px;
+    }
+
+    .journal-spotlight .style-blank {
+        background-image: none !important;
+    }
+
+    .journal-spotlight .front-cover-design {
         position: absolute;
         inset: 0;
         background: #3D2B1F;
         border-radius: 0 6px 6px 0;
-        box-shadow: -15px 0 35px rgba(0, 0, 0, 0.4);
+        /* Rounded on the outer edge when viewed from front */
+        box-shadow: 15px 0 35px rgba(0, 0, 0, 0.4);
+        transform: rotateY(180deg);
+        backface-visibility: hidden;
     }
 
-    .journal-spotlight .elastic { position: absolute; right: 22px; top: 0; bottom: 0; width: 9px; background: linear-gradient(to right, #0a0a0a, #1c1c1c 50%, #0a0a0a); border-radius: 3px; z-index: 3; }
+    .journal-spotlight .elastic {
+        position: absolute;
+        right: 22px;
+        top: 0;
+        bottom: 0;
+        width: 9px;
+        background: linear-gradient(to right, #0a0a0a, #1c1c1c 50%, #0a0a0a);
+        border-radius: 3px;
+        z-index: 3;
+    }
 
     .journal-spotlight .cover-label {
         position: absolute;
@@ -691,24 +825,68 @@
         top: 50%;
         transform: translateY(-50%);
         text-align: center;
-        z-index: 20; /* Ensure text is on top of the leather background */
+        z-index: 20;
         pointer-events: none;
     }
-    .journal-spotlight .lbl-small { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: 13px; color: rgba(255, 255, 255, 0.5); letter-spacing: 1px; margin-bottom: 4px; display: block; }
-    .journal-spotlight .lbl-big { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 32px; color: rgba(255, 255, 255, 0.9); line-height: 1; display: block; }
+
+    .journal-spotlight .lbl-small {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-weight: 300;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .journal-spotlight .lbl-big {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: 32px;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1;
+        display: block;
+    }
 
     .btn-journal {
-        background: #3D2B1F; color: #fdfaf3; border: none; padding: 12px 30px; border-radius: 30px;
-        font-family: 'Balsamiq Sans', cursive; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
-        cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        background: #3D2B1F;
+        color: #fdfaf3;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-family: 'Balsamiq Sans', cursive;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
-    .btn-journal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); opacity: 0.9; }
+
+    .btn-journal:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        opacity: 0.9;
+    }
 
     .picker-wrap-3d {
-        display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 24px;
-        opacity: 0; transform: translateY(10px); transition: all 0.4s ease; pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-top: 24px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.4s ease;
+        pointer-events: none;
     }
-    .picker-wrap-3d.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+
+    .picker-wrap-3d.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+    }
 
     /* ── LIBRARY GRID ────────────────────────── */
     .shelf-books {
@@ -728,7 +906,8 @@
     }
 
     .lib-journal-item .premium-book {
-        --scale: 0.65; /* Scale down for grid */
+        --scale: 0.65;
+        /* Scale down for grid */
     }
 
     .lib-journal-item .flat-meta {
@@ -786,84 +965,197 @@
 
     /* ── OPEN BOOK OVERLAY ───────────────────── */
     .obo-wrap {
-        position: fixed; inset: 0; z-index: 1000;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
         background: rgba(234, 232, 225, 0.96);
-        display: flex; align-items: center; justify-content: center;
-        opacity: 0; pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
         transition: opacity 0.32s;
     }
+
     .obo-wrap.visible {
-        opacity: 1; pointer-events: all;
+        opacity: 1;
+        pointer-events: all;
     }
+
     .obo-close {
-        position: absolute; top: 20px; right: 20px;
-        width: 32px; height: 32px; border-radius: 50%; border: none;
-        background: rgba(196, 192, 184, 0.7); color: #5A544A;
-        cursor: pointer; font-size: 20px;
-        display: flex; align-items: center; justify-content: center;
-        line-height: 1; transition: background 0.2s;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(196, 192, 184, 0.7);
+        color: #5A544A;
+        cursor: pointer;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        transition: background 0.2s;
     }
-    .obo-close:hover { background: rgba(176, 172, 164, 0.9); }
-    
-    .obo-content { position: relative; }
-    .obo-header { text-align: center; margin-bottom: 20px; }
-    .obo-header .obo-title { font-family: 'Lora', serif; font-weight: 400; font-size: 22px; color: #2C2820; letter-spacing: 0.02em; margin: 0; }
-    .obo-header .obo-pages { font-family: 'Lora', serif; font-size: 10px; color: #9A9288; letter-spacing: 0.18em; text-transform: uppercase; margin: 5px 0 0; }
-    
+
+    .obo-close:hover {
+        background: rgba(176, 172, 164, 0.9);
+    }
+
+    .obo-content {
+        position: relative;
+    }
+
+    .obo-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .obo-header .obo-title {
+        font-family: 'Lora', serif;
+        font-weight: 400;
+        font-size: 22px;
+        color: #2C2820;
+        letter-spacing: 0.02em;
+        margin: 0;
+    }
+
+    .obo-header .obo-pages {
+        font-family: 'Lora', serif;
+        font-size: 10px;
+        color: #9A9288;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin: 5px 0 0;
+    }
+
     .obo-spread-wrap {
-        display: flex; align-items: stretch;
+        display: flex;
+        align-items: stretch;
         transform: scale(0.86) translateY(22px);
         transition: transform 0.42s cubic-bezier(0.34, 1.08, 0.64, 1);
     }
+
     .obo-wrap.visible .obo-spread-wrap {
         transform: scale(1) translateY(0);
     }
-    
+
     .obo-book-body {
-        display: flex; border-radius: 3px;
-        box-shadow: 0 24px 64px rgba(0,0,0,0.16), 0 4px 12px rgba(0,0,0,0.07);
+        display: flex;
+        border-radius: 3px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.07);
         transform: perspective(1200px) rotateX(2deg);
     }
+
     .obo-left {
-        width: 320px; height: 420px; background: #EDE4D2;
-        border-radius: 3px 0 0 3px; flex-shrink: 0;
-        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px;
-        box-shadow: inset -15px 0 30px rgba(0,0,0,0.08);
+        width: 320px;
+        height: 420px;
+        background: #EDE4D2;
+        border-radius: 3px 0 0 3px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        box-shadow: inset -15px 0 30px rgba(0, 0, 0, 0.08);
     }
-    .obo-left-text { font-family: 'Lora', serif; font-size: 11px; color: #A09080; letter-spacing: 0.22em; text-transform: uppercase; }
-    .obo-left-hr { width: 44px; height: 1px; background: #C8BEAE; }
-    
+
+    .obo-left-text {
+        font-family: 'Lora', serif;
+        font-size: 11px;
+        color: #A09080;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+    }
+
+    .obo-left-hr {
+        width: 44px;
+        height: 1px;
+        background: #C8BEAE;
+    }
+
     .obo-right {
-        width: 400px; height: 420px; background: #F8F4EE;
-        flex-shrink: 0; position: relative; overflow: hidden;
-        border-left: 1px solid rgba(0,0,0,0.05);
+        width: 400px;
+        height: 420px;
+        background: #F8F4EE;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+        border-left: 1px solid rgba(0, 0, 0, 0.05);
     }
+
     .obo-lines {
-        position: absolute; inset: 0;
+        position: absolute;
+        inset: 0;
         background-image: repeating-linear-gradient(to bottom, transparent, transparent 28px, #E4DDD4 28px, #E4DDD4 29px);
         padding-top: 44px;
     }
-    .obo-crease { position: absolute; top:0; left: 54px; bottom: 0; width: 1px; background: rgba(200, 155, 135, 0.22); }
-    .obo-shadow { position: absolute; top:0; left: 0; width: 30px; height: 100%; background: linear-gradient(to right, rgba(0,0,0,0.07), transparent); }
-    .obo-right-title { position: absolute; top: 17px; left: 18px; font-family: 'Lora', serif; font-style: italic; font-size: 13px; color: #9A9080; letter-spacing: 0.04em; }
-    
-    .obo-fanned { position: relative; flex-shrink: 0; width: 50px; height: 420px; align-self: stretch; }
-    .fpage { position: absolute; top: 0; height: 420px; border-radius: 0 4px 4px 0; }
+
+    .obo-crease {
+        position: absolute;
+        top: 0;
+        left: 54px;
+        bottom: 0;
+        width: 1px;
+        background: rgba(200, 155, 135, 0.22);
+    }
+
+    .obo-shadow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 30px;
+        height: 100%;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.07), transparent);
+    }
+
+    .obo-right-title {
+        position: absolute;
+        top: 17px;
+        left: 18px;
+        font-family: 'Lora', serif;
+        font-style: italic;
+        font-size: 13px;
+        color: #9A9080;
+        letter-spacing: 0.04em;
+    }
+
+    .obo-fanned {
+        position: relative;
+        flex-shrink: 0;
+        width: 50px;
+        height: 420px;
+        align-self: stretch;
+    }
+
+    .fpage {
+        position: absolute;
+        top: 0;
+        height: 420px;
+        border-radius: 0 4px 4px 0;
+    }
 
     /* ── LIBRARY SECTION (View Switcher) ───────────── */
     .library-section {
         padding: 0 52px 60px;
     }
+
     .library-nav {
         display: flex;
         align-items: center;
         border-bottom: 1px solid var(--rule);
         margin-bottom: 36px;
     }
+
     .view-tabs {
         display: flex;
         gap: 0;
     }
+
     .view-tab {
         padding: 12px 18px;
         background: none;
@@ -878,35 +1170,57 @@
         transition: color 0.2s, border-color 0.2s;
         margin-bottom: -1px;
     }
-    .view-tab:hover { color: var(--text); }
+
+    .view-tab:hover {
+        color: var(--text);
+    }
+
     .view-tab.active {
         color: var(--text);
         border-bottom-color: var(--text);
     }
+
     .btn-new-vol {
         margin-left: auto;
         display: none;
         align-items: center;
         gap: 7px;
         padding: 6px 14px;
-        background: var(--text); color: var(--bg);
-        border: none; border-radius: 20px;
-        font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
-        cursor: pointer; transition: opacity 0.2s;
+        background: var(--text);
+        color: var(--bg);
+        border: none;
+        border-radius: 20px;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: opacity 0.2s;
         font-family: inherit;
     }
-    .btn-new-vol.visible { display: flex; }
-    .btn-new-vol:hover { opacity: 0.75; }
+
+    .btn-new-vol.visible {
+        display: flex;
+    }
+
+    .btn-new-vol:hover {
+        opacity: 0.75;
+    }
+
     .lib-empty {
         text-align: center;
         padding: 48px 32px;
         color: var(--muted);
         font-size: 12px;
         letter-spacing: 0.04em;
-        border: 1px dashed rgba(0,0,0,0.08);
+        border: 1px dashed rgba(0, 0, 0, 0.08);
         border-radius: 12px;
     }
-    .lib-empty a { color: var(--text); cursor: pointer; text-decoration: underline; }
+
+    .lib-empty a {
+        color: var(--text);
+        cursor: pointer;
+        text-decoration: underline;
+    }
 
     /* Month-book cards (one per month on the Monthly shelf) */
     .month-book {
@@ -917,49 +1231,75 @@
         cursor: pointer;
         transition: transform 0.25s;
     }
-    .month-book:hover { transform: translateY(-8px); }
+
+    .month-book:hover {
+        transform: translateY(-8px);
+    }
+
     .month-cover {
         width: 128px;
         height: 188px;
         border-radius: 4px 8px 8px 4px;
         position: relative;
         overflow: hidden;
-        filter: drop-shadow(3px 10px 18px rgba(0,0,0,0.14));
+        filter: drop-shadow(3px 10px 18px rgba(0, 0, 0, 0.14));
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: 4px;
     }
+
     .month-spine {
         position: absolute;
-        left: 0; top: 0; bottom: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
         width: 10px;
-        background: rgba(0,0,0,0.12);
+        background: rgba(0, 0, 0, 0.12);
     }
+
     .month-dot {
         position: absolute;
-        top: 14px; left: 20px;
-        width: 7px; height: 7px;
+        top: 14px;
+        left: 20px;
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
-        background: rgba(255,255,255,0.55);
+        background: rgba(255, 255, 255, 0.55);
     }
+
     .month-name-text {
         font-family: 'Lora', serif;
         font-size: 17px;
-        color: rgba(255,255,255,0.92);
+        color: rgba(255, 255, 255, 0.92);
         letter-spacing: 0.03em;
         position: relative;
     }
+
     .month-year-text {
         font-size: 9px;
-        color: rgba(255,255,255,0.6);
+        color: rgba(255, 255, 255, 0.6);
         letter-spacing: 0.18em;
         text-transform: uppercase;
         position: relative;
     }
-    .month-meta h3 { font-size: 11px; font-weight: 400; color: var(--muted); margin: 0; letter-spacing: 0.04em; }
-    .month-meta p  { font-size: 10px; color: rgba(0,0,0,0.28); margin: 2px 0 0; letter-spacing: 0.04em; }
+
+    .month-meta h3 {
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--muted);
+        margin: 0;
+        letter-spacing: 0.04em;
+    }
+
+    .month-meta p {
+        font-size: 10px;
+        color: rgba(0, 0, 0, 0.28);
+        margin: 2px 0 0;
+        letter-spacing: 0.04em;
+    }
+
     .lib-breadcrumb {
         display: flex;
         align-items: center;
@@ -969,27 +1309,43 @@
         color: var(--muted);
         letter-spacing: 0.06em;
     }
+
     .lib-breadcrumb button {
-        background: none; border: none;
-        color: var(--muted); cursor: pointer;
-        font-size: 11px; font-family: inherit;
-        letter-spacing: 0.06em; padding: 0;
+        background: none;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 11px;
+        font-family: inherit;
+        letter-spacing: 0.06em;
+        padding: 0;
         text-decoration: underline;
         text-underline-offset: 3px;
     }
-    .lib-breadcrumb button:hover { color: var(--text); }
+
+    .lib-breadcrumb button:hover {
+        color: var(--text);
+    }
 
     /* Modal */
     .col-modal-bg {
-        position: fixed; inset: 0; z-index: 1100;
-        background: rgba(0,0,0,0.25);
-        display: flex; align-items: center; justify-content: center;
-        opacity: 0; pointer-events: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        background: rgba(0, 0, 0, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
         transition: opacity 0.25s;
     }
+
     .col-modal-bg.visible {
-        opacity: 1; pointer-events: all;
+        opacity: 1;
+        pointer-events: all;
     }
+
     .col-modal {
         background: var(--surface);
         border-radius: 20px;
@@ -999,58 +1355,108 @@
         transition: transform 0.3s cubic-bezier(0.34, 1.08, 0.64, 1);
         position: relative;
     }
+
     .col-modal-bg.visible .col-modal {
         transform: scale(1) translateY(0);
     }
+
     .col-modal h3 {
         font-family: 'Lora', serif;
-        font-weight: 400; font-size: 20px;
-        color: var(--text); margin: 0 0 6px;
+        font-weight: 400;
+        font-size: 20px;
+        color: var(--text);
+        margin: 0 0 6px;
     }
+
     .col-modal p {
-        font-size: 12px; color: var(--muted); margin: 0 0 28px;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 28px;
     }
+
     .col-field-label {
-        font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-        color: var(--muted); margin-bottom: 8px;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
     }
+
     .col-field-input {
-        width: 100%; padding: 12px 16px;
-        background: var(--bg); border: 1px solid rgba(0,0,0,0.08);
-        border-radius: 10px; font-size: 14px; font-family: inherit;
-        color: var(--text); outline: none;
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--bg);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: inherit;
+        color: var(--text);
+        outline: none;
         transition: border-color 0.2s;
         box-sizing: border-box;
     }
-    .col-field-input:focus { border-color: var(--text); }
+
+    .col-field-input:focus {
+        border-color: var(--text);
+    }
+
     .col-colors {
-        display: flex; gap: 10px; flex-wrap: wrap;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
         margin: 12px 0 24px;
     }
+
     .col-swatch {
-        width: 28px; height: 28px; border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
         border: 3px solid transparent;
-        cursor: pointer; transition: transform 0.15s, border-color 0.15s;
+        cursor: pointer;
+        transition: transform 0.15s, border-color 0.15s;
     }
-    .col-swatch:hover { transform: scale(1.15); }
-    .col-swatch.active { border-color: var(--text); }
+
+    .col-swatch:hover {
+        transform: scale(1.15);
+    }
+
+    .col-swatch.active {
+        border-color: var(--text);
+    }
+
     .col-modal-actions {
-        display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 8px;
     }
+
     .btn-cancel {
         padding: 10px 20px;
-        background: transparent; border: 1px solid rgba(0,0,0,0.12);
-        border-radius: 10px; font-size: 12px; font-family: inherit;
-        color: var(--muted); cursor: pointer;
+        background: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 10px;
+        font-size: 12px;
+        font-family: inherit;
+        color: var(--muted);
+        cursor: pointer;
     }
+
     .btn-create {
         padding: 10px 24px;
-        background: var(--text); color: var(--bg);
-        border: none; border-radius: 10px;
-        font-size: 12px; font-family: inherit; cursor: pointer;
+        background: var(--text);
+        color: var(--bg);
+        border: none;
+        border-radius: 10px;
+        font-size: 12px;
+        font-family: inherit;
+        cursor: pointer;
         transition: opacity 0.2s;
     }
-    .btn-create:hover { opacity: 0.8; }
+
+    .btn-create:hover {
+        opacity: 0.8;
+    }
 </style>
 {% endblock %}
 
@@ -1062,12 +1468,13 @@
             <div class="greeting-block">
                 <h1>{{ greeting }}</h1>
                 <div class="stats-block">
-                    {{ stats_msg }} 
-                    <span style="color: var(--muted); opacity: 0.8; display: block; margin-top: 4px; font-size: 13px; font-weight: 400; line-height: 1.4;">
+                    {{ stats_msg }}
+                    <span
+                        style="color: var(--muted); opacity: 0.8; display: block; margin-top: 4px; font-size: 13px; font-weight: 400; line-height: 1.4;">
                         {{ trend.msg }}
                     </span>
                 </div>
-                
+
                 {% if current_streak > 0 %}
                 <div class="streak-widget">
                     <div class="streak-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
@@ -1084,206 +1491,249 @@
                         <div class="journal" id="journal3d" onclick="toggleJournal3D()">
                             <div class="wing left-half" id="leftHalf">
                                 <div class="left-page style-lined" id="leftPage">
-                                    <div class="page-content" style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6;">
+                                    <div class="page-content"
+                                        style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6;">
                                         <p>Dear Diary,</p>
-                                        <p style="margin-top: 20px;">Today feels like a dream. The sun is shining, and I can feel the world blooming around me...</p>
+                                        <p style="margin-top: 20px;">Today feels like a dream. The sun is shining, and I
+                                            can feel the world blooming around me...</p>
                                     </div>
                                 </div>
-                                <div style="position:absolute; inset:0; transform:rotateY(180deg); background:#3D2B1F; backface-visibility:hidden; border-radius:6px 0 0 6px;"></div>
+                                <!-- THE FRONT COVER (visible when the book is closed and left-half is flipped 180deg) -->
+                                <div class="front-cover-design">
+                                    <div class="elastic"></div>
+                                    <div class="cover-label">
+                                        <div class="lbl-small">a memory from</div>
+                                        <div class="lbl-big" id="cover-date">{{ all_entries[0].created_at.strftime('%b
+                                            %d') if all_entries else 'May 13' }}</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="spine-bar"></div>
-                            <div class="wing right-wing" id="rightWing">
-                                <div class="right-page style-lined" id="rightPage">
-                                    <div class="page-content" style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6;">
-                                        <p>I hope to keep this feeling forever. This sanctuary is where my heart rests.</p>
-                                        <p style="margin-top: 40px; text-align: right;">— MoodBlume</p>
-                                    </div>
-                                </div>
-                                <div class="cover" id="cover3d">
-                                    <div class="cover-front">
-                                        <div class="elastic"></div>
-                                        <div class="cover-label">
-                                            <div class="lbl-small">a memory from</div>
-                                            <div class="lbl-big" id="cover-date">{{ all_entries[0].created_at.strftime('%b %d') if all_entries else 'May 13' }}</div>
+
+                            <!-- FLIPPING PAGE -->
+                            <div class="wing page-flip" id="pageFlip">
+                                <div class="flip-front style-lined" id="flipFront">
+                                    <div class="page-content"
+                                        style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
+                                        <div
+                                            style="width: 40px; height: 1px; background: rgba(75, 43, 31, 0.2); margin-bottom: 20px;">
+                                        </div>
+                                        <p style="color: #8a7b6c; font-size: 24px; letter-spacing: 2px;">Chapter 1</p>
+                                        <p style="font-size: 16px; color: rgba(75,43,31,0.5); margin-top: 10px;">The
+                                            Beginning</p>
+                                        <div
+                                            style="width: 40px; height: 1px; background: rgba(75, 43, 31, 0.2); margin-top: 20px;">
                                         </div>
                                     </div>
                                 </div>
+                                <div class="flip-back style-lined" id="flipBack">
+                                    <div class="page-content"
+                                        style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6;">
+                                        <p>Sometimes you just need to turn the page to see what's next.</p>
+                                        <p style="margin-top: 20px;">Every blank page is a new opportunity to bloom.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="wing right-wing" id="rightWing">
+                                <div class="right-page style-lined" id="rightPage">
+                                    <div class="page-content"
+                                        style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6;">
+                                        <p>I hope to keep this feeling forever. This sanctuary is where my heart rests.
+                                        </p>
+                                        <p style="margin-top: 40px; text-align: right;">— MoodBlume</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="journal-controls" style="margin-top: 40px; text-align: center;">
+                            <button class="btn-journal" onclick="toggleJournal3D()" id="btn-journal-toggle">Open
+                                Journal</button>
+                        </div>
+                        <div class="picker-wrap-3d" id="pickerWrap3D">
+                            <div class="picker-label"
+                                style="font-family:'Balsamiq Sans',cursive; font-size:10px; color:rgba(0,0,0,0.3); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">
+                                page style</div>
+                            <div class="style-picker"
+                                style="display:flex; background:white; border:1px solid rgba(0,0,0,0.1); border-radius:50px; overflow:hidden;">
+                                <button class="style-btn" onclick="setStyle3D('lined')"
+                                    style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">lined</button>
+                                <button class="style-btn" onclick="setStyle3D('grid')"
+                                    style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">grid</button>
+                                <button class="style-btn" onclick="setStyle3D('blank')"
+                                    style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer;">blank</button>
                             </div>
                         </div>
                     </div>
-                    <div class="journal-controls" style="margin-top: 40px; text-align: center;">
-                        <button class="btn-journal" onclick="toggleJournal3D()" id="btn-journal-toggle">Open Journal</button>
-                    </div>
-                    <div class="picker-wrap-3d" id="pickerWrap3D">
-                        <div class="picker-label" style="font-family:'Balsamiq Sans',cursive; font-size:10px; color:rgba(0,0,0,0.3); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">page style</div>
-                        <div class="style-picker" style="display:flex; background:white; border:1px solid rgba(0,0,0,0.1); border-radius:50px; overflow:hidden;">
-                            <button class="style-btn" onclick="setStyle3D('lined')" style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">lined</button>
-                            <button class="style-btn" onclick="setStyle3D('grid')" style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">grid</button>
-                            <button class="style-btn" onclick="setStyle3D('blank')" style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer;">blank</button>
+                </div>
+
+                <div class="blob-card"
+                    style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s;">
+                    <div class="blob-stage">
+                        <div class="blob-main">
+                            <div class="blob-body"></div>
+                            <div class="blob-face">
+                                <div class="blob-eyes">
+                                    <div class="blob-eye"></div>
+                                    <div class="blob-eye"></div>
+                                </div>
+                                <svg width="20" height="8" viewBox="0 0 22 10" fill="none">
+                                    <path d="{{ companion.mouth }}" stroke="#3a2d22" stroke-width="2.5"
+                                        stroke-linecap="round" fill="none" opacity="0.7" />
+                                </svg>
+                            </div>
                         </div>
+                    </div>
+                    <div>
+                        <div class="blob-score-num">{{ companion.score }}</div>
+                        <div class="blob-score-label">Energy Level · {{ companion.label }}</div>
                     </div>
                 </div>
             </div>
 
-            <div class="blob-card"
-                style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s;">
-                <div class="blob-stage">
-                    <div class="blob-main">
-                        <div class="blob-body"></div>
-                        <div class="blob-face">
-                            <div class="blob-eyes">
-                                <div class="blob-eye"></div>
-                                <div class="blob-eye"></div>
-                            </div>
-                            <svg width="20" height="8" viewBox="0 0 22 10" fill="none">
-                                <path d="{{ companion.mouth }}" stroke="#3a2d22" stroke-width="2.5"
-                                    stroke-linecap="round" fill="none" opacity="0.7" />
-                            </svg>
+            <div class="chart-container" id="aw">
+                <div class="mood-map-header">
+                    <div>
+                        <p class="mm-title" id="mm-month-title">Mood Map</p>
+                        <p class="mm-subtitle">Your emotional chronicle</p>
+                    </div>
+                    <div style="display:flex; gap:12px; align-items:center;">
+                        <div class="cal-toggle">
+                            <button id="btn-weekly" class="cal-tab active"
+                                onclick="setCalMode('weekly')">Weekly</button>
+                            <button id="btn-monthly" class="cal-tab" onclick="setCalMode('monthly')">Monthly</button>
                         </div>
+                        <button id="emotion-set-toggle"
+                            onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';"
+                            style="background:var(--surface); border:1px solid var(--rule); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;"><i
+                                class="fas fa-smile"></i> Legend</button>
                     </div>
                 </div>
-                <div>
-                    <div class="blob-score-num">{{ companion.score }}</div>
-                    <div class="blob-score-label">Energy Level · {{ companion.label }}</div>
-                </div>
-            </div>
-        </div>
 
-        <div class="chart-container" id="aw">
-              <div class="mood-map-header">
-                <div>
-                  <p class="mm-title" id="mm-month-title">Mood Map</p>
-                  <p class="mm-subtitle">Your emotional chronicle</p>
-                </div>
-                <div style="display:flex; gap:12px; align-items:center;">
-                  <div class="cal-toggle">
-                    <button id="btn-weekly" class="cal-tab active" onclick="setCalMode('weekly')">Weekly</button>
-                    <button id="btn-monthly" class="cal-tab" onclick="setCalMode('monthly')">Monthly</button>
-                  </div>
-                  <button id="emotion-set-toggle" onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';" style="background:var(--surface); border:1px solid var(--rule); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;"><i class="fas fa-smile"></i> Legend</button>
-                </div>
-              </div>
-
-              <div id="emotion-set-container" style="display:none; margin-bottom:16px;">
-                <div style="background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <span class="mbs" style="margin:0;">AI-detected emotion set</span>
-                    <button onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';" style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--muted);">✕</button>
-                  </div>
-                  <div class="fg" id="fg"></div>
-                </div>
-              </div>
-
-              <div class="mood-map-body">
-                <script id="chart-labels" type="application/json">{{ chart_labels | tojson | safe }}</script>
-                <script id="chart-scores" type="application/json">{{ chart_scores | tojson | safe }}</script>
-                <script id="chart-moods" type="application/json">{{ chart_moods | tojson | safe }}</script>
-                <div id="mood-calendar"></div>
-              </div>
-        </div>
-    </div>
-
-    <!-- SECTION 2: 3D FEATURED CAROUSEL -->
-    <section class="featured-archive">
-        <div class="archive-header" id="header">
-            <h1 class="archive-title" id="active-title">Loading...</h1>
-            <p class="archive-subtitle" id="active-pages">-- Pages</p>
-        </div>
-
-        <div class="journal-track" id="track">
-            {% for j in featured_journals %}
-            <div class="journal-item" data-id="{{ j.id }}" data-title="{{ j.title }}" data-pages="{{ j.pages }}"
-                data-index="{{ loop.index0 }}">
-                <div class="premium-book">
-                    <div class="book-pages">
+                <div id="emotion-set-container" style="display:none; margin-bottom:16px;">
+                    <div
+                        style="background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px;">
                         <div
-                            style="padding: 24px; font-family: 'Lora', serif; font-size: 11px; color: var(--text); line-height: 1.8; opacity: 0.8;">
-                            {{ j.content_preview }}
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <span class="mbs" style="margin:0;">AI-detected emotion set</span>
+                            <button
+                                onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';"
+                                style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--muted);">✕</button>
+                        </div>
+                        <div class="fg" id="fg"></div>
+                    </div>
+                </div>
+
+                <div class="mood-map-body">
+                    <script id="chart-labels" type="application/json">{{ chart_labels | tojson | safe }}</script>
+                    <script id="chart-scores" type="application/json">{{ chart_scores | tojson | safe }}</script>
+                    <script id="chart-moods" type="application/json">{{ chart_moods | tojson | safe }}</script>
+                    <div id="mood-calendar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: 3D FEATURED CAROUSEL -->
+        <section class="featured-archive">
+            <div class="archive-header" id="header">
+                <h1 class="archive-title" id="active-title">Loading...</h1>
+                <p class="archive-subtitle" id="active-pages">-- Pages</p>
+            </div>
+
+            <div class="journal-track" id="track">
+                {% for j in featured_journals %}
+                <div class="journal-item" data-id="{{ j.id }}" data-title="{{ j.title }}" data-pages="{{ j.pages }}"
+                    data-index="{{ loop.index0 }}">
+                    <div class="premium-book">
+                        <div class="book-pages">
+                            <div
+                                style="padding: 24px; font-family: 'Lora', serif; font-size: 11px; color: var(--text); line-height: 1.8; opacity: 0.8;">
+                                {{ j.content_preview }}
+                            </div>
+                        </div>
+                        <div class="book-cover" id="cover-{{ j.id }}">
+                            <div class="cover-front" id="svg-container-{{ j.id }}"></div>
+                            <div class="cover-back">
+                                <span
+                                    style="font-family: 'Lora', serif; font-size: 10px; color: #B0A090; letter-spacing: 0.2em; text-transform: uppercase;">Ex
+                                    Libris</span>
+                                <div style="width: 30px; height: 1px; background: #C8C0B0; margin-top: 8px;"></div>
+                            </div>
+                            <div class="elastic-band" id="band-{{ j.id }}"></div>
                         </div>
                     </div>
-                    <div class="book-cover" id="cover-{{ j.id }}">
-                        <div class="cover-front" id="svg-container-{{ j.id }}"></div>
-                        <div class="cover-back">
-                            <span
-                                style="font-family: 'Lora', serif; font-size: 10px; color: #B0A090; letter-spacing: 0.2em; text-transform: uppercase;">Ex
-                                Libris</span>
-                            <div style="width: 30px; height: 1px; background: #C8C0B0; margin-top: 8px;"></div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="dot-nav">
+                {% for j in featured_journals %}
+                <div class="dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></div>
+                {% endfor %}
+            </div>
+
+            <div class="action-bar">
+                <button class="action-btn" title="Share"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+                <button class="action-btn" title="Add" style="background: var(--text); color: var(--bg);"><i
+                        class="fa-solid fa-plus"></i></button>
+            </div>
+
+            <p
+                style="margin-top: 24px; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6;">
+                Swipe to Browse · Tap Center to Open
+            </p>
+        </section>
+
+        <!-- SECTION 3: LIBRARY -->
+        <section class="library-section">
+            <div class="library-nav">
+                <div class="view-tabs">
+                    <button class="view-tab active" data-view="monthly">Monthly</button>
+                    <button class="view-tab" data-view="mood">By Mood</button>
+                    <button class="view-tab" data-view="volumes">Volumes</button>
+                    <button class="view-tab" data-view="all">All Entries</button>
+                </div>
+                <button class="btn-new-vol" id="btn-new-vol">
+                    <i class="fa-solid fa-plus" style="font-size:10px"></i>
+                    New Volume
+                </button>
+            </div>
+            <div id="library-grid"></div>
+        </section>
+
+        <!-- OPEN BOOK OVERLAY -->
+        <div id="obo-modal" class="obo-wrap">
+            <button class="obo-close" id="obo-close-btn">&times;</button>
+            <div class="obo-content">
+                <div class="obo-header">
+                    <h2 class="obo-title" id="obo-dyn-title">--</h2>
+                    <p class="obo-pages" id="obo-dyn-pages">--</p>
+                </div>
+                <div class="obo-spread-wrap">
+                    <div class="obo-book-body">
+                        <div class="obo-left">
+                            <span class="obo-left-text">EX LIBRIS</span>
+                            <div class="obo-left-hr"></div>
                         </div>
-                        <div class="elastic-band" id="band-{{ j.id }}"></div>
+                        <div class="obo-right">
+                            <div class="obo-lines"></div>
+                            <div class="obo-crease"></div>
+                            <div class="obo-shadow"></div>
+                            <span class="obo-right-title" id="obo-dyn-writ">--</span>
+                        </div>
+                    </div>
+                    <div class="obo-fanned">
+                        <div class="fpage" style="left:0px; width:6px; background:#F2EDE5; opacity:0.45;"></div>
+                        <div class="fpage" style="left:5px; width:7px; background:#EDE8DF; opacity:0.515;"></div>
+                        <div class="fpage" style="left:10px; width:8px; background:#F2EDE5; opacity:0.58;"></div>
+                        <div class="fpage" style="left:15px; width:9px; background:#EDE8DF; opacity:0.645;"></div>
+                        <div class="fpage" style="left:20px; width:10px; background:#F2EDE5; opacity:0.71;"></div>
+                        <div class="fpage" style="left:25px; width:11px; background:#EDE8DF; opacity:0.775;"></div>
+                        <div class="fpage" style="left:30px; width:12px; background:#F2EDE5; opacity:0.84;"></div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-
-        <div class="dot-nav">
-            {% for j in featured_journals %}
-            <div class="dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></div>
-            {% endfor %}
-        </div>
-
-        <div class="action-bar">
-            <button class="action-btn" title="Share"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-            <button class="action-btn" title="Add" style="background: var(--text); color: var(--bg);"><i
-                    class="fa-solid fa-plus"></i></button>
-        </div>
-
-        <p
-            style="margin-top: 24px; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6;">
-            Swipe to Browse · Tap Center to Open
-        </p>
-    </section>
-
-    <!-- SECTION 3: LIBRARY -->
-    <section class="library-section">
-        <div class="library-nav">
-            <div class="view-tabs">
-                <button class="view-tab active" data-view="monthly">Monthly</button>
-                <button class="view-tab" data-view="mood">By Mood</button>
-                <button class="view-tab" data-view="volumes">Volumes</button>
-                <button class="view-tab" data-view="all">All Entries</button>
-            </div>
-            <button class="btn-new-vol" id="btn-new-vol">
-                <i class="fa-solid fa-plus" style="font-size:10px"></i>
-                New Volume
-            </button>
-        </div>
-        <div id="library-grid"></div>
-    </section>
-
-    <!-- OPEN BOOK OVERLAY -->
-    <div id="obo-modal" class="obo-wrap">
-        <button class="obo-close" id="obo-close-btn">&times;</button>
-        <div class="obo-content">
-            <div class="obo-header">
-                <h2 class="obo-title" id="obo-dyn-title">--</h2>
-                <p class="obo-pages" id="obo-dyn-pages">--</p>
-            </div>
-            <div class="obo-spread-wrap">
-                <div class="obo-book-body">
-                    <div class="obo-left">
-                        <span class="obo-left-text">EX LIBRIS</span>
-                        <div class="obo-left-hr"></div>
-                    </div>
-                    <div class="obo-right">
-                        <div class="obo-lines"></div>
-                        <div class="obo-crease"></div>
-                        <div class="obo-shadow"></div>
-                        <span class="obo-right-title" id="obo-dyn-writ">--</span>
-                    </div>
-                </div>
-                <div class="obo-fanned">
-                    <div class="fpage" style="left:0px; width:6px; background:#F2EDE5; opacity:0.45;"></div>
-                    <div class="fpage" style="left:5px; width:7px; background:#EDE8DF; opacity:0.515;"></div>
-                    <div class="fpage" style="left:10px; width:8px; background:#F2EDE5; opacity:0.58;"></div>
-                    <div class="fpage" style="left:15px; width:9px; background:#EDE8DF; opacity:0.645;"></div>
-                    <div class="fpage" style="left:20px; width:10px; background:#F2EDE5; opacity:0.71;"></div>
-                    <div class="fpage" style="left:25px; width:11px; background:#EDE8DF; opacity:0.775;"></div>
-                    <div class="fpage" style="left:30px; width:12px; background:#F2EDE5; opacity:0.84;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 </main>
 
 <!-- COLLECTION CREATOR MODAL -->
@@ -1292,7 +1742,8 @@
         <h3>New Volume</h3>
         <p>Give your journal a name and a cover colour.</p>
         <div class="col-field-label">Volume name</div>
-        <input class="col-field-input" id="col-name-input" type="text" placeholder="e.g. Travel Log, Dear Future Me…" maxlength="60">
+        <input class="col-field-input" id="col-name-input" type="text" placeholder="e.g. Travel Log, Dear Future Me…"
+            maxlength="60">
         <div class="col-field-label" style="margin-top: 20px;">Cover colour</div>
         <div class="col-colors" id="col-swatches">
             <div class="col-swatch active" data-color="#C8D898" style="background:#C8D898;"></div>
@@ -1440,7 +1891,7 @@
     // Opening Interaction - Overlay Modal
     const oboModal = document.getElementById('obo-modal');
     const oboCloseBtn = document.getElementById('obo-close-btn');
-    
+
     function getSceneSVG(idx) {
         var s = idx % 10;
         var scenes = [
@@ -1461,20 +1912,20 @@
     function openOverlay(title, pages, entry = null) {
         document.getElementById('obo-dyn-title').textContent = title;
         document.getElementById('obo-dyn-pages').textContent = pages;
-        
+
         const leftBox = document.querySelector('.obo-left');
         const rightBox = document.querySelector('.obo-right');
-        
+
         if (entry) {
             // Populate actual content
             let contentText = "No thoughts recorded for this day.";
             try {
                 const parsed = JSON.parse(entry.content);
                 contentText = parsed.text || contentText;
-            } catch(e) {
+            } catch (e) {
                 contentText = entry.content || contentText;
             }
-            
+
             // Left page: Artwork and Header
             leftBox.innerHTML = `
                 <div style="padding: 40px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;">
@@ -1486,7 +1937,7 @@
                     </div>
                 </div>
             `;
-            
+
             // Right page: The text with lines
             rightBox.innerHTML = `
                 <div style="padding: 45px; height: 100%; font-family: 'Lora', serif; font-size: 16px; line-height: 1.9; color: #4A4438; position: relative; overflow: hidden;">
@@ -1496,7 +1947,7 @@
                     </div>
                 </div>
             `;
-            
+
             // Inject art based on entry id for deterministic variety
             const artContainer = document.getElementById('obo-art-container');
             if (artContainer) {
@@ -1510,11 +1961,11 @@
             `;
             rightBox.innerHTML = `<div class="obo-lines"></div><p id="obo-dyn-writ" style="position:relative; z-index:2; margin: 40px; color: #8C8476; font-style: italic;">Select an entry to view details...</p>`;
         }
-        
+
         oboModal.classList.add('visible');
     }
-    
-    window.openEntryFromCalendar = function(id) {
+
+    window.openEntryFromCalendar = function (id) {
         const entry = ENTRIES_DATA.find(e => e.id == id);
         if (entry) {
             const date = new Date(entry.iso_date);
@@ -1562,53 +2013,53 @@
         const labels = JSON.parse(document.getElementById('chart-labels').textContent);
         const scores = JSON.parse(document.getElementById('chart-scores').textContent);
         const moods = JSON.parse(document.getElementById('chart-moods').textContent);
-        
-        const SK='#3a2d22';
-        const FACES=[
-          {e:'happy',    c:'#9AD6A0',s:3,  sc:9},
-          {e:'excited',  c:'#F2DD66',s:7,  sc:9},
-          {e:'grateful', c:'#FFB4D1',s:11, sc:8},
-          {e:'hopeful',  c:'#85D0E8',s:15, sc:7},
-          {e:'calm',     c:'#A8DADC',s:19, sc:7},
-          {e:'neutral',  c:'#DFDAC9',s:23, sc:5},
-          {e:'confused', c:'#C5C6D0',s:27, sc:4},
-          {e:'tired',    c:'#CDB3DF',s:31, sc:3},
-          {e:'anxious',  c:'#B6AEE6',s:35, sc:3},
-          {e:'sad',      c:'#A8C1ED',s:39, sc:2},
-          {e:'lonely',   c:'#839BCC',s:43, sc:2},
-          {e:'angry',    c:'#FF9AA2',s:47, sc:1},
+
+        const SK = '#3a2d22';
+        const FACES = [
+            { e: 'happy', c: '#9AD6A0', s: 3, sc: 9 },
+            { e: 'excited', c: '#F2DD66', s: 7, sc: 9 },
+            { e: 'grateful', c: '#FFB4D1', s: 11, sc: 8 },
+            { e: 'hopeful', c: '#85D0E8', s: 15, sc: 7 },
+            { e: 'calm', c: '#A8DADC', s: 19, sc: 7 },
+            { e: 'neutral', c: '#DFDAC9', s: 23, sc: 5 },
+            { e: 'confused', c: '#C5C6D0', s: 27, sc: 4 },
+            { e: 'tired', c: '#CDB3DF', s: 31, sc: 3 },
+            { e: 'anxious', c: '#B6AEE6', s: 35, sc: 3 },
+            { e: 'sad', c: '#A8C1ED', s: 39, sc: 2 },
+            { e: 'lonely', c: '#839BCC', s: 43, sc: 2 },
+            { e: 'angry', c: '#FF9AA2', s: 47, sc: 1 },
         ];
 
-        const FEATS={
-          happy:   `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 62 Q50 72 64 62" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-          excited: `<circle cx="39" cy="46" r="4.5" fill="${SK}"/><circle cx="61" cy="46" r="4.5" fill="${SK}"/><path d="M33 62 Q50 78 67 62" stroke="${SK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
-          grateful:`<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 63 Q50 74 64 63" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-          hopeful: `<circle cx="39" cy="47" r="2.8" fill="${SK}"/><circle cx="61" cy="47" r="2.8" fill="${SK}"/><path d="M40 63 Q50 68 60 63" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
-          calm:    `<circle cx="39" cy="47" r="2.8" fill="${SK}"/><circle cx="61" cy="47" r="2.8" fill="${SK}"/><path d="M42 63 L58 63" stroke="${SK}" stroke-width="2" stroke-linecap="round"/>`,
-          neutral: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 63 L62 63" stroke="${SK}" stroke-width="2.2" stroke-linecap="round"/>`,
-          confused:`<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M40 63 Q45 61 50 63 Q55 65 60 63" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-          tired:   `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M42 64 Q50 66 58 64" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
-          anxious: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 64 Q44 62 50 64 Q56 66 62 64" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-          sad:     `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 66 Q50 58 62 66" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-          lonely:  `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M40 66 Q50 60 60 66" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
-          angry:   `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 66 Q50 54 64 66" stroke="${SK}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+        const FEATS = {
+            happy: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 62 Q50 72 64 62" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+            excited: `<circle cx="39" cy="46" r="4.5" fill="${SK}"/><circle cx="61" cy="46" r="4.5" fill="${SK}"/><path d="M33 62 Q50 78 67 62" stroke="${SK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+            grateful: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 63 Q50 74 64 63" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+            hopeful: `<circle cx="39" cy="47" r="2.8" fill="${SK}"/><circle cx="61" cy="47" r="2.8" fill="${SK}"/><path d="M40 63 Q50 68 60 63" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+            calm: `<circle cx="39" cy="47" r="2.8" fill="${SK}"/><circle cx="61" cy="47" r="2.8" fill="${SK}"/><path d="M42 63 L58 63" stroke="${SK}" stroke-width="2" stroke-linecap="round"/>`,
+            neutral: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 63 L62 63" stroke="${SK}" stroke-width="2.2" stroke-linecap="round"/>`,
+            confused: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M40 63 Q45 61 50 63 Q55 65 60 63" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+            tired: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M42 64 Q50 66 58 64" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+            anxious: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 64 Q44 62 50 64 Q56 66 62 64" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+            sad: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 66 Q50 58 62 66" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+            lonely: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M40 66 Q50 60 60 66" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+            angry: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 66 Q50 54 64 66" stroke="${SK}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
         };
 
-        const grid=document.getElementById('fg');
+        const grid = document.getElementById('fg');
         if (grid && !grid.hasChildNodes()) {
-            FACES.forEach((f,i)=>{
-              const id=`fg${i}`;
-              const cell=document.createElement('div');
-              cell.className='fc';
-              cell.innerHTML=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            FACES.forEach((f, i) => {
+                const id = `fg${i}`;
+                const cell = document.createElement('div');
+                cell.className = 'fc';
+                cell.innerHTML = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="50" cy="50" r="45" fill="${f.c}"/>${FEATS[f.e]}
               </svg><span class="fl">${f.e}</span>`;
-              grid.appendChild(cell);
+                grid.appendChild(cell);
             });
         }
 
         let calMode = 'weekly';
-        window.setCalMode = function(mode) {
+        window.setCalMode = function (mode) {
             calMode = mode;
             document.getElementById('btn-weekly').classList.toggle('active', mode === 'weekly');
             document.getElementById('btn-monthly').classList.toggle('active', mode === 'monthly');
@@ -1621,7 +2072,7 @@
         });
 
         const calContainer = document.getElementById('mood-calendar');
-        
+
         function renderCalendar() {
             if (!calContainer) return;
 
@@ -1629,24 +2080,24 @@
             if (ENTRIES_DATA.length > 0 && ENTRIES_DATA[0].iso_date) {
                 displayDate = new Date(ENTRIES_DATA[0].iso_date);
             }
-            
+
             const today = new Date();
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            
+
             let html = `<div class="cal-weekdays">
                 <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
             </div>`;
-            
+
             html += `<div class="cal-grid">`;
-            
+
             let hasToday = false;
-            
+
             function renderDay(y, m, d) {
-                const dateStr = `${y}-${String(m+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 const entry = entriesByDate[dateStr];
                 const isTodayCell = (today.getFullYear() === y && today.getMonth() === m && today.getDate() === d);
                 const todayCls = isTodayCell ? ' cal-day--today' : '';
-                
+
                 let out = '';
                 if (entry) {
                     const eLower = entry.mood_label.toLowerCase();
@@ -1677,7 +2128,7 @@
 
                 const firstDay = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
-                
+
                 for (let i = 0; i < firstDay; i++) {
                     html += `<div></div>`;
                 }
@@ -1688,23 +2139,23 @@
                 // Weekly mode
                 let weekStart = new Date(displayDate);
                 weekStart.setDate(displayDate.getDate() - displayDate.getDay()); // go to Sunday
-                
+
                 const headerTitle = document.getElementById('mm-month-title');
                 if (headerTitle) headerTitle.textContent = monthNames[weekStart.getMonth()] + ' ' + weekStart.getFullYear();
-                
+
                 for (let i = 0; i < 7; i++) {
                     let cd = new Date(weekStart);
                     cd.setDate(weekStart.getDate() + i);
                     html += renderDay(cd.getFullYear(), cd.getMonth(), cd.getDate());
                 }
             }
-            
+
             html += `</div>`;
-            
+
             if (hasToday) {
                 html += `<a href="/writing" class="write-today-cta"><i class="fas fa-feather-alt"></i> Write today's entry</a>`;
             }
-            
+
             calContainer.innerHTML = html;
         }
 
@@ -1721,7 +2172,7 @@
         const arts = ['botanical', 'linen', 'face', 'wood', 'clouds'];
         const bgs = ["#C8D898", "#EDE4D2", "#A8C4E4", "#DDBEAA", "#F0EAD6"];
         const elastics = ["#1a2810", "#222222", "#283858", "#604818", "#1A1A1A"];
-        
+
         const art = arts[idx % arts.length];
         const bg = bgs[idx % bgs.length];
         const elastic = elastics[idx % elastics.length];
@@ -1791,13 +2242,13 @@
                 const arts = ['linen', 'wood', 'botanical', 'face', 'clouds'];
                 const bgs = ["#C8D898", "#EDE4D2", "#A8C4E4", "#DDBEAA", "#F0EAD6"];
                 const elastics = ["#1a2810", "#222222", "#283858", "#604818", "#1A1A1A"];
-                
+
                 const art = arts[idx % arts.length];
                 const bg = bgs[idx % bgs.length];
                 const elastic = elastics[idx % elastics.length];
 
                 const [mon, yr] = month.split(' ');
-                
+
                 return `
                 <div class="lib-journal-item" onclick="renderMonthDrilldown('${month}')">
                     <div class="premium-book">
@@ -1902,13 +2353,15 @@
     const journal3d = document.getElementById('journal3d');
     const leftHalf3d = document.getElementById('leftHalf');
     const rightWing3d = document.getElementById('rightWing');
-    const cover3d = document.getElementById('cover3d');
     const btnToggle3d = document.getElementById('btn-journal-toggle');
     const pickerWrap3d = document.getElementById('pickerWrap3D');
     const leftPage3d = document.getElementById('leftPage');
     const rightPage3d = document.getElementById('rightPage');
+    const pageFlip3d = document.getElementById('pageFlip');
+    const flipFront3d = document.getElementById('flipFront');
+    const flipBack3d = document.getElementById('flipBack');
 
-    const OPEN_DUR = 1300;
+    const OPEN_DUR = 1400; // Slightly longer to accommodate the sequence
     const WING_DUR = 1200;
     const SHIFT_DUR = 650;
     const EASE = 'cubic-bezier(0.645, 0.045, 0.355, 1.000)';
@@ -1922,37 +2375,47 @@
             journal3d.style.transition = `transform ${OPEN_DUR}ms ${EASE}`;
             journal3d.classList.add('spread-open');
             leftHalf3d.classList.add('wing-open');
-            cover3d.classList.add('wing-open');
 
             // RIGHT WING PARTICIPATION
             rightWing3d.classList.add('wing-lift');
             setTimeout(() => { rightWing3d.classList.remove('wing-lift'); }, OPEN_DUR * 0.75);
 
+            // PAGE FLIP SEQUENCE
+            setTimeout(() => {
+                if (pageFlip3d) pageFlip3d.classList.add('flipped');
+            }, OPEN_DUR * 0.45);
+
             btnToggle3d.textContent = 'Close Journal';
-            setTimeout(() => { isAnimating3D = false; pickerWrap3d.classList.add('visible'); }, OPEN_DUR);
+            setTimeout(() => { isAnimating3D = false; pickerWrap3d.classList.add('visible'); }, OPEN_DUR + 400);
         } else {
             pickerWrap3d.classList.remove('visible');
-            leftHalf3d.classList.remove('wing-open');
-            cover3d.classList.remove('wing-open');
 
-            rightWing3d.classList.add('wing-lift');
-            setTimeout(() => rightWing3d.classList.remove('wing-lift'), WING_DUR * 0.8);
+            // PAGE FLIP BACK FIRST
+            if (pageFlip3d) pageFlip3d.classList.remove('flipped');
 
-            btnToggle3d.textContent = 'Open Journal';
             setTimeout(() => {
-                journal3d.style.transition = `transform ${SHIFT_DUR}ms ${EASE}`;
-                journal3d.classList.remove('spread-open');
-            }, WING_DUR + 40);
+                leftHalf3d.classList.remove('wing-open');
 
-            setTimeout(() => { isAnimating3D = false; }, WING_DUR + SHIFT_DUR + 150);
+                rightWing3d.classList.add('wing-lift');
+                setTimeout(() => rightWing3d.classList.remove('wing-lift'), WING_DUR * 0.8);
+
+                btnToggle3d.textContent = 'Open Journal';
+                setTimeout(() => {
+                    journal3d.style.transition = `transform ${SHIFT_DUR}ms ${EASE}`;
+                    journal3d.classList.remove('spread-open');
+                }, WING_DUR + 40);
+
+                setTimeout(() => { isAnimating3D = false; }, WING_DUR + SHIFT_DUR + 150);
+            }, 500); // Wait for the page to flip back before closing the cover
         }
     }
 
     function setStyle3D(style) {
-        [leftPage3d, rightPage3d].forEach(p => {
-            p.classList.remove('style-grid', 'style-blank');
-            if (style === 'grid') p.classList.add('style-grid');
-            if (style === 'blank') p.classList.add('style-blank');
+        [leftPage3d, rightPage3d, flipFront3d, flipBack3d].forEach(p => {
+            if (p) {
+                p.classList.remove('style-grid', 'style-blank', 'style-lined');
+                p.classList.add('style-' + style);
+            }
         });
     }
 </script>
