@@ -666,7 +666,7 @@
         flex-direction: column;
         align-items: center;
         perspective: 3000px;
-        perspective-origin: 50% 45%;
+        perspective-origin: 50% 10px;
     }
 
     .journal-spotlight .journal {
@@ -734,6 +734,7 @@
 
     .journal-spotlight .left-half.wing-open {
         transform: rotateY(0deg) translateZ(-5px);
+        /* Stable Depth */
     }
 
     .journal-spotlight .cover-inside {
@@ -743,9 +744,10 @@
         background: #f4eee0;
         z-index: 1;
         transform: translateZ(2px);
-        /* Stable 3D layer */
+        /* Stable depth */
     }
 
+    /* Stable 3D layer */
     .journal-spotlight .left-half .cover-inside {
         left: 8px;
         /* Outer leather bleed */
@@ -811,6 +813,12 @@
         transform-style: preserve-3d;
         background: #3D2B1F;
         border-radius: 0 35px 35px 0;
+        transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+
+    .journal-spotlight .right-wing.wing-open {
+        transform: rotateY(0deg) translateZ(-5px);
+        /* Stable Depth */
     }
 
     .journal-spotlight .back-cover-design {
@@ -832,7 +840,7 @@
         /* Outer leather bleed */
         border-radius: 0 28px 28px 0;
         transform: translateZ(2px);
-        /* Facing forward */
+        /* Stable depth */
         backface-visibility: hidden;
         z-index: 2;
     }
@@ -861,10 +869,11 @@
     .journal-spotlight .page-front,
     .journal-spotlight .page-back {
         position: absolute;
-        top: 10px;
-        bottom: 10px;
+        top: 11px;
+        /* Visual level top */
+        bottom: 12px;
+        /* Visual level bottom (closer to camera) */
         background-color: #fdfaf3;
-        /* Solid Ivory Base */
         backface-visibility: hidden;
         box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.02);
         overflow: hidden;
@@ -2514,6 +2523,7 @@
         if (isOpen3D) {
             journal3d.classList.add('spread-open');
             leftHalf3d.classList.add('wing-open');
+            rightWing3d.classList.add('wing-open');
             btnToggle3d.textContent = 'Close Journal';
             setTimeout(() => { isAnimating3D = false; pickerWrap3d.classList.add('visible'); }, OPEN_DUR);
         } else {
@@ -2530,6 +2540,7 @@
 
             setTimeout(() => {
                 leftHalf3d.classList.remove('wing-open');
+                rightWing3d.classList.remove('wing-open');
                 setTimeout(() => {
                     journal3d.classList.remove('spread-open');
                     btnToggle3d.textContent = 'Open Journal';
