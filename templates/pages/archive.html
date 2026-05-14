@@ -659,7 +659,7 @@
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
     }
 
-    /* ── 3D JOURNAL STYLES ── */
+    /* ── TRUE 3D MULTI-PAGE SYSTEM ─────────────────── */
     .journal-spotlight {
         margin: 60px 0 80px;
         display: flex;
@@ -674,24 +674,12 @@
         width: 630px;
         height: 420px;
         transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         transform: translateX(-157px) rotateX(2deg);
-        transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-        cursor: pointer;
     }
 
     .journal-spotlight .journal.spread-open {
-        transform: translateX(0) rotateX(0deg);
-    }
-
-    .journal-spotlight .spine-bar {
-        position: absolute;
-        left: 306px;
-        top: 0;
-        width: 18px;
-        height: 100%;
-        z-index: 5;
-        background: linear-gradient(to right, #0e0905 0%, #20110a 18%, #3d2610 42%, #4c3218 50%, #3d2610 58%, #20110a 82%, #0e0905 100%);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        transform: rotateX(10deg);
     }
 
     .journal-spotlight .wing {
@@ -700,100 +688,37 @@
         width: 306px;
         height: 100%;
         transform-style: preserve-3d;
-        transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+        transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     }
 
+    /* Covers */
     .journal-spotlight .left-half {
         left: 0;
         transform-origin: calc(100% + 9px) center;
-        /* Pivots exactly at the spine center (315px) */
-        transform: rotateY(180deg) translateZ(-2px);
-        z-index: 6;
+        transform: rotateY(180deg) translateZ(-5px);
+        z-index: 1;
+    }
+
+    /* Covers */
+    .journal-spotlight .left-half {
+        left: 0;
+        transform-origin: calc(100% + 9px) center;
+        transform: rotateY(180deg) translateZ(-5px);
+        z-index: 1;
     }
 
     .journal-spotlight .left-half.wing-open {
-        transform: rotateY(0deg) translateZ(-2px);
+        transform: rotateY(0deg) translateZ(-5px);
     }
 
-    .journal-spotlight .right-wing {
-        left: 324px;
-        transform-origin: left center;
-        transform: rotateY(0deg);
-        z-index: 4;
-    }
-
-    .journal-spotlight .right-wing.wing-lift {
-        transform: rotateY(-35deg);
-    }
-
-    .journal-spotlight .left-page,
-    .journal-spotlight .right-page {
+    .journal-spotlight .cover-inside {
         position: absolute;
         inset: 0;
-        background: #fdfaf3;
-        backface-visibility: hidden;
-        overflow: hidden;
-    }
-
-    .journal-spotlight .left-page {
+        background: #f4eee0;
+        /* Slightly darker cream for lining */
         border-radius: 6px 0 0 6px;
-        box-shadow: inset -10px 0 30px rgba(0, 0, 0, 0.05);
-    }
-
-    .journal-spotlight .right-page {
-        border-radius: 0 6px 6px 0;
-        box-shadow: inset 10px 0 30px rgba(0, 0, 0, 0.05);
-    }
-
-    .journal-spotlight .page-flip {
-        left: 324px;
-        transform-origin: -9px center;
-        /* Pivots exactly at the spine center (315px) */
-        z-index: 5;
-        transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-        transform-style: preserve-3d;
-        transform: translateZ(0px);
-    }
-
-    .journal-spotlight .page-flip.flipped {
-        transform: rotateY(-180deg) translateZ(0px);
-        z-index: 10;
-        /* Pop to the top when flipped over the left side */
-    }
-
-    .journal-spotlight .flip-front,
-    .journal-spotlight .flip-back {
-        position: absolute;
-        inset: 0;
-        background: #fdfaf3;
         backface-visibility: hidden;
-        overflow: hidden;
-    }
-
-    .journal-spotlight .flip-front {
-        border-radius: 0 6px 6px 0;
-        box-shadow: inset 10px 0 30px rgba(0, 0, 0, 0.05);
-    }
-
-    .journal-spotlight .flip-back {
-        border-radius: 6px 0 0 6px;
-        box-shadow: inset -10px 0 30px rgba(0, 0, 0, 0.05);
-        transform: rotateY(180deg);
-    }
-
-    .journal-spotlight .style-lined {
-        background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(150, 128, 96, 0.15) 31px, rgba(150, 128, 96, 0.15) 32px);
-        background-size: 100% 32px;
-        background-position: 0 10px;
-    }
-
-    .journal-spotlight .style-grid {
-        background-image: repeating-linear-gradient(to bottom, transparent 0px, transparent 23px, rgba(150, 128, 96, 0.15) 23px, rgba(150, 128, 96, 0.15) 24px), repeating-linear-gradient(to right, transparent 0px, transparent 23px, rgba(150, 128, 96, 0.1) 23px, rgba(150, 128, 96, 0.1) 24px);
-        background-size: 24px 24px;
-    }
-
-    .journal-spotlight .style-blank {
-        background-image: none !important;
+        z-index: 1;
     }
 
     .journal-spotlight .front-cover-design {
@@ -801,7 +726,103 @@
         inset: 0;
         background: #3D2B1F;
         border-radius: 0 6px 6px 0;
-        /* Rounded on the outer edge when viewed from front */
+        box-shadow: 15px 0 35px rgba(0, 0, 0, 0.4);
+        transform: rotateY(180deg);
+        backface-visibility: hidden;
+        z-index: 2;
+    }
+
+    .journal-spotlight .right-wing {
+        left: 324px;
+        transform-origin: left center;
+        transform: rotateY(0deg) translateZ(-5px);
+        z-index: 1;
+    }
+
+    /* Page Stack Base */
+    .journal-spotlight .page {
+        position: absolute;
+        left: 324px;
+        top: 0;
+        width: 306px;
+        height: 100%;
+        transform-origin: -9px center;
+        transform-style: preserve-3d;
+        transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .journal-spotlight .page.flipped {
+        transform: rotateY(-180deg);
+    }
+
+    /* Faces */
+    .journal-spotlight .page-front,
+    .journal-spotlight .page-back {
+        position: absolute;
+        inset: 0;
+        background: #fdfaf3;
+        backface-visibility: hidden;
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.02);
+        overflow: hidden;
+    }
+
+    .journal-spotlight .page-front {
+        border-radius: 0 6px 6px 0;
+        z-index: 2;
+    }
+
+    .journal-spotlight .page-back {
+        border-radius: 6px 0 0 6px;
+        transform: rotateY(180deg);
+        z-index: 1;
+    }
+
+    /* Spine Polish */
+    .journal-spotlight .spine-shadow {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .journal-spotlight .page-front .spine-shadow {
+        left: 0;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+    }
+
+    .journal-spotlight .page-back .spine-shadow {
+        right: 0;
+        background: linear-gradient(to left, rgba(0, 0, 0, 0.08), transparent);
+    }
+
+    /* Paper Styles */
+    .journal-spotlight .style-lined {
+        background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(150, 128, 96, 0.18) 31px, rgba(150, 128, 96, 0.18) 32px);
+        background-size: 100% 32px;
+        background-position: 0 10px;
+    }
+
+    .journal-spotlight .style-grid {
+        background-image:
+            linear-gradient(to right, rgba(150, 128, 96, 0.15) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(150, 128, 96, 0.15) 1px, transparent 1px);
+        background-size: 24px 24px;
+    }
+
+    .journal-spotlight .style-blank {
+        background-image: none !important;
+    }
+
+    /* Cover design */
+    .journal-spotlight .front-cover-design {
+        position: absolute;
+        inset: 0;
+        background: #3D2B1F;
+        border-radius: 0 6px 6px 0;
         box-shadow: 15px 0 35px rgba(0, 0, 0, 0.4);
         transform: rotateY(180deg);
         backface-visibility: hidden;
@@ -847,6 +868,55 @@
         color: rgba(255, 255, 255, 0.9);
         line-height: 1;
         display: block;
+    }
+
+    .journal-spotlight .spine-bar {
+        position: absolute;
+        left: 306px;
+        top: 0;
+        width: 18px;
+        height: 100%;
+        z-index: 5;
+        background: linear-gradient(to right, #0e0905 0%, #20110a 18%, #3d2610 42%, #4c3218 50%, #3d2610 58%, #20110a 82%, #0e0905 100%);
+    }
+
+    .btn-journal {
+        background: #3D2B1F;
+        color: #fdfaf3;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-family: 'Balsamiq Sans', cursive;
+        font-size: 14px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-journal:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        opacity: 0.9;
+    }
+
+    .picker-wrap-3d {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-top: 24px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.4s ease;
+        pointer-events: none;
+    }
+
+    .picker-wrap-3d.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
     }
 
     .btn-journal {
@@ -1488,252 +1558,253 @@
                 <!-- 3D JOURNAL SPOTLIGHT -->
                 <div class="journal-spotlight">
                     <div class="scene">
-                        <div class="journal" id="journal3d" onclick="toggleJournal3D()">
+                        <div class="journal" id="journal3d">
+                            <!-- COVERS -->
                             <div class="wing left-half" id="leftHalf">
-                                <div class="left-page style-lined" id="leftPage">
-                                    <div class="page-content"
-                                        style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6;">
-                                        <p>Dear Diary,</p>
-                                        <p style="margin-top: 20px;">Today feels like a dream. The sun is shining, and I
-                                            can feel the world blooming around me...</p>
-                                    </div>
-                                </div>
-                                <!-- THE FRONT COVER (visible when the book is closed and left-half is flipped 180deg) -->
+                                <div class="cover-inside"></div>
                                 <div class="front-cover-design">
                                     <div class="elastic"></div>
                                     <div class="cover-label">
                                         <div class="lbl-small">a memory from</div>
                                         <div class="lbl-big" id="cover-date">{{ all_entries[0].created_at.strftime('%b
-                                            %d') if all_entries else 'May 13' }}</div>
+                                            %d') if all_entries else 'May 14' }}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="spine-bar"></div>
-
-                            <!-- FLIPPING PAGE -->
-                            <div class="wing page-flip" id="pageFlip">
-                                <div class="flip-front style-lined" id="flipFront">
-                                    <div class="page-content"
-                                        style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
-                                        <div
-                                            style="width: 40px; height: 1px; background: rgba(75, 43, 31, 0.2); margin-bottom: 20px;">
-                                        </div>
-                                        <p style="color: #8a7b6c; font-size: 24px; letter-spacing: 2px;">Chapter 1</p>
-                                        <p style="font-size: 16px; color: rgba(75,43,31,0.5); margin-top: 10px;">The
-                                            Beginning</p>
-                                        <div
-                                            style="width: 40px; height: 1px; background: rgba(75, 43, 31, 0.2); margin-top: 20px;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flip-back style-lined" id="flipBack">
-                                    <div class="page-content"
-                                        style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6;">
-                                        <p>Sometimes you just need to turn the page to see what's next.</p>
-                                        <p style="margin-top: 20px;">Every blank page is a new opportunity to bloom.</p>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="wing right-wing" id="rightWing">
-                                <div class="right-page style-lined" id="rightPage">
-                                    <div class="page-content"
-                                        style="padding: 40px; font-family: 'Caveat', cursive; font-size: 20px; color: #4b3b2a; line-height: 1.6;">
-                                        <p>I hope to keep this feeling forever. This sanctuary is where my heart rests.
-                                        </p>
-                                        <p style="margin-top: 40px; text-align: right;">— MoodBlume</p>
-                                    </div>
-                                </div>
+                                <div class="page-front style-lined" style="border-radius: 0 6px 6px 0;"></div>
                             </div>
-                        </div>
-                        <div class="journal-controls" style="margin-top: 40px; text-align: center;">
-                            <button class="btn-journal" onclick="toggleJournal3D()" id="btn-journal-toggle">Open
-                                Journal</button>
-                        </div>
-                        <div class="picker-wrap-3d" id="pickerWrap3D">
-                            <div class="picker-label"
-                                style="font-family:'Balsamiq Sans',cursive; font-size:10px; color:rgba(0,0,0,0.3); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">
-                                page style</div>
-                            <div class="style-picker"
-                                style="display:flex; background:white; border:1px solid rgba(0,0,0,0.1); border-radius:50px; overflow:hidden;">
-                                <button class="style-btn" onclick="setStyle3D('lined')"
-                                    style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">lined</button>
-                                <button class="style-btn" onclick="setStyle3D('grid')"
-                                    style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">grid</button>
-                                <button class="style-btn" onclick="setStyle3D('blank')"
-                                    style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer;">blank</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="blob-card"
-                    style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s;">
-                    <div class="blob-stage">
-                        <div class="blob-main">
-                            <div class="blob-body"></div>
-                            <div class="blob-face">
-                                <div class="blob-eyes">
-                                    <div class="blob-eye"></div>
-                                    <div class="blob-eye"></div>
+                            <!-- STACKED PAGES (5) -->
+                            <div class="page style-lined" style="z-index: 10;" data-page="1">
+                                <div class="page-front style-lined">
+                                    <div class="spine-shadow"></div>
                                 </div>
-                                <svg width="20" height="8" viewBox="0 0 22 10" fill="none">
-                                    <path d="{{ companion.mouth }}" stroke="#3a2d22" stroke-width="2.5"
-                                        stroke-linecap="round" fill="none" opacity="0.7" />
-                                </svg>
+                                <div class="page-back style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
                             </div>
+                            <div class="page style-lined" style="z-index: 9;" data-page="2">
+                                <div class="page-front style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
+                                <div class="page-back style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
+                            </div>
+                            <div class="page style-lined" style="z-index: 8;" data-page="3">
+                                <div class="page-front style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
+                                <div class="page-back style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
+                            </div>
+                            <div class="page style-lined" style="z-index: 7;" data-page="4">
+                                <div class="page-front style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
+                                <div class="page-back style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
+                            </div>
+                            <div class="page style-lined" style="z-index: 6;" data-page="5">
+                                <div class="page-front style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
+                                <div class="page-back style-lined">
+                                    <div class="spine-shadow"></div>
+                                </div>
+                            </div>
+
+                            <div class="spine-bar"></div>
                         </div>
                     </div>
-                    <div>
-                        <div class="blob-score-num">{{ companion.score }}</div>
-                        <div class="blob-score-label">Energy Level · {{ companion.label }}</div>
+                    <div class="journal-controls" style="margin-top: 40px; text-align: center;">
+                        <button class="btn-journal" onclick="toggleJournal3D()" id="btn-journal-toggle">Open
+                            Journal</button>
+                    </div>
+                    <div class="picker-wrap-3d" id="pickerWrap3D">
+                        <div class="picker-label"
+                            style="font-family:'Balsamiq Sans',cursive; font-size:10px; color:rgba(0,0,0,0.3); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">
+                            page style</div>
+                        <div class="style-picker"
+                            style="display:flex; background:white; border:1px solid rgba(0,0,0,0.1); border-radius:50px; overflow:hidden;">
+                            <button class="style-btn" onclick="setStyle3D('lined')"
+                                style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">lined</button>
+                            <button class="style-btn" onclick="setStyle3D('grid')"
+                                style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">grid</button>
+                            <button class="style-btn" onclick="setStyle3D('blank')"
+                                style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer;">blank</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="chart-container" id="aw">
-                <div class="mood-map-header">
-                    <div>
-                        <p class="mm-title" id="mm-month-title">Mood Map</p>
-                        <p class="mm-subtitle">Your emotional chronicle</p>
-                    </div>
-                    <div style="display:flex; gap:12px; align-items:center;">
-                        <div class="cal-toggle">
-                            <button id="btn-weekly" class="cal-tab active"
-                                onclick="setCalMode('weekly')">Weekly</button>
-                            <button id="btn-monthly" class="cal-tab" onclick="setCalMode('monthly')">Monthly</button>
+            <div class="blob-card"
+                style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s;">
+                <div class="blob-stage">
+                    <div class="blob-main">
+                        <div class="blob-body"></div>
+                        <div class="blob-face">
+                            <div class="blob-eyes">
+                                <div class="blob-eye"></div>
+                                <div class="blob-eye"></div>
+                            </div>
+                            <svg width="20" height="8" viewBox="0 0 22 10" fill="none">
+                                <path d="{{ companion.mouth }}" stroke="#3a2d22" stroke-width="2.5"
+                                    stroke-linecap="round" fill="none" opacity="0.7" />
+                            </svg>
                         </div>
-                        <button id="emotion-set-toggle"
-                            onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';"
-                            style="background:var(--surface); border:1px solid var(--rule); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;"><i
-                                class="fas fa-smile"></i> Legend</button>
                     </div>
                 </div>
+                <div>
+                    <div class="blob-score-num">{{ companion.score }}</div>
+                    <div class="blob-score-label">Energy Level · {{ companion.label }}</div>
+                </div>
+            </div>
+        </div>
 
-                <div id="emotion-set-container" style="display:none; margin-bottom:16px;">
-                    <div
-                        style="background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px;">
+        <div class="chart-container" id="aw">
+            <div class="mood-map-header">
+                <div>
+                    <p class="mm-title" id="mm-month-title">Mood Map</p>
+                    <p class="mm-subtitle">Your emotional chronicle</p>
+                </div>
+                <div style="display:flex; gap:12px; align-items:center;">
+                    <div class="cal-toggle">
+                        <button id="btn-weekly" class="cal-tab active" onclick="setCalMode('weekly')">Weekly</button>
+                        <button id="btn-monthly" class="cal-tab" onclick="setCalMode('monthly')">Monthly</button>
+                    </div>
+                    <button id="emotion-set-toggle"
+                        onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';"
+                        style="background:var(--surface); border:1px solid var(--rule); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;"><i
+                            class="fas fa-smile"></i> Legend</button>
+                </div>
+            </div>
+
+            <div id="emotion-set-container" style="display:none; margin-bottom:16px;">
+                <div style="background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <span class="mbs" style="margin:0;">AI-detected emotion set</span>
+                        <button
+                            onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';"
+                            style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--muted);">✕</button>
+                    </div>
+                    <div class="fg" id="fg"></div>
+                </div>
+            </div>
+
+            <div class="mood-map-body">
+                <script id="chart-labels" type="application/json">{{ chart_labels | tojson | safe }}</script>
+                <script id="chart-scores" type="application/json">{{ chart_scores | tojson | safe }}</script>
+                <script id="chart-moods" type="application/json">{{ chart_moods | tojson | safe }}</script>
+                <div id="mood-calendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: 3D FEATURED CAROUSEL -->
+    <section class="featured-archive">
+        <div class="archive-header" id="header">
+            <h1 class="archive-title" id="active-title">Loading...</h1>
+            <p class="archive-subtitle" id="active-pages">-- Pages</p>
+        </div>
+
+        <div class="journal-track" id="track">
+            {% for j in featured_journals %}
+            <div class="journal-item" data-id="{{ j.id }}" data-title="{{ j.title }}" data-pages="{{ j.pages }}"
+                data-index="{{ loop.index0 }}">
+                <div class="premium-book">
+                    <div class="book-pages">
                         <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                            <span class="mbs" style="margin:0;">AI-detected emotion set</span>
-                            <button
-                                onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';"
-                                style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--muted);">✕</button>
+                            style="padding: 24px; font-family: 'Lora', serif; font-size: 11px; color: var(--text); line-height: 1.8; opacity: 0.8;">
+                            {{ j.content_preview }}
                         </div>
-                        <div class="fg" id="fg"></div>
+                    </div>
+                    <div class="book-cover" id="cover-{{ j.id }}">
+                        <div class="cover-front" id="svg-container-{{ j.id }}"></div>
+                        <div class="cover-back">
+                            <span
+                                style="font-family: 'Lora', serif; font-size: 10px; color: #B0A090; letter-spacing: 0.2em; text-transform: uppercase;">Ex
+                                Libris</span>
+                            <div style="width: 30px; height: 1px; background: #C8C0B0; margin-top: 8px;"></div>
+                        </div>
+                        <div class="elastic-band" id="band-{{ j.id }}"></div>
                     </div>
                 </div>
+            </div>
+            {% endfor %}
+        </div>
 
-                <div class="mood-map-body">
-                    <script id="chart-labels" type="application/json">{{ chart_labels | tojson | safe }}</script>
-                    <script id="chart-scores" type="application/json">{{ chart_scores | tojson | safe }}</script>
-                    <script id="chart-moods" type="application/json">{{ chart_moods | tojson | safe }}</script>
-                    <div id="mood-calendar"></div>
+        <div class="dot-nav">
+            {% for j in featured_journals %}
+            <div class="dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></div>
+            {% endfor %}
+        </div>
+
+        <div class="action-bar">
+            <button class="action-btn" title="Share"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+            <button class="action-btn" title="Add" style="background: var(--text); color: var(--bg);"><i
+                    class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <p
+            style="margin-top: 24px; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6;">
+            Swipe to Browse · Tap Center to Open
+        </p>
+    </section>
+
+    <!-- SECTION 3: LIBRARY -->
+    <section class="library-section">
+        <div class="library-nav">
+            <div class="view-tabs">
+                <button class="view-tab active" data-view="monthly">Monthly</button>
+                <button class="view-tab" data-view="mood">By Mood</button>
+                <button class="view-tab" data-view="volumes">Volumes</button>
+                <button class="view-tab" data-view="all">All Entries</button>
+            </div>
+            <button class="btn-new-vol" id="btn-new-vol">
+                <i class="fa-solid fa-plus" style="font-size:10px"></i>
+                New Volume
+            </button>
+        </div>
+        <div id="library-grid"></div>
+    </section>
+
+    <!-- OPEN BOOK OVERLAY -->
+    <div id="obo-modal" class="obo-wrap">
+        <button class="obo-close" id="obo-close-btn">&times;</button>
+        <div class="obo-content">
+            <div class="obo-header">
+                <h2 class="obo-title" id="obo-dyn-title">--</h2>
+                <p class="obo-pages" id="obo-dyn-pages">--</p>
+            </div>
+            <div class="obo-spread-wrap">
+                <div class="obo-book-body">
+                    <div class="obo-left">
+                        <span class="obo-left-text">EX LIBRIS</span>
+                        <div class="obo-left-hr"></div>
+                    </div>
+                    <div class="obo-right">
+                        <div class="obo-lines"></div>
+                        <div class="obo-crease"></div>
+                        <div class="obo-shadow"></div>
+                        <span class="obo-right-title" id="obo-dyn-writ">--</span>
+                    </div>
+                </div>
+                <div class="obo-fanned">
+                    <div class="fpage" style="left:0px; width:6px; background:#F2EDE5; opacity:0.45;"></div>
+                    <div class="fpage" style="left:5px; width:7px; background:#EDE8DF; opacity:0.515;"></div>
+                    <div class="fpage" style="left:10px; width:8px; background:#F2EDE5; opacity:0.58;"></div>
+                    <div class="fpage" style="left:15px; width:9px; background:#EDE8DF; opacity:0.645;"></div>
+                    <div class="fpage" style="left:20px; width:10px; background:#F2EDE5; opacity:0.71;"></div>
+                    <div class="fpage" style="left:25px; width:11px; background:#EDE8DF; opacity:0.775;"></div>
+                    <div class="fpage" style="left:30px; width:12px; background:#F2EDE5; opacity:0.84;"></div>
                 </div>
             </div>
         </div>
-
-        <!-- SECTION 2: 3D FEATURED CAROUSEL -->
-        <section class="featured-archive">
-            <div class="archive-header" id="header">
-                <h1 class="archive-title" id="active-title">Loading...</h1>
-                <p class="archive-subtitle" id="active-pages">-- Pages</p>
-            </div>
-
-            <div class="journal-track" id="track">
-                {% for j in featured_journals %}
-                <div class="journal-item" data-id="{{ j.id }}" data-title="{{ j.title }}" data-pages="{{ j.pages }}"
-                    data-index="{{ loop.index0 }}">
-                    <div class="premium-book">
-                        <div class="book-pages">
-                            <div
-                                style="padding: 24px; font-family: 'Lora', serif; font-size: 11px; color: var(--text); line-height: 1.8; opacity: 0.8;">
-                                {{ j.content_preview }}
-                            </div>
-                        </div>
-                        <div class="book-cover" id="cover-{{ j.id }}">
-                            <div class="cover-front" id="svg-container-{{ j.id }}"></div>
-                            <div class="cover-back">
-                                <span
-                                    style="font-family: 'Lora', serif; font-size: 10px; color: #B0A090; letter-spacing: 0.2em; text-transform: uppercase;">Ex
-                                    Libris</span>
-                                <div style="width: 30px; height: 1px; background: #C8C0B0; margin-top: 8px;"></div>
-                            </div>
-                            <div class="elastic-band" id="band-{{ j.id }}"></div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-            <div class="dot-nav">
-                {% for j in featured_journals %}
-                <div class="dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></div>
-                {% endfor %}
-            </div>
-
-            <div class="action-bar">
-                <button class="action-btn" title="Share"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-                <button class="action-btn" title="Add" style="background: var(--text); color: var(--bg);"><i
-                        class="fa-solid fa-plus"></i></button>
-            </div>
-
-            <p
-                style="margin-top: 24px; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6;">
-                Swipe to Browse · Tap Center to Open
-            </p>
-        </section>
-
-        <!-- SECTION 3: LIBRARY -->
-        <section class="library-section">
-            <div class="library-nav">
-                <div class="view-tabs">
-                    <button class="view-tab active" data-view="monthly">Monthly</button>
-                    <button class="view-tab" data-view="mood">By Mood</button>
-                    <button class="view-tab" data-view="volumes">Volumes</button>
-                    <button class="view-tab" data-view="all">All Entries</button>
-                </div>
-                <button class="btn-new-vol" id="btn-new-vol">
-                    <i class="fa-solid fa-plus" style="font-size:10px"></i>
-                    New Volume
-                </button>
-            </div>
-            <div id="library-grid"></div>
-        </section>
-
-        <!-- OPEN BOOK OVERLAY -->
-        <div id="obo-modal" class="obo-wrap">
-            <button class="obo-close" id="obo-close-btn">&times;</button>
-            <div class="obo-content">
-                <div class="obo-header">
-                    <h2 class="obo-title" id="obo-dyn-title">--</h2>
-                    <p class="obo-pages" id="obo-dyn-pages">--</p>
-                </div>
-                <div class="obo-spread-wrap">
-                    <div class="obo-book-body">
-                        <div class="obo-left">
-                            <span class="obo-left-text">EX LIBRIS</span>
-                            <div class="obo-left-hr"></div>
-                        </div>
-                        <div class="obo-right">
-                            <div class="obo-lines"></div>
-                            <div class="obo-crease"></div>
-                            <div class="obo-shadow"></div>
-                            <span class="obo-right-title" id="obo-dyn-writ">--</span>
-                        </div>
-                    </div>
-                    <div class="obo-fanned">
-                        <div class="fpage" style="left:0px; width:6px; background:#F2EDE5; opacity:0.45;"></div>
-                        <div class="fpage" style="left:5px; width:7px; background:#EDE8DF; opacity:0.515;"></div>
-                        <div class="fpage" style="left:10px; width:8px; background:#F2EDE5; opacity:0.58;"></div>
-                        <div class="fpage" style="left:15px; width:9px; background:#EDE8DF; opacity:0.645;"></div>
-                        <div class="fpage" style="left:20px; width:10px; background:#F2EDE5; opacity:0.71;"></div>
-                        <div class="fpage" style="left:25px; width:11px; background:#EDE8DF; opacity:0.775;"></div>
-                        <div class="fpage" style="left:30px; width:12px; background:#F2EDE5; opacity:0.84;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
 </main>
 
 <!-- COLLECTION CREATOR MODAL -->
@@ -2347,7 +2418,7 @@
         }
     });
 
-    /* ── 3D JOURNAL LOGIC ── */
+    /* ── 3D JOURNAL MULTI-PAGE LOGIC ── */
     let isOpen3D = false;
     let isAnimating3D = false;
     const journal3d = document.getElementById('journal3d');
@@ -2355,15 +2426,9 @@
     const rightWing3d = document.getElementById('rightWing');
     const btnToggle3d = document.getElementById('btn-journal-toggle');
     const pickerWrap3d = document.getElementById('pickerWrap3D');
-    const leftPage3d = document.getElementById('leftPage');
-    const rightPage3d = document.getElementById('rightPage');
-    const pageFlip3d = document.getElementById('pageFlip');
-    const flipFront3d = document.getElementById('flipFront');
-    const flipBack3d = document.getElementById('flipBack');
+    const allPages = document.querySelectorAll('.journal-spotlight .page');
 
-    const OPEN_DUR = 1400; // Slightly longer to accommodate the sequence
-    const WING_DUR = 1200;
-    const SHIFT_DUR = 650;
+    const OPEN_DUR = 1200;
     const EASE = 'cubic-bezier(0.645, 0.045, 0.355, 1.000)';
 
     function toggleJournal3D() {
@@ -2372,50 +2437,94 @@
         isOpen3D = !isOpen3D;
 
         if (isOpen3D) {
-            journal3d.style.transition = `transform ${OPEN_DUR}ms ${EASE}`;
             journal3d.classList.add('spread-open');
             leftHalf3d.classList.add('wing-open');
-
-            // RIGHT WING PARTICIPATION
-            rightWing3d.classList.add('wing-lift');
-            setTimeout(() => { rightWing3d.classList.remove('wing-lift'); }, OPEN_DUR * 0.75);
-
-            // PAGE FLIP SEQUENCE
-            setTimeout(() => {
-                if (pageFlip3d) pageFlip3d.classList.add('flipped');
-            }, OPEN_DUR * 0.45);
-
             btnToggle3d.textContent = 'Close Journal';
-            setTimeout(() => { isAnimating3D = false; pickerWrap3d.classList.add('visible'); }, OPEN_DUR + 400);
+            setTimeout(() => { isAnimating3D = false; pickerWrap3d.classList.add('visible'); }, OPEN_DUR);
         } else {
             pickerWrap3d.classList.remove('visible');
 
-            // PAGE FLIP BACK FIRST
-            if (pageFlip3d) pageFlip3d.classList.remove('flipped');
+            // Flip all pages back to right before closing
+            let delay = 0;
+            const flippedPages = Array.from(allPages).filter(p => p.classList.contains('flipped')).reverse();
+
+            flippedPages.forEach((p, i) => {
+                setTimeout(() => p.classList.remove('flipped'), i * 150);
+                delay = Math.max(delay, (i * 150) + 600);
+            });
 
             setTimeout(() => {
                 leftHalf3d.classList.remove('wing-open');
-
-                rightWing3d.classList.add('wing-lift');
-                setTimeout(() => rightWing3d.classList.remove('wing-lift'), WING_DUR * 0.8);
-
-                btnToggle3d.textContent = 'Open Journal';
                 setTimeout(() => {
-                    journal3d.style.transition = `transform ${SHIFT_DUR}ms ${EASE}`;
                     journal3d.classList.remove('spread-open');
-                }, WING_DUR + 40);
-
-                setTimeout(() => { isAnimating3D = false; }, WING_DUR + SHIFT_DUR + 150);
-            }, 500); // Wait for the page to flip back before closing the cover
+                    btnToggle3d.textContent = 'Open Journal';
+                    isAnimating3D = false;
+                    updateZIndices(); // Reset Z-indices after closing
+                }, 800);
+            }, delay);
         }
     }
 
-    function setStyle3D(style) {
-        [leftPage3d, rightPage3d, flipFront3d, flipBack3d].forEach(p => {
-            if (p) {
-                p.classList.remove('style-grid', 'style-blank', 'style-lined');
-                p.classList.add('style-' + style);
+    // Page Interaction Logic
+    allPages.forEach((page, index) => {
+        page.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!isOpen3D || isAnimating3D) return;
+
+            const isFlipped = page.classList.contains('flipped');
+
+            if (!isFlipped) {
+                // Flip Forward (Right to Left)
+                const nextToFlip = Array.from(allPages).find(p => !p.classList.contains('flipped'));
+                if (page === nextToFlip) {
+                    page.classList.add('flipped');
+                    updateZIndices();
+                }
+            } else {
+                // Flip Backward (Left to Right)
+                const flipped = Array.from(allPages).filter(p => p.classList.contains('flipped'));
+                const lastFlipped = flipped[flipped.length - 1];
+                if (page === lastFlipped) {
+                    page.classList.remove('flipped');
+                    updateZIndices();
+                }
             }
+        });
+    });
+
+    function updateZIndices() {
+        allPages.forEach((page, index) => {
+            const isFlipped = page.classList.contains('flipped');
+            if (isFlipped) {
+                page.style.zIndex = 10 + index;
+            } else {
+                page.style.zIndex = 10 - index;
+            }
+        });
+    }
+
+    // Initialize Z-indices
+    updateZIndices();
+
+    journal3d.addEventListener('click', () => {
+        if (!isOpen3D) toggleJournal3D();
+    });
+
+    function setStyle3D(style) {
+        // Target all page containers and all individual page faces (front, back, inside cover)
+        const selectors = [
+            '.journal-spotlight .page',
+            '.journal-spotlight .page-front',
+            '.journal-spotlight .page-back',
+            '.journal-spotlight .cover-inside',
+            '.journal-spotlight .right-wing .page-front'
+        ];
+
+        const elements = document.querySelectorAll(selectors.join(','));
+
+        elements.forEach(el => {
+            el.classList.remove('style-grid', 'style-blank', 'style-lined');
+            el.classList.add('style-' + style);
         });
     }
 </script>
