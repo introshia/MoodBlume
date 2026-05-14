@@ -698,7 +698,7 @@
         transform: rotateY(180deg) translateZ(-5px);
         z-index: 1;
         background: #3D2B1F;
-        border-radius: 20px 0 0 20px;
+        border-radius: 35px 0 0 35px;
     }
 
     .journal-spotlight .left-half.wing-open {
@@ -720,7 +720,7 @@
         /* Outer leather bleed */
         right: 0;
         /* Continuous to spine */
-        border-radius: 15px 0 0 15px;
+        border-radius: 28px 0 0 28px;
     }
 
     .journal-spotlight .front-cover-design {
@@ -735,18 +735,22 @@
                 rgba(0, 0, 0, 0.2) 6%,
                 rgba(0, 0, 0, 0.4) 7%,
                 transparent 9%), #3D2B1F;
-        border-radius: 0 20px 20px 0;
+        border-radius: 0 35px 35px 0;
         box-shadow: 15px 0 35px rgba(0, 0, 0, 0.4);
         transform: rotateY(180deg);
         backface-visibility: hidden;
         z-index: 2;
+        overflow: hidden;
+        /* Clip the elastic band */
     }
 
     .journal-spotlight .elastic {
         position: absolute;
         right: 22px;
-        top: 0;
-        bottom: 0;
+        top: 4px;
+        /* Inset from top */
+        bottom: 4px;
+        /* Inset from bottom */
         width: 9px;
         background: linear-gradient(to right, #0a0a0a, #1c1c1c 50%, #0a0a0a);
         border-radius: 3px;
@@ -772,14 +776,14 @@
         z-index: 1;
         transform-style: preserve-3d;
         background: #3D2B1F;
-        border-radius: 0 20px 20px 0;
+        border-radius: 0 35px 35px 0;
     }
 
     .journal-spotlight .back-cover-design {
         position: absolute;
         inset: 0;
         background: #3D2B1F;
-        border-radius: 0 20px 20px 0;
+        border-radius: 0 35px 35px 0;
         backface-visibility: hidden;
         z-index: 1;
     }
@@ -793,7 +797,7 @@
         /* Continuous to spine */
         right: 8px;
         /* Outer leather bleed */
-        border-radius: 0 15px 15px 0;
+        border-radius: 0 28px 28px 0;
         transform: rotateY(180deg);
         backface-visibility: hidden;
         z-index: 2;
@@ -834,14 +838,14 @@
     .journal-spotlight .page-front {
         left: 0;
         right: 8px;
-        border-radius: 0 15px 15px 0;
+        border-radius: 0 28px 28px 0;
         z-index: 2;
     }
 
     .journal-spotlight .page-back {
         left: 8px;
         right: 0;
-        border-radius: 15px 0 0 15px;
+        border-radius: 28px 0 0 28px;
         transform: rotateY(180deg);
         z-index: 1;
     }
