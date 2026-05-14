@@ -699,14 +699,6 @@
         z-index: 1;
     }
 
-    /* Covers */
-    .journal-spotlight .left-half {
-        left: 0;
-        transform-origin: calc(100% + 9px) center;
-        transform: rotateY(180deg) translateZ(-5px);
-        z-index: 1;
-    }
-
     .journal-spotlight .left-half.wing-open {
         transform: rotateY(0deg) translateZ(-5px);
     }
@@ -719,6 +711,8 @@
         border-radius: 6px 0 0 6px;
         backface-visibility: hidden;
         z-index: 1;
+        background-image: none !important;
+        /* Never allow lines on lining */
     }
 
     .journal-spotlight .front-cover-design {
@@ -799,21 +793,27 @@
         background: linear-gradient(to left, rgba(0, 0, 0, 0.08), transparent);
     }
 
-    /* Paper Styles */
-    .journal-spotlight .style-lined {
+    /* Paper Styles - Specific to Pages */
+    .journal-spotlight .page.style-lined,
+    .journal-spotlight .page-front.style-lined,
+    .journal-spotlight .page-back.style-lined {
         background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(150, 128, 96, 0.18) 31px, rgba(150, 128, 96, 0.18) 32px);
         background-size: 100% 32px;
         background-position: 0 10px;
     }
 
-    .journal-spotlight .style-grid {
+    .journal-spotlight .page.style-grid,
+    .journal-spotlight .page-front.style-grid,
+    .journal-spotlight .page-back.style-grid {
         background-image:
             linear-gradient(to right, rgba(150, 128, 96, 0.15) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(150, 128, 96, 0.15) 1px, transparent 1px);
         background-size: 24px 24px;
     }
 
-    .journal-spotlight .style-blank {
+    .journal-spotlight .page.style-blank,
+    .journal-spotlight .page-front.style-blank,
+    .journal-spotlight .page-back.style-blank {
         background-image: none !important;
     }
 
@@ -1572,7 +1572,7 @@
                                 </div>
                             </div>
                             <div class="wing right-wing" id="rightWing">
-                                <div class="page-front style-lined" style="border-radius: 0 6px 6px 0;"></div>
+                                <div class="cover-inside" style="border-radius: 0 6px 6px 0;"></div>
                             </div>
 
                             <!-- STACKED PAGES (5) -->
@@ -2380,7 +2380,7 @@
     });
     renderView('monthly');
 
-    // \u2500\u2500 COLLECTION MODAL \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    // ── COLLECTION MODAL ────────────────────────────────────────────────
     const colModalBg = document.getElementById('col-modal-bg');
     const colNameInput = document.getElementById('col-name-input');
     let selectedColor = '#C8D898';
@@ -2511,7 +2511,7 @@
     });
 
     function setStyle3D(style) {
-        // Target all page containers and all individual page faces (front, back, inside cover)
+        // Target ONLY the interactive pages and their faces
         const selectors = [
             '.journal-spotlight .page',
             '.journal-spotlight .page-front',
