@@ -691,7 +691,7 @@
         transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     }
 
-    /* Covers */
+    /* Covers & Wings */
     .journal-spotlight .left-half {
         left: 0;
         transform-origin: calc(100% + 9px) center;
@@ -707,23 +707,43 @@
         position: absolute;
         inset: 0;
         background: #f4eee0;
-        /* Slightly darker cream for lining */
-        border-radius: 6px 0 0 6px;
+        border-radius: 20px 0 0 20px;
         backface-visibility: hidden;
         z-index: 1;
         background-image: none !important;
-        /* Never allow lines on lining */
     }
 
     .journal-spotlight .front-cover-design {
         position: absolute;
         inset: 0;
         background: #3D2B1F;
-        border-radius: 0 6px 6px 0;
+        border-radius: 0 20px 20px 0;
         box-shadow: 15px 0 35px rgba(0, 0, 0, 0.4);
         transform: rotateY(180deg);
         backface-visibility: hidden;
         z-index: 2;
+    }
+
+    .journal-spotlight .elastic {
+        position: absolute;
+        right: 22px;
+        top: 0;
+        bottom: 0;
+        width: 9px;
+        background: linear-gradient(to right, #0a0a0a, #1c1c1c 50%, #0a0a0a);
+        border-radius: 3px;
+        z-index: 3;
+    }
+
+    .journal-spotlight .cover-label {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: center;
+        z-index: 20;
+        pointer-events: none;
     }
 
     .journal-spotlight .right-wing {
@@ -731,6 +751,26 @@
         transform-origin: left center;
         transform: rotateY(0deg) translateZ(-5px);
         z-index: 1;
+        transform-style: preserve-3d;
+    }
+
+    .journal-spotlight .back-cover-design {
+        position: absolute;
+        inset: 0;
+        background: #3D2B1F;
+        border-radius: 0 20px 20px 0;
+        backface-visibility: hidden;
+        z-index: 1;
+    }
+
+    .journal-spotlight .right-wing .cover-inside {
+        position: absolute;
+        inset: 0;
+        background: #f4eee0;
+        border-radius: 0 20px 20px 0;
+        transform: rotateY(180deg);
+        backface-visibility: hidden;
+        z-index: 2;
     }
 
     /* Page Stack Base */
@@ -745,6 +785,7 @@
         transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
         cursor: pointer;
         user-select: none;
+        overflow: hidden; /* Prevent pattern bleed while keeping spine sharp */
     }
 
     .journal-spotlight .page.flipped {
@@ -763,12 +804,12 @@
     }
 
     .journal-spotlight .page-front {
-        border-radius: 0 6px 6px 0;
+        border-radius: 0 20px 20px 0;
         z-index: 2;
     }
 
     .journal-spotlight .page-back {
-        border-radius: 6px 0 0 6px;
+        border-radius: 20px 0 0 20px; /* Round local LEFT so it lands on GLOBAL LEFT after 180 flip */
         transform: rotateY(180deg);
         z-index: 1;
     }
@@ -815,39 +856,6 @@
     .journal-spotlight .page-front.style-blank,
     .journal-spotlight .page-back.style-blank {
         background-image: none !important;
-    }
-
-    /* Cover design */
-    .journal-spotlight .front-cover-design {
-        position: absolute;
-        inset: 0;
-        background: #3D2B1F;
-        border-radius: 0 6px 6px 0;
-        box-shadow: 15px 0 35px rgba(0, 0, 0, 0.4);
-        transform: rotateY(180deg);
-        backface-visibility: hidden;
-    }
-
-    .journal-spotlight .elastic {
-        position: absolute;
-        right: 22px;
-        top: 0;
-        bottom: 0;
-        width: 9px;
-        background: linear-gradient(to right, #0a0a0a, #1c1c1c 50%, #0a0a0a);
-        border-radius: 3px;
-        z-index: 3;
-    }
-
-    .journal-spotlight .cover-label {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        text-align: center;
-        z-index: 20;
-        pointer-events: none;
     }
 
     .journal-spotlight .lbl-small {
@@ -1572,11 +1580,12 @@
                                 </div>
                             </div>
                             <div class="wing right-wing" id="rightWing">
-                                <div class="cover-inside" style="border-radius: 0 6px 6px 0;"></div>
+                                <div class="back-cover-design"></div>
+                                <div class="cover-inside"></div>
                             </div>
 
                             <!-- STACKED PAGES (5) -->
-                            <div class="page style-lined" style="z-index: 10;" data-page="1">
+                            <div class="page" style="z-index: 10;" data-page="1">
                                 <div class="page-front style-lined">
                                     <div class="spine-shadow"></div>
                                 </div>
@@ -1584,7 +1593,7 @@
                                     <div class="spine-shadow"></div>
                                 </div>
                             </div>
-                            <div class="page style-lined" style="z-index: 9;" data-page="2">
+                            <div class="page" style="z-index: 9;" data-page="2">
                                 <div class="page-front style-lined">
                                     <div class="spine-shadow"></div>
                                 </div>
@@ -1592,7 +1601,7 @@
                                     <div class="spine-shadow"></div>
                                 </div>
                             </div>
-                            <div class="page style-lined" style="z-index: 8;" data-page="3">
+                            <div class="page" style="z-index: 8;" data-page="3">
                                 <div class="page-front style-lined">
                                     <div class="spine-shadow"></div>
                                 </div>
@@ -1600,7 +1609,7 @@
                                     <div class="spine-shadow"></div>
                                 </div>
                             </div>
-                            <div class="page style-lined" style="z-index: 7;" data-page="4">
+                            <div class="page" style="z-index: 7;" data-page="4">
                                 <div class="page-front style-lined">
                                     <div class="spine-shadow"></div>
                                 </div>
@@ -1608,7 +1617,7 @@
                                     <div class="spine-shadow"></div>
                                 </div>
                             </div>
-                            <div class="page style-lined" style="z-index: 6;" data-page="5">
+                            <div class="page" style="z-index: 6;" data-page="5">
                                 <div class="page-front style-lined">
                                     <div class="spine-shadow"></div>
                                 </div>
@@ -2511,21 +2520,13 @@
     });
 
     function setStyle3D(style) {
-        // Target ONLY the interactive pages and their faces
-        const selectors = [
-            '.journal-spotlight .page',
-            '.journal-spotlight .page-front',
-            '.journal-spotlight .page-back',
-            '.journal-spotlight .cover-inside',
-            '.journal-spotlight .right-wing .page-front'
-        ];
+        // 1. Clear styles from EVERY possible component to avoid "ghost lines"
+        const allPotential = document.querySelectorAll('.journal-spotlight .page, .journal-spotlight .page-front, .journal-spotlight .page-back, .journal-spotlight .wing, .journal-spotlight .cover-inside');
+        allPotential.forEach(el => el.classList.remove('style-grid', 'style-blank', 'style-lined'));
 
-        const elements = document.querySelectorAll(selectors.join(','));
-
-        elements.forEach(el => {
-            el.classList.remove('style-grid', 'style-blank', 'style-lined');
-            el.classList.add('style-' + style);
-        });
+        // 2. Apply new style ONLY to the actual paper faces
+        const faces = document.querySelectorAll('.journal-spotlight .page-front, .journal-spotlight .page-back');
+        faces.forEach(el => el.classList.add('style-' + style));
     }
 </script>
 {% endblock %}
