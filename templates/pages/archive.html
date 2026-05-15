@@ -735,6 +735,7 @@
     .journal-spotlight .left-half.wing-open {
         transform: rotateY(0deg) translateZ(-5px);
         /* Stable Depth */
+        cursor: pointer;
     }
 
     .journal-spotlight .cover-inside {
@@ -819,6 +820,14 @@
     .journal-spotlight .right-wing.wing-open {
         transform: rotateY(0deg) translateZ(-5px);
         /* Stable Depth */
+        cursor: pointer;
+        z-index: 100;
+        /* Priority interaction layer */
+    }
+
+    .journal-spotlight .wing.wing-open .cover-inside {
+        cursor: pointer;
+        /* Clearly interactive */
     }
 
     .journal-spotlight .back-cover-design {
@@ -859,6 +868,14 @@
         cursor: pointer;
         user-select: none;
         overflow: hidden;
+        pointer-events: none;
+        /* Allow clicks to pass through to covers */
+    }
+
+    .journal-spotlight .page-front,
+    .journal-spotlight .page-back {
+        pointer-events: auto;
+        /* Re-enable for paper */
     }
 
     .journal-spotlight .page.flipped {
@@ -2592,8 +2609,29 @@
     // Initialize Z-indices
     updateZIndices();
 
-    journal3d.addEventListener('click', () => {
-        if (!isOpen3D) toggleJournal3D();
+    // ── BULLETPROOF CLOSE LISTENER ──
+    // A global listener ensures we catch the click no matter what 3D layer the browser thinks it hit.
+    document.addEventListener('click', (e) => {
+        if (isOpen3D && !isAnimating3D) {
+            // Check what was actually clicked
+            const isCoverInside = e.target.closest('.cover-inside');
+            const isWing = e.target.closest('.wing');
+            const isScene = e.target.closest('.scene');
+            const isPage = e.target.closest('.page');
+            const isControls = e.target.closest('.journal-controls');
+
+            // If they clicked the lining, the wing, or the background scene (and NOT a page or button)
+            if ((isCoverInside || isWing || isScene) && !isPage && !isControls) {
+                toggleJournal3D();
+            }
+        }
+    });
+
+    // ── JOURNAL BASE INTERACTION (OPEN) ──
+    journal3d.addEventListener('click', (e) => {
+        if (!isOpen3D && !isAnimating3D) {
+            toggleJournal3D();
+        }
     });
 
     function setStyle3D(style) {
