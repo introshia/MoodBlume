@@ -132,6 +132,65 @@ def calculate_mood_trend(entries):
         "msg": f"Your emotional rhythm is {status}.", 
         "consistency": "Consistent."
     }
+
+def calculate_advanced_insights(entries):
+    if len(entries) < 3:
+        return None
+    
+    # 1. THE THERAPY MODEL (Word Count vs Mood)
+    # X = Word Count, Y = Compound Score
+    X_words = []
+    y_scores = []
+    
+    # 2. THE RHYTHM MODEL (Time of Day vs Mood)
+    # X = Hour, Y = Compound Score
+    X_time = []
+    
+    for e in entries:
+        content = e.get('content', '')
+        # Handle JSON content
+        if content.startswith('{'):
+            import json
+            try: content = json.loads(content).get('text', '')
+            except: pass
+        
+        word_count = len(content.split())
+        hour = e['entry_date'].hour + (e['entry_date'].minute / 60)
+        
+        # We use mood_score normalized to 0-1 for regression targets
+        score = (e.get('mood_score', 5) - 1) / 8.0 
+        
+        X_words.append([word_count])
+        X_time.append([hour])
+        y_scores.append(score)
+        
+    y_scores = np.array(y_scores)
+    
+    # Fit Word Model
+    word_model = LinearRegression().fit(np.array(X_words), y_scores)
+    word_slope = word_model.coef_[0]
+    
+    # Fit Time Model
+    time_model = LinearRegression().fit(np.array(X_time), y_scores)
+    time_slope = time_model.coef_[0]
+    
+    # Predict tomorrow's mood based on time trend (Velocity)
+    # Just a simple projection of the recent trend
+    X_trend = np.array(range(len(entries))).reshape(-1, 1)
+    trend_model = LinearRegression().fit(X_trend, y_scores)
+    prediction = trend_model.predict([[len(entries) + 1]])[0]
+    
+    # Human-readable interpretations
+    word_insight = "Longer entries correlate with better clarity." if word_slope > 0.001 else "Your mood stays stable regardless of length."
+    time_insight = "Your energy peaks in the evening." if time_slope > 0.01 else "Morning reflections bring you more peace." if time_slope < -0.01 else "Your mood is consistent throughout the day."
+    
+    return {
+        "word_slope": round(word_slope * 100, 2),
+        "word_msg": word_insight,
+        "time_msg": time_insight,
+        "predicted_energy": round(prediction * 100, 1),
+        "predicted_label": "High" if prediction > 0.7 else "Moderate" if prediction > 0.4 else "Restorative"
+    }
 def calculate_energy_data(content):
     if not content:
         return {"score": 50, "mood": "neutral", "label": "Resting", "color": "#F5C842"}
@@ -474,7 +533,7 @@ def archive():
                           featured_journals=featured_journals,
                           greeting=greeting,
                           stats_msg=stats_msg,
-                          trend=trend,
+                          trend=trend, insights=calculate_advanced_insights(all_entries),
                           chart_labels=chart_labels,
                           chart_scores=chart_scores,
                           chart_colors=chart_colors,

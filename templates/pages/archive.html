@@ -43,6 +43,12 @@
         gap: 32px;
     }
 
+    .greeting-block {
+        grid-column: 1 / -1;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
     .greeting-block h1 {
         font-family: 'Lora', serif;
         font-size: 32px;
@@ -56,6 +62,9 @@
         color: var(--muted);
         font-weight: 300;
         margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
 
@@ -187,6 +196,100 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--muted);
+    }
+
+    /* Predictive Intelligence Card */
+    .predictive-card {
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 8px 32px rgba(45, 51, 42, 0.04);
+        margin-top: 20px;
+        animation: fadeIn 1s ease-out;
+    }
+
+    .pred-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .pred-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #F4E6A6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4B2E1F;
+        font-size: 16px;
+    }
+
+    .pred-title {
+        font-family: 'Lora', serif;
+        font-size: 16px;
+        margin: 0;
+        color: var(--text);
+    }
+
+    .pred-subtitle {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--muted);
+        margin: 0;
+    }
+
+    .pred-insight {
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .pred-insight:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .pred-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 4px;
+    }
+
+    .pred-val {
+        font-family: 'Lora', serif;
+        font-size: 24px;
+        color: var(--text);
+    }
+
+    .pred-lbl {
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+    }
+
+    .pred-text {
+        font-size: 12px;
+        color: var(--text);
+        opacity: 0.8;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    .pred-footer {
+        margin-top: 10px;
+        font-size: 11px;
+        color: var(--muted);
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
     /* Chart */
@@ -548,12 +651,15 @@
         opacity: 0;
     }
 
-    /* ── CAROUSEL SPECIFIC ─────────────────────── */
-    .featured-archive {
-        padding: 40px 0 60px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    /* ── FEATURED SHELF (Top of Library) ────────── */
+    .featured-shelf {
+        padding: 60px 0 40px;
+        text-align: center;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.4);
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+        margin-bottom: 40px;
     }
 
     .journal-track {
@@ -1097,8 +1203,55 @@
         display: flex;
         flex-wrap: wrap;
         gap: 32px;
-        justify-content: center;
-        padding: 10px 0;
+        margin-top: 24px;
+        transition: all 0.3s ease;
+    }
+
+    /* Carousel Mode Overrides */
+    .library-section.mode-carousel .shelf-books {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 60px 40px 80px;
+        /* More space for scaling */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-snap-type: x mandatory;
+        gap: 60px;
+        perspective: 1500px;
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .library-section.mode-carousel .shelf-books::-webkit-scrollbar {
+        display: none;
+    }
+
+    .library-section.mode-carousel .shelf-books>* {
+        scroll-snap-align: center;
+        flex-shrink: 0;
+        transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.4s ease;
+        transform-origin: center center;
+        cursor: pointer;
+    }
+
+    /* Remove the simple hover scale; we'll use dynamic JS scaling instead */
+    .library-section.mode-carousel .shelf-books>*:hover {
+        z-index: 50;
+    }
+
+    .library-section.mode-carousel .month-card,
+    .library-section.mode-carousel .lib-journal-item {
+        filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.15));
+    }
+
+    .lib-view-pane {
+        display: block;
+        /* Ensure it's always ready to receive content */
+        min-height: 200px;
+    }
+
+    .lib-view-pane.active {
+        display: block;
     }
 
     .lib-journal-item {
@@ -1171,18 +1324,21 @@
     .obo-wrap {
         position: fixed;
         inset: 0;
-        z-index: 1000;
+        z-index: 2000;
+        /* Move to top but keep inactive */
         background: rgba(234, 232, 225, 0.96);
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
+        visibility: hidden;
         pointer-events: none;
-        transition: opacity 0.32s;
+        transition: all 0.32s;
     }
 
     .obo-wrap.visible {
         opacity: 1;
+        visibility: visible;
         pointer-events: all;
     }
 
@@ -1384,8 +1540,43 @@
         border-bottom-color: var(--text);
     }
 
-    .btn-new-vol {
+    .library-actions {
         margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .mode-switcher {
+        display: flex;
+        background: rgba(0, 0, 0, 0.04);
+        padding: 4px;
+        border-radius: 10px;
+        gap: 4px;
+    }
+
+    .mode-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: none;
+        border-radius: 7px;
+        cursor: pointer;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+        background: var(--surface);
+        color: var(--text);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-new-vol {
         display: none;
         align-items: center;
         gap: 7px;
@@ -1535,18 +1726,20 @@
     .col-modal-bg {
         position: fixed;
         inset: 0;
-        z-index: 1100;
+        z-index: 2100;
         background: rgba(0, 0, 0, 0.25);
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
+        visibility: hidden;
         pointer-events: none;
-        transition: opacity 0.25s;
+        transition: all 0.25s;
     }
 
     .col-modal-bg.visible {
         opacity: 1;
+        visibility: visible;
         pointer-events: all;
     }
 
@@ -1668,233 +1861,215 @@
 <main>
     <!-- SECTION 1: INSIGHTS & ATMOSPHERE -->
     <div class="insights-section">
+        <div class="greeting-block">
+            <h1>{{ greeting }}</h1>
+            <div class="stats-block">
+                {{ stats_msg }}
+                <span
+                    style="color: var(--muted); opacity: 0.8; display: block; margin-top: 4px; font-size: 13px; font-weight: 400; line-height: 1.4;">
+                    {{ trend.msg }}
+                </span>
+            </div>
+        </div>
+
         <div class="left-column">
-            <div class="greeting-block">
-                <h1>{{ greeting }}</h1>
-                <div class="stats-block">
-                    {{ stats_msg }}
-                    <span
-                        style="color: var(--muted); opacity: 0.8; display: block; margin-top: 4px; font-size: 13px; font-weight: 400; line-height: 1.4;">
-                        {{ trend.msg }}
-                    </span>
-                </div>
-
-                {% if current_streak > 0 %}
-                <div class="streak-widget">
-                    <div class="streak-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
-                    <div class="streak-text">
-                        <span class="streak-count">{{ current_streak }} Day Streak</span>
-                        <span class="streak-label">You're blooming!</span>
-                    </div>
-                </div>
-                {% endif %}
-
-                <!-- 3D JOURNAL SPOTLIGHT -->
-                <div class="journal-spotlight">
-                    <div class="scene">
-                        <div class="journal" id="journal3d">
-                            <!-- COVERS -->
-                            <div class="wing left-half" id="leftHalf">
-                                <div class="cover-inside">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                                <div class="front-cover-design">
-                                    <div class="elastic"></div>
-                                    <div class="cover-label">
-                                        <div class="lbl-small">a memory from</div>
-                                        <div class="lbl-big" id="cover-date">{{ all_entries[0].created_at.strftime('%b
-                                            %d') if all_entries else 'May 14' }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="wing right-wing" id="rightWing">
-                                <div class="back-cover-design"></div>
-                                <div class="cover-inside">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                            </div>
-
-                            <!-- STACKED PAGES (5) -->
-                            <div class="page" style="z-index: 10;" data-page="1">
-                                <div class="page-front style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                                <div class="page-back style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                            </div>
-                            <div class="page" style="z-index: 9;" data-page="2">
-                                <div class="page-front style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                                <div class="page-back style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                            </div>
-                            <div class="page" style="z-index: 8;" data-page="3">
-                                <div class="page-front style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                                <div class="page-back style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                            </div>
-                            <div class="page" style="z-index: 7;" data-page="4">
-                                <div class="page-front style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                                <div class="page-back style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                            </div>
-                            <div class="page" style="z-index: 6;" data-page="5">
-                                <div class="page-front style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                                <div class="page-back style-lined">
-                                    <div class="spine-shadow"></div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="journal-controls" style="margin-top: 40px; text-align: center;">
-                        <button class="btn-journal" onclick="toggleJournal3D()" id="btn-journal-toggle">Open
-                            Journal</button>
-                    </div>
-                    <div class="picker-wrap-3d" id="pickerWrap3D">
-                        <div class="picker-label"
-                            style="font-family:'Balsamiq Sans',cursive; font-size:10px; color:rgba(0,0,0,0.3); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">
-                            page style</div>
-                        <div class="style-picker"
-                            style="display:flex; background:white; border:1px solid rgba(0,0,0,0.1); border-radius:50px; overflow:hidden;">
-                            <button class="style-btn" onclick="setStyle3D('lined')"
-                                style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">lined</button>
-                            <button class="style-btn" onclick="setStyle3D('grid')"
-                                style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">grid</button>
-                            <button class="style-btn" onclick="setStyle3D('blank')"
-                                style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer;">blank</button>
-                        </div>
-                    </div>
+            {% if current_streak > 0 %}
+            <div class="streak-widget">
+                <div class="streak-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                <div class="streak-text">
+                    <span class="streak-count">{{ current_streak }} Day Streak</span>
+                    <span class="streak-label">You're blooming!</span>
                 </div>
             </div>
+            {% endif %}
 
-            <div class="blob-card"
-                style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s;">
-                <div class="blob-stage">
-                    <div class="blob-main">
-                        <div class="blob-body"></div>
-                        <div class="blob-face">
-                            <div class="blob-eyes">
-                                <div class="blob-eye"></div>
-                                <div class="blob-eye"></div>
+            <!-- 3D JOURNAL SPOTLIGHT -->
+            <div class="journal-spotlight">
+                <div class="scene">
+                    <div class="journal" id="journal3d">
+                        <!-- COVERS -->
+                        <div class="wing left-half" id="leftHalf">
+                            <div class="cover-inside">
+                                <div class="spine-shadow"></div>
                             </div>
-                            <svg width="20" height="8" viewBox="0 0 22 10" fill="none">
-                                <path d="{{ companion.mouth }}" stroke="#3a2d22" stroke-width="2.5"
-                                    stroke-linecap="round" fill="none" opacity="0.7" />
-                            </svg>
+                            <div class="front-cover-design">
+                                <div class="elastic"></div>
+                                <div class="cover-label">
+                                    <div class="lbl-small">a memory from</div>
+                                    <div class="lbl-big" id="cover-date">{{ all_entries[0].created_at.strftime('%b
+                                        %d') if all_entries else 'May 14' }}</div>
+                                </div>
+                            </div>
                         </div>
+                        <div class="wing right-wing" id="rightWing">
+                            <div class="back-cover-design"></div>
+                            <div class="cover-inside">
+                                <div class="spine-shadow"></div>
+                            </div>
+                        </div>
+
+                        <!-- STACKED PAGES (5) -->
+                        <div class="page" style="z-index: 10;" data-page="1">
+                            <div class="page-front style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                            <div class="page-back style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                        </div>
+                        <div class="page" style="z-index: 9;" data-page="2">
+                            <div class="page-front style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                            <div class="page-back style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                        </div>
+                        <div class="page" style="z-index: 8;" data-page="3">
+                            <div class="page-front style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                            <div class="page-back style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                        </div>
+                        <div class="page" style="z-index: 7;" data-page="4">
+                            <div class="page-front style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                            <div class="page-back style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                        </div>
+                        <div class="page" style="z-index: 6;" data-page="5">
+                            <div class="page-front style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                            <div class="page-back style-lined">
+                                <div class="spine-shadow"></div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-                <div>
-                    <div class="blob-score-num">{{ companion.score }}</div>
-                    <div class="blob-score-label">Energy Level · {{ companion.label }}</div>
+                <div class="journal-controls" style="margin-top: 40px; text-align: center;">
+                    <button class="btn-journal" onclick="toggleJournal3D()" id="btn-journal-toggle">Open
+                        Journal</button>
+                </div>
+                <div class="picker-wrap-3d" id="pickerWrap3D">
+                    <div class="picker-label"
+                        style="font-family:'Balsamiq Sans',cursive; font-size:10px; color:rgba(0,0,0,0.3); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">
+                        page style</div>
+                    <div class="style-picker"
+                        style="display:flex; background:white; border:1px solid rgba(0,0,0,0.1); border-radius:50px; overflow:hidden;">
+                        <button class="style-btn" onclick="setStyle3D('lined')"
+                            style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">lined</button>
+                        <button class="style-btn" onclick="setStyle3D('grid')"
+                            style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">grid</button>
+                        <button class="style-btn" onclick="setStyle3D('blank')"
+                            style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer;">blank</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="chart-container" id="aw">
-            <div class="mood-map-header">
-                <div>
-                    <p class="mm-title" id="mm-month-title">Mood Map</p>
-                    <p class="mm-subtitle">Your emotional chronicle</p>
-                </div>
-                <div style="display:flex; gap:12px; align-items:center;">
-                    <div class="cal-toggle">
-                        <button id="btn-weekly" class="cal-tab active" onclick="setCalMode('weekly')">Weekly</button>
-                        <button id="btn-monthly" class="cal-tab" onclick="setCalMode('monthly')">Monthly</button>
+        <div class="blob-card"
+            style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s;">
+            <div class="blob-stage">
+                <div class="blob-main">
+                    <div class="blob-body"></div>
+                    <div class="blob-face">
+                        <div class="blob-eyes">
+                            <div class="blob-eye"></div>
+                            <div class="blob-eye"></div>
+                        </div>
+                        <svg width="20" height="8" viewBox="0 0 22 10" fill="none">
+                            <path d="{{ companion.mouth }}" stroke="#3a2d22" stroke-width="2.5" stroke-linecap="round"
+                                fill="none" opacity="0.7" />
+                        </svg>
                     </div>
-                    <button id="emotion-set-toggle"
-                        onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';"
-                        style="background:var(--surface); border:1px solid var(--rule); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;"><i
-                            class="fas fa-smile"></i> Legend</button>
                 </div>
             </div>
-
-            <div id="emotion-set-container" style="display:none; margin-bottom:16px;">
-                <div style="background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <span class="mbs" style="margin:0;">AI-detected emotion set</span>
-                        <button
-                            onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';"
-                            style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--muted);">✕</button>
-                    </div>
-                    <div class="fg" id="fg"></div>
-                </div>
-            </div>
-
-            <div class="mood-map-body">
-                <script id="chart-labels" type="application/json">{{ chart_labels | tojson | safe }}</script>
-                <script id="chart-scores" type="application/json">{{ chart_scores | tojson | safe }}</script>
-                <script id="chart-moods" type="application/json">{{ chart_moods | tojson | safe }}</script>
-                <div id="mood-calendar"></div>
+            <div>
+                <div class="blob-score-num">{{ companion.score }}</div>
+                <div class="blob-score-label">Energy Level · {{ companion.label }}</div>
             </div>
         </div>
+
+        <!-- PREDICTIVE INTELLIGENCE CARD -->
+        {% if insights %}
+        <div class="predictive-card">
+            <div class="pred-header">
+                <div class="pred-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <div>
+                    <h4 class="pred-title">Predictive Intelligence</h4>
+                    <p class="pred-subtitle">Linear Regression Forecast</p>
+                </div>
+            </div>
+            <div class="pred-body">
+                <div class="pred-insight">
+                    <div class="pred-stat">
+                        <span class="pred-val">{{ insights.word_slope }}%</span>
+                        <span class="pred-lbl">Clarity Correlation</span>
+                    </div>
+                    <p class="pred-text">{{ insights.word_msg }}</p>
+                </div>
+                <div class="pred-insight">
+                    <div class="pred-stat">
+                        <span class="pred-val">{{ insights.predicted_energy }}%</span>
+                        <span class="pred-lbl">Velocity Projection</span>
+                    </div>
+                    <p class="pred-text">Predicted energy for tomorrow: <strong>{{ insights.predicted_label }}</strong>.</p>
+                </div>
+                <div class="pred-footer">
+                    <i class="fa-solid fa-clock-rotate-left"></i> {{ insights.time_msg }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
-    <!-- SECTION 2: 3D FEATURED CAROUSEL -->
-    <section class="featured-archive">
-        <div class="archive-header" id="header">
-            <h1 class="archive-title" id="active-title">Loading...</h1>
-            <p class="archive-subtitle" id="active-pages">-- Pages</p>
-        </div>
-
-        <div class="journal-track" id="track">
-            {% for j in featured_journals %}
-            <div class="journal-item" data-id="{{ j.id }}" data-title="{{ j.title }}" data-pages="{{ j.pages }}"
-                data-index="{{ loop.index0 }}">
-                <div class="premium-book">
-                    <div class="book-pages">
-                        <div
-                            style="padding: 24px; font-family: 'Lora', serif; font-size: 11px; color: var(--text); line-height: 1.8; opacity: 0.8;">
-                            {{ j.content_preview }}
-                        </div>
-                    </div>
-                    <div class="book-cover" id="cover-{{ j.id }}">
-                        <div class="cover-front" id="svg-container-{{ j.id }}"></div>
-                        <div class="cover-back">
-                            <span
-                                style="font-family: 'Lora', serif; font-size: 10px; color: #B0A090; letter-spacing: 0.2em; text-transform: uppercase;">Ex
-                                Libris</span>
-                            <div style="width: 30px; height: 1px; background: #C8C0B0; margin-top: 8px;"></div>
-                        </div>
-                        <div class="elastic-band" id="band-{{ j.id }}"></div>
-                    </div>
-                </div>
+    <div class="chart-container" id="aw">
+        <div class="mood-map-header">
+            <div>
+                <p class="mm-title" id="mm-month-title">Mood Map</p>
+                <p class="mm-subtitle">Your emotional chronicle</p>
             </div>
-            {% endfor %}
+            <div style="display:flex; gap:12px; align-items:center;">
+                <div class="cal-toggle">
+                    <button id="btn-weekly" class="cal-tab active" onclick="setCalMode('weekly')">Weekly</button>
+                    <button id="btn-monthly" class="cal-tab" onclick="setCalMode('monthly')">Monthly</button>
+                </div>
+                <button id="emotion-set-toggle"
+                    onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';"
+                    style="background:var(--surface); border:1px solid var(--rule); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;"><i
+                        class="fas fa-smile"></i> Legend</button>
+            </div>
         </div>
 
-        <div class="dot-nav">
-            {% for j in featured_journals %}
-            <div class="dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></div>
-            {% endfor %}
+        <div id="emotion-set-container" style="display:none; margin-bottom:16px;">
+            <div style="background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span class="mbs" style="margin:0;">AI-detected emotion set</span>
+                    <button
+                        onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';"
+                        style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--muted);">✕</button>
+                </div>
+                <div class="fg" id="fg"></div>
+            </div>
         </div>
 
-        <div class="action-bar">
-            <button class="action-btn" title="Share"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-            <button class="action-btn" title="Add" style="background: var(--text); color: var(--bg);"><i
-                    class="fa-solid fa-plus"></i></button>
+        <div class="mood-map-body">
+            <script id="chart-labels" type="application/json">{{ chart_labels | tojson | safe }}</script>
+            <script id="chart-scores" type="application/json">{{ chart_scores | tojson | safe }}</script>
+            <script id="chart-moods" type="application/json">{{ chart_moods | tojson | safe }}</script>
+            <div id="mood-calendar"></div>
         </div>
+    </div> <!-- Closes insights-section -->
+    </div> <!-- Closes main content wrapper if any -->
 
-        <p
-            style="margin-top: 24px; font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6;">
-            Swipe to Browse · Tap Center to Open
-        </p>
-    </section>
-
-    <!-- SECTION 3: LIBRARY -->
-    <section class="library-section">
+    <!-- UNIFIED LIBRARY SECTION -->
+    <section class="library-section mode-carousel" style="margin-top: 40px;">
         <div class="library-nav">
             <div class="view-tabs">
                 <button class="view-tab active" data-view="monthly">Monthly</button>
@@ -1902,12 +2077,24 @@
                 <button class="view-tab" data-view="volumes">Volumes</button>
                 <button class="view-tab" data-view="all">All Entries</button>
             </div>
-            <button class="btn-new-vol" id="btn-new-vol">
-                <i class="fa-solid fa-plus" style="font-size:10px"></i>
-                New Volume
-            </button>
+            <div class="library-actions">
+                <div class="mode-switcher">
+                    <button class="mode-btn" id="mode-grid" title="Grid View"><i
+                            class="fa-solid fa-table-cells"></i></button>
+                    <button class="mode-btn active" id="mode-carousel" title="Carousel View"><i
+                            class="fa-solid fa-scroll"></i></button>
+                </div>
+                <button class="btn-new-vol" id="btn-new-vol">
+                    <i class="fa-solid fa-plus" style="font-size:10px"></i>
+                    New Volume
+                </button>
+            </div>
         </div>
-        <div id="library-grid"></div>
+
+        <div id="library-content-area">
+            <!-- GRID/CAROUSEL VIEW (JS Rendered) -->
+            <div id="library-grid" class="lib-view-pane active"></div>
+        </div>
     </section>
 
     <!-- OPEN BOOK OVERLAY -->
@@ -2054,49 +2241,6 @@
         if (band) band.style.backgroundColor = j.elastic;
     });
 
-    const track = document.getElementById('track');
-    const items = document.querySelectorAll('.journal-item');
-    const dots = document.querySelectorAll('.dot');
-    const titleEl = document.getElementById('active-title');
-    const pagesEl = document.getElementById('active-pages');
-    const headerEl = document.getElementById('header');
-
-    let activeIndex = 0;
-
-    function updateActive(index) {
-        activeIndex = index;
-        const active = items[index];
-        const title = active.dataset.title;
-        const pages = active.dataset.pages;
-
-        headerEl.style.opacity = '0';
-        setTimeout(() => {
-            titleEl.textContent = title;
-            pagesEl.textContent = pages;
-            headerEl.style.opacity = '1';
-        }, 150);
-
-        dots.forEach((d, i) => d.classList.toggle('active', i === index));
-
-        // Dynamic 3D Scale Falloff
-        items.forEach((item, i) => {
-            const dist = Math.abs(i - index);
-            const scale = Math.max(0.72, 1 - dist * 0.1);
-            const translateY = (i === index) ? -14 : 0;
-            item.style.transform = `scale(${scale}) translateY(${translateY}px)`;
-        });
-    }
-
-    // Swipe / Scroll Sync
-    track.addEventListener('scroll', () => {
-        const scrollLeft = track.scrollLeft;
-        const itemWidth = items[0].offsetWidth + 32;
-        const index = Math.round(scrollLeft / itemWidth);
-        if (index !== activeIndex && items[index]) {
-            updateActive(index);
-        }
-    });
-
     // Opening Interaction - Overlay Modal
     const oboModal = document.getElementById('obo-modal');
     const oboCloseBtn = document.getElementById('obo-close-btn');
@@ -2195,27 +2339,7 @@
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeOverlay();
     });
-
-    items.forEach((item, i) => {
-        item.addEventListener('click', () => {
-            if (i !== activeIndex) {
-                item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            } else {
-                const entryId = item.dataset.id;
-                const entry = ENTRIES_DATA.find(e => e.id == entryId);
-                openOverlay(item.dataset.title, item.dataset.pages, entry);
-            }
-        });
-    });
-
-    dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            const idx = parseInt(dot.dataset.index);
-            items[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        });
-    });
-
-    updateActive(0);
+    // Overlay logic is handled via openEntryFromCalendar
 
     // ── NEW ATMOSPHERE MAP LOGIC ─────────────────────────────────
     setTimeout(() => {
@@ -2372,12 +2496,11 @@
     }, 100);
 
     // ── VIEW SWITCHER ───────────────────────────────────────────────────
-    const libGrid = document.getElementById('library-grid');
-    const btnNewVol = document.getElementById('btn-new-vol');
+    let libGrid, btnNewVol;
 
     // Use the 3D book markup instead of the flat cards
+    // Use the 3D book markup instead of the flat cards
     function cardHTML(e, idx) {
-        // Find style variants based on index to ensure variety
         const arts = ['botanical', 'linen', 'face', 'wood', 'clouds'];
         const bgs = ["#C8D898", "#EDE4D2", "#A8C4E4", "#DDBEAA", "#F0EAD6"];
         const elastics = ["#1a2810", "#222222", "#283858", "#604818", "#1A1A1A"];
@@ -2387,7 +2510,7 @@
         const elastic = elastics[idx % elastics.length];
 
         return `
-        <div class="lib-journal-item" data-id="${e.id}" onclick="openEntryFromCalendar('${e.id}')" style="cursor: pointer;">
+        <div class="lib-journal-item" data-id="${e.id}" style="cursor: pointer;">
             <div class="premium-book" id="lib-book-${e.id}">
                 <div class="book-pages"></div>
                 <div class="book-cover">
@@ -2459,7 +2582,7 @@
                 const [mon, yr] = month.split(' ');
 
                 return `
-                <div class="lib-journal-item" onclick="renderMonthDrilldown('${month}')">
+                <div class="lib-journal-item" data-month="${month}" style="cursor: pointer;">
                     <div class="premium-book">
                         <div class="book-pages"></div>
                         <div class="book-cover">
@@ -2504,7 +2627,17 @@
                 if (!html) html = `<div class="lib-empty">Assign entries to a volume to see them here.</div>`;
             }
         }
-        libGrid.innerHTML = html;
+
+        if (!html) {
+            html = `<div class="lib-empty">No journals found in this collection.</div>`;
+        }
+
+        const grid = document.getElementById('library-grid');
+        if (grid) {
+            grid.innerHTML = html;
+        } else {
+            console.error("Library grid element not found");
+        }
     }
 
     let activeView = 'monthly';
@@ -2516,47 +2649,122 @@
             renderView(activeView);
         });
     });
-    renderView('monthly');
+    // Robust Initialization
+    window.addEventListener('load', () => {
+        libGrid = document.getElementById('library-grid');
+        btnNewVol = document.getElementById('btn-new-vol');
+        const modeGridBtn = document.getElementById('mode-grid');
+        const modeCarouselBtn = document.getElementById('mode-carousel');
+        const libSection = document.querySelector('.library-section');
 
-    // ── COLLECTION MODAL ────────────────────────────────────────────────
+        if (modeGridBtn && modeCarouselBtn) {
+            modeGridBtn.addEventListener('click', () => {
+                modeGridBtn.classList.add('active');
+                modeCarouselBtn.classList.remove('active');
+                libSection.classList.remove('mode-carousel');
+                renderView(activeView);
+            });
+
+            modeCarouselBtn.addEventListener('click', () => {
+                modeCarouselBtn.classList.add('active');
+                modeGridBtn.classList.remove('active');
+                libSection.classList.add('mode-carousel');
+                renderView(activeView);
+                setTimeout(updateCarouselAnims, 50); // Ensure initial scaling is correct
+            });
+        }
+
+        // Set initial active button state
+        if (libSection.classList.contains('mode-carousel')) {
+            modeCarouselBtn?.classList.add('active');
+            modeGridBtn?.classList.remove('active');
+            setTimeout(updateCarouselAnims, 100);
+        } else {
+            modeGridBtn?.classList.add('active');
+            modeCarouselBtn?.classList.remove('active');
+        }
+
+        // Initial render
+        renderView('monthly');
+    });
+
+    // ── DYNAMIC CAROUSEL ANIMATION ──
+    function updateCarouselAnims() {
+        const shelves = document.querySelectorAll('.library-section.mode-carousel .shelf-books');
+        shelves.forEach(shelf => {
+            const items = shelf.children;
+            const shelfRect = shelf.getBoundingClientRect();
+            const centerX = shelfRect.left + shelfRect.width / 2;
+
+            Array.from(items).forEach(item => {
+                const rect = item.getBoundingClientRect();
+                const itemCenter = rect.left + rect.width / 2;
+                const dist = Math.abs(centerX - itemCenter);
+                const maxDist = shelfRect.width / 1.5;
+
+                const normDist = Math.min(dist / maxDist, 1);
+                const scale = 1.15 - (normDist * 0.45);
+                const opacity = 1 - (normDist * 0.4);
+                const translateY = (1 - normDist) * -15;
+
+                item.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+                item.style.opacity = opacity;
+                item.style.zIndex = Math.round((1 - normDist) * 100);
+            });
+        });
+    }
+
+    // Connect the animation to scrolling
+    document.addEventListener('scroll', (e) => {
+        if (e.target.classList?.contains('shelf-books')) {
+            updateCarouselAnims();
+        }
+    }, true);
+
+    // ── SMART INTERACTION: TAP TO CENTER OR OPEN ──
+    document.addEventListener('click', (e) => {
+        const libItem = e.target.closest('.lib-journal-item');
+        if (!libItem) return;
+
+        const libSection = document.querySelector('.library-section');
+        const entryId = libItem.dataset.id;
+        const monthLabel = libItem.dataset.month;
+
+        const performAction = () => {
+            if (monthLabel) renderMonthDrilldown(monthLabel);
+            else if (entryId) openEntryFromCalendar(entryId);
+        };
+
+        // If in Grid mode, just open immediately
+        if (!libSection?.classList.contains('mode-carousel')) {
+            performAction();
+            return;
+        }
+
+        // In Carousel mode, only open if centered
+        const shelf = libItem.parentElement;
+        if (!shelf) return;
+
+        const shelfRect = shelf.getBoundingClientRect();
+        const centerX = shelfRect.left + shelfRect.width / 2;
+        const itemRect = libItem.getBoundingClientRect();
+        const itemCenterX = itemRect.left + itemRect.width / 2;
+
+        const distFromCenter = Math.abs(centerX - itemCenterX);
+
+        if (distFromCenter < 80) {
+            performAction();
+        } else {
+            libItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    });
+
+    // ── COLLECTION MODAL ──
     const colModalBg = document.getElementById('col-modal-bg');
     const colNameInput = document.getElementById('col-name-input');
     let selectedColor = '#C8D898';
 
-    btnNewVol.addEventListener('click', () => {
-        colNameInput.value = '';
-        colModalBg.classList.add('visible');
-        setTimeout(() => colNameInput.focus(), 300);
-    });
-    document.getElementById('col-cancel-btn').addEventListener('click', () => colModalBg.classList.remove('visible'));
-    colModalBg.addEventListener('click', e => { if (e.target === colModalBg) colModalBg.classList.remove('visible'); });
-    window.addEventListener('keydown', e => { if (e.key === 'Escape') colModalBg.classList.remove('visible'); });
-
-    document.querySelectorAll('.col-swatch').forEach(sw => {
-        sw.addEventListener('click', () => {
-            document.querySelectorAll('.col-swatch').forEach(s => s.classList.remove('active'));
-            sw.classList.add('active');
-            selectedColor = sw.dataset.color;
-        });
-    });
-
-    document.getElementById('col-create-btn').addEventListener('click', async () => {
-        const name = colNameInput.value.trim();
-        if (!name) { colNameInput.focus(); return; }
-        const res = await fetch('/collections', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, cover_color: selectedColor, art_style: 'linen' })
-        });
-        const data = await res.json();
-        if (data.success) {
-            colModalBg.classList.remove('visible');
-            COLLECTIONS.unshift({ id: data.id, name: data.name, cover_color: data.cover_color });
-            if (activeView === 'volumes') renderView('volumes');
-        }
-    });
-
-    /* ── 3D JOURNAL MULTI-PAGE LOGIC ── */
+    // ── 3D JOURNAL MULTI-PAGE LOGIC ──
     let isOpen3D = false;
     let isAnimating3D = false;
     const journal3d = document.getElementById('journal3d');
@@ -2569,7 +2777,7 @@
     const OPEN_DUR = 1200;
     const EASE = 'cubic-bezier(0.645, 0.045, 0.355, 1.000)';
 
-    function toggleJournal3D() {
+    window.toggleJournal3D = function () {
         if (isAnimating3D) return;
         isAnimating3D = true;
         isOpen3D = !isOpen3D;
@@ -2578,12 +2786,11 @@
             journal3d.classList.add('spread-open');
             leftHalf3d.classList.add('wing-open');
             rightWing3d.classList.add('wing-open');
-            btnToggle3d.textContent = 'Close Journal';
+            if (btnToggle3d) btnToggle3d.textContent = 'Close Journal';
             setTimeout(() => { isAnimating3D = false; pickerWrap3d.classList.add('visible'); }, OPEN_DUR);
         } else {
             pickerWrap3d.classList.remove('visible');
 
-            // Flip all pages back to right before closing
             let delay = 0;
             const flippedPages = Array.from(allPages).filter(p => p.classList.contains('flipped')).reverse();
 
@@ -2597,40 +2804,13 @@
                 rightWing3d.classList.remove('wing-open');
                 setTimeout(() => {
                     journal3d.classList.remove('spread-open');
-                    btnToggle3d.textContent = 'Open Journal';
+                    if (btnToggle3d) btnToggle3d.textContent = 'Open Journal';
                     isAnimating3D = false;
-                    updateZIndices(); // Reset Z-indices after closing
+                    updateZIndices();
                 }, 800);
             }, delay);
         }
-    }
-
-    // Page Interaction Logic
-    allPages.forEach((page, index) => {
-        page.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!isOpen3D || isAnimating3D) return;
-
-            const isFlipped = page.classList.contains('flipped');
-
-            if (!isFlipped) {
-                // Flip Forward (Right to Left)
-                const nextToFlip = Array.from(allPages).find(p => !p.classList.contains('flipped'));
-                if (page === nextToFlip) {
-                    page.classList.add('flipped');
-                    updateZIndices();
-                }
-            } else {
-                // Flip Backward (Left to Right)
-                const flipped = Array.from(allPages).filter(p => p.classList.contains('flipped'));
-                const lastFlipped = flipped[flipped.length - 1];
-                if (page === lastFlipped) {
-                    page.classList.remove('flipped');
-                    updateZIndices();
-                }
-            }
-        });
-    });
+    };
 
     function updateZIndices() {
         const flipped = Array.from(allPages).filter(p => p.classList.contains('flipped'));
@@ -2639,14 +2819,7 @@
 
         allPages.forEach((page, index) => {
             const isFlipped = page.classList.contains('flipped');
-            if (isFlipped) {
-                page.style.zIndex = 10 + index;
-            } else {
-                page.style.zIndex = 10 - index;
-            }
-
-            // Masking: Only the visible spread (or the page currently turning) stays visible
-            // This removes the "threads" from the hinge area
+            page.style.zIndex = isFlipped ? 10 + index : 10 - index;
             if (page === lastFlipped || page === nextToFlip) {
                 page.classList.add('active-page');
             } else {
@@ -2655,42 +2828,121 @@
         });
     }
 
-    // Initialize Z-indices
-    updateZIndices();
+    // Robust Initialization
+    window.addEventListener('load', () => {
+        libGrid = document.getElementById('library-grid');
+        const btnNewVol = document.getElementById('btn-new-vol');
+        const modeGridBtn = document.getElementById('mode-grid');
+        const modeCarouselBtn = document.getElementById('mode-carousel');
+        const libSection = document.querySelector('.library-section');
 
-    // ── BULLETPROOF CLOSE LISTENER ──
-    // A global listener ensures we catch the click no matter what 3D layer the browser thinks it hit.
-    document.addEventListener('click', (e) => {
-        if (isOpen3D && !isAnimating3D) {
-            // Check what was actually clicked
-            const isCoverInside = e.target.closest('.cover-inside');
-            const isWing = e.target.closest('.wing');
-            const isScene = e.target.closest('.scene');
-            const isPage = e.target.closest('.page');
-            const isControls = e.target.closest('.journal-controls');
+        // Initial render
+        renderView('monthly');
 
-            // If they clicked the lining, the wing, or the background scene (and NOT a page or button)
-            if ((isCoverInside || isWing || isScene) && !isPage && !isControls) {
-                toggleJournal3D();
+        // Collection Modal Listeners
+        if (btnNewVol) {
+            btnNewVol.addEventListener('click', () => {
+                colNameInput.value = '';
+                colModalBg.classList.add('visible');
+                setTimeout(() => colNameInput.focus(), 300);
+            });
+        }
+        document.getElementById('col-cancel-btn')?.addEventListener('click', () => colModalBg.classList.remove('visible'));
+        colModalBg?.addEventListener('click', e => { if (e.target === colModalBg) colModalBg.classList.remove('visible'); });
+
+        document.querySelectorAll('.col-swatch').forEach(sw => {
+            sw.addEventListener('click', () => {
+                document.querySelectorAll('.col-swatch').forEach(s => s.classList.remove('active'));
+                sw.classList.add('active');
+                selectedColor = sw.dataset.color;
+            });
+        });
+
+        document.getElementById('col-create-btn')?.addEventListener('click', async () => {
+            const name = colNameInput.value.trim();
+            if (!name) { colNameInput.focus(); return; }
+            const res = await fetch('/collections', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, cover_color: selectedColor, art_style: 'linen' })
+            });
+            const data = await res.json();
+            if (data.success) {
+                colModalBg.classList.remove('visible');
+                COLLECTIONS.unshift({ id: data.id, name: data.name, cover_color: data.cover_color });
+                if (activeView === 'volumes') renderView('volumes');
             }
+        });
+
+        // View Mode Listeners
+        if (modeGridBtn && modeCarouselBtn) {
+            modeGridBtn.addEventListener('click', () => {
+                modeGridBtn.classList.add('active');
+                modeCarouselBtn.classList.remove('active');
+                libSection.classList.remove('mode-carousel');
+                renderView(activeView);
+            });
+            modeCarouselBtn.addEventListener('click', () => {
+                modeCarouselBtn.classList.add('active');
+                modeGridBtn.classList.remove('active');
+                libSection.classList.add('mode-carousel');
+                renderView(activeView);
+            });
         }
+
+        // 3D Journal Listeners
+        updateZIndices();
+        allPages.forEach((page, index) => {
+            page.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!isOpen3D || isAnimating3D) return;
+                const isFlipped = page.classList.contains('flipped');
+                if (!isFlipped) {
+                    const nextToFlip = Array.from(allPages).find(p => !p.classList.contains('flipped'));
+                    if (page === nextToFlip) {
+                        page.classList.add('flipped');
+                        updateZIndices();
+                    }
+                } else {
+                    const flipped = Array.from(allPages).filter(p => p.classList.contains('flipped'));
+                    if (page === flipped[flipped.length - 1]) {
+                        page.classList.remove('flipped');
+                        updateZIndices();
+                    }
+                }
+            });
+        });
+
+        journal3d?.addEventListener('click', (e) => {
+            if (!isOpen3D && !isAnimating3D) toggleJournal3D();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (isOpen3D && !isAnimating3D) {
+                const isCoverInside = e.target.closest('.cover-inside');
+                const isWing = e.target.closest('.wing');
+                const isScene = e.target.closest('.scene');
+                const isPage = e.target.closest('.page');
+                const isControls = e.target.closest('.journal-controls');
+                if ((isCoverInside || isWing || isScene) && !isPage && !isControls) {
+                    toggleJournal3D();
+                }
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (isOpen3D && !isAnimating3D) toggleJournal3D();
+                colModalBg?.classList.remove('visible');
+            }
+        });
     });
 
-    // ── JOURNAL BASE INTERACTION (OPEN) ──
-    journal3d.addEventListener('click', (e) => {
-        if (!isOpen3D && !isAnimating3D) {
-            toggleJournal3D();
-        }
-    });
-
-    function setStyle3D(style) {
-        // 1. Clear styles from EVERY possible component to avoid "ghost lines"
+    window.setStyle3D = function (style) {
         const allPotential = document.querySelectorAll('.journal-spotlight .page, .journal-spotlight .page-front, .journal-spotlight .page-back, .journal-spotlight .wing, .journal-spotlight .cover-inside');
         allPotential.forEach(el => el.classList.remove('style-grid', 'style-blank', 'style-lined'));
-
-        // 2. Apply new style ONLY to the actual paper faces
         const faces = document.querySelectorAll('.journal-spotlight .page-front, .journal-spotlight .page-back');
         faces.forEach(el => el.classList.add('style-' + style));
-    }
+    };
 </script>
 {% endblock %}
