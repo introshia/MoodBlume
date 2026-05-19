@@ -6,8 +6,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
     :root {
-        --bg: #F6F3EE;
-        /* Old Lace     */
+        --bg: #FFF9FD;
+        /* Soft Pinkish White */
         --surface: #FFFFFF;
         --text: #4B2E1F;
         /* Freshly Roasted */
@@ -23,28 +23,64 @@
         --sw: 18px;
     }
 
+    body {
+        background-color: var(--bg) !important;
+    }
+
     main {
         padding-top: 30px;
         /* Refined offset for fixed navbar */
     }
 
-    /* ── INSIGHTS SECTION ────────────────────── */
-    .insights-section {
-        padding: 40px 52px 20px;
+    /* ── DASHBOARD GRID & COLUMN SYSTEM ────────────────────── */
+    .dashboard-grid {
+        padding: 20px 52px 40px;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 80px;
+        gap: 60px;
         align-items: flex-start;
+        max-width: 1000px;
+        margin: 0 auto;
     }
 
-    .left-column {
+    .dashboard-col {
         display: flex;
         flex-direction: column;
-        gap: 32px;
+        gap: 28px;
+    }
+
+    .flex-center-contents {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 3D Journal Spotlight Centered Row */
+    .journal-spotlight-section {
+        width: 100%;
+        max-width: 1000px;
+        margin: 40px auto 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0 52px;
+    }
+
+    @media (max-width: 860px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 40px;
+            padding: 20px 24px;
+        }
+        
+        .journal-spotlight-section {
+            padding: 0 24px;
+        }
     }
 
     .greeting-block {
-        grid-column: 1 / -1;
         text-align: center;
         margin-bottom: 20px;
     }
@@ -78,28 +114,89 @@
         color: #5D4A4A;
     }
 
-    /* Streak Widget */
-    .streak-widget {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        background: rgba(244, 230, 166, 0.15);
-        border: 1px solid rgba(244, 230, 166, 0.4);
-        padding: 10px 18px;
-        border-radius: 14px;
-        margin-top: 8px;
-        animation: fadeIn 0.8s ease-out;
+    /* Legacy streak CSS removed */
+
+    /* Weekly Wrap-up Card */
+    .weekly-wrap-card {
+        background: #F1F1F1;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        max-width: 340px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
 
-    .streak-icon {
-        font-size: 18px;
-        color: #D97706;
-        filter: drop-shadow(0 2px 4px rgba(217, 119, 6, 0.2));
-    }
-
-    .streak-text {
+    .ww-header {
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        margin-bottom: 32px;
+        position: relative;
+    }
+
+    .ww-logo-bg {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #F9D423 0%, #FF4E50 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .ww-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #B6C0CD;
+        position: absolute;
+        left: 40px;
+        border: 3px solid #F1F1F1;
+        background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Alex&backgroundColor=b6e3f4');
+        background-size: cover;
+    }
+
+    .ww-subtitle {
+        color: #8E8E93;
+        font-size: 13px;
+        line-height: 1.4;
+        margin-bottom: 12px;
+    }
+
+    .ww-stats {
+        font-size: 34px;
+        line-height: 1.1;
+        letter-spacing: -1px;
+    }
+
+    .ww-big {
+        color: #000;
+        font-weight: 500;
+    }
+
+    .ww-muted {
+        color: #8E8E93;
+        font-weight: 500;
+    }
+
+    .ww-arrow-up {
+        color: #34C759; /* Premium Visible iOS Green */
+        font-size: 20px;
+        margin-left: 4px;
+        margin-right: 8px;
+        display: inline-block;
+        transform: translateY(-4px);
+    }
+
+    .ww-arrow-down {
+        color: #FF3B30; /* Premium Visible iOS Red */
+        font-size: 20px;
+        margin-left: 4px;
+        margin-right: 8px;
+        display: inline-block;
+        transform: translateY(-4px);
     }
 
     .streak-count {
@@ -129,37 +226,55 @@
         }
     }
 
-    /* Blob Card */
+    /* Original Blob Card */
     .blob-card {
-        background: transparent;
+        background: #fff;
+        border-radius: 22px;
         width: 100%;
+        max-width: 340px;
+        height: 300px;
         position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 1px solid rgba(0, 0, 0, 0.06);
         display: flex;
-        align-items: center;
-        gap: 24px;
-        padding: 10px 0;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 20px 22px;
+        margin-top: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
     }
 
     .blob-stage {
-        width: 100px;
-        height: 100px;
+        position: absolute;
+        inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        position: relative;
+        padding-bottom: 48px;
     }
 
     .blob-main {
-        width: 80px;
-        height: 80px;
+        width: 130px;
+        height: 130px;
         position: relative;
+        animation: blobFloat var(--speed, 3s) ease-in-out infinite;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .blob-main:hover {
+        transform: scale(1.07);
     }
 
     .blob-body {
         width: 100%;
         height: 100%;
-        border-radius: 50%;
-        background: var(--base);
+        border-radius: var(--br, 50% 40% 60% 40% / 40% 50% 40% 60%);
+        background: radial-gradient(circle at 35% 30%, var(--light), var(--base));
+        position: relative;
+        transition: background 0.6s, border-radius 0.6s;
+        animation: blobMorph var(--speed, 3s) ease-in-out infinite alternate;
     }
 
     .blob-face {
@@ -170,32 +285,136 @@
         align-items: center;
         justify-content: center;
         gap: 6px;
+        padding-top: 10px;
+        z-index: 3;
     }
 
     .blob-eyes {
         display: flex;
-        gap: 10px;
+        gap: 14px;
     }
 
     .blob-eye {
-        width: 5px;
-        height: 5px;
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
-        background: #3a2d22;
-        opacity: 0.8;
+        background: rgba(0, 0, 0, 0.55);
+    }
+
+    .blob-mouth {
+        width: 22px;
+        height: 10px;
+        position: relative;
+        overflow: visible;
+    }
+
+    .blob-mouth svg {
+        overflow: visible;
+    }
+
+    /* mini blobs */
+    .blob-mini {
+        position: absolute;
+        border-radius: 50% 40% 55% 45% / 45% 55% 40% 55%;
+        background: var(--dark);
+        animation: miniFloat var(--mspeed, 4s) ease-in-out infinite;
+        opacity: 0.85;
+    }
+
+    .blob-mini.m1 {
+        width: 42px;
+        height: 42px;
+        top: 42px;
+        left: 30px;
+        animation-delay: -1.2s;
+    }
+
+    .blob-mini.m2 {
+        width: 26px;
+        height: 26px;
+        top: 62%;
+        left: 68%;
+        animation-delay: -2.5s;
+        animation-direction: alternate-reverse;
     }
 
     .blob-score-num {
         font-family: 'Lora', serif;
-        font-size: 38px;
-        color: var(--text);
+        font-size: 46px;
+        font-weight: 600;
+        line-height: 1;
+        color: var(--base);
+        transition: color 0.6s;
+        position: relative;
+        z-index: 2;
     }
 
     .blob-score-label {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--base);
+        opacity: 0.8;
+        margin-top: 2px;
+        letter-spacing: 0.01em;
+        position: relative;
+        z-index: 2;
+        text-transform: none;
+    }
+
+    .blob-entry-hint {
+        font-size: 11px;
         color: var(--muted);
+        margin-top: 2px;
+        font-weight: 300;
+        letter-spacing: 0.02em;
+        position: relative;
+        z-index: 2;
+    }
+
+    @keyframes blobFloat {
+        0% {
+            transform: translateY(0px) translateX(0px);
+        }
+
+        30% {
+            transform: translateY(-10px) translateX(3px);
+        }
+
+        60% {
+            transform: translateY(-6px) translateX(-2px);
+        }
+
+        100% {
+            transform: translateY(0px) translateX(0px);
+        }
+    }
+
+    @keyframes blobMorph {
+        0% {
+            border-radius: 50% 40% 60% 40% / 40% 50% 40% 60%;
+        }
+
+        50% {
+            border-radius: 42% 55% 45% 58% / 55% 42% 60% 38%;
+        }
+
+        100% {
+            border-radius: 58% 38% 52% 46% / 44% 60% 38% 52%;
+        }
+    }
+
+    @keyframes miniFloat {
+        0% {
+            transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-7px) rotate(8deg);
+        }
+
+        100% {
+            transform: translateY(0) rotate(0deg);
+        }
     }
 
     /* Predictive Intelligence Card */
@@ -337,152 +556,162 @@
         padding: 0;
     }
 
-    .cal-weekdays {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        text-align: center;
-        font-size: 11px;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 12px;
+    /* Apple Emotion Calendar Card (Matches Claude's exactly) */
+    .cal-wrap {
+        background: #F2F2F7 !important;
+        border-radius: 22px !important;
+        padding: 18px 16px 16px !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif !important;
+        max-width: 320px !important;
+        margin: 40px auto 0 !important;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04) !important;
+        border: none !important;
     }
-
+    
+    .cal-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        margin-bottom: 14px !important;
+    }
+    
+    .cal-title {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1px !important;
+    }
+    
+    .cal-month-label {
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        color: #1C1C1E !important;
+        letter-spacing: -.3px !important;
+        line-height: 1 !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
+    }
+    
+    .cal-year-label {
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        color: #8E8E93 !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
+    }
+    
+    .cal-nav {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+    
+    .nav-btn {
+        background: #fff !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 30px !important;
+        height: 30px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        font-size: 14px !important;
+        color: #1C1C1E !important;
+        font-weight: 600 !important;
+        transition: opacity 0.15s !important;
+    }
+    
+    .nav-btn:active {
+        opacity: .6 !important;
+    }
+    
+    .today-pill {
+        background: #fff !important;
+        border-radius: 20px !important;
+        padding: 4px 10px !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        color: #1C1C1E !important;
+        cursor: pointer !important;
+        border: none !important;
+        transition: opacity 0.15s !important;
+    }
+    
+    .today-pill:active {
+        opacity: .6 !important;
+    }
+    
     .cal-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 12px;
+        display: grid !important;
+        grid-template-columns: repeat(7, 1fr) !important;
+        gap: 5px !important;
     }
-
+    
+    .cal-dow {
+        text-align: center !important;
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        color: #8E8E93 !important;
+        padding-bottom: 4px !important;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+    
     .cal-day {
-        aspect-ratio: 1;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        font-weight: 500;
-        position: relative;
-        transition: transform 0.15s ease, background 0.15s ease;
+        aspect-ratio: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 9px !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
-
-    .cal-day--empty {
-        background: transparent;
-        color: rgba(75, 46, 31, 0.3);
-        border: 1.5px dashed rgba(75, 46, 31, 0.1);
-        cursor: default;
+    
+    /* Emotion Colors */
+    .e-joy { background: #F5E6B0 !important; color: #7A6020 !important; }
+    .e-sadness { background: #BDDDF0 !important; color: #2C5A72 !important; }
+    .e-anger { background: #F5C0BE !important; color: #7A3030 !important; }
+    .e-fear { background: #DBC8F0 !important; color: #523878 !important; }
+    .e-disgust { background: #B8EACC !important; color: #2A6045 !important; }
+    .e-confuse { background: #D8D4C0 !important; color: #5A5440 !important; }
+    .e-none { background: transparent !important; color: #3A3A3C !important; }
+    .e-future { background: transparent !important; color: #C7C7CC !important; font-weight: 400 !important; font-size: 13px !important; }
+    
+    .today-ring {
+        outline: 2px solid #1C1C1E !important;
+        outline-offset: -2px !important;
     }
-
-    .cal-day--empty:hover {
-        background: rgba(75, 46, 31, 0.03);
+    
+    /* Legend Card */
+    .legend {
+        margin-top: 14px !important;
+        background: #fff !important;
+        border-radius: 14px !important;
+        padding: 12px !important;
+        border: none !important;
     }
-
-    .cal-day--mood {
-        cursor: pointer;
-        color: #fff;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    
+    .legend-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 7px 10px !important;
     }
-
-    .cal-day--mood:hover {
-        transform: scale(1.15);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-        z-index: 2;
+    
+    .legend-row {
+        display: flex !important;
+        align-items: center !important;
+        gap: 7px !important;
     }
-
-    .cal-day--mood:hover .cal-tooltip {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
+    
+    .legend-dot {
+        width: 12px !important;
+        height: 12px !important;
+        border-radius: 3px !important;
+        flex-shrink: 0 !important;
     }
-
-    .cal-tooltip {
-        position: absolute;
-        bottom: calc(100% + 6px);
-        left: 50%;
-        transform: translateX(-50%) translateY(4px);
-        background: var(--text);
-        color: var(--bg);
-        font-size: 9px;
-        font-weight: 500;
-        letter-spacing: 0.04em;
-        padding: 3px 8px;
-        border-radius: 4px;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.15s, transform 0.15s;
-    }
-
-    .cal-tooltip::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 4px solid transparent;
-        border-top-color: var(--text);
-    }
-
-    .cal-day--today {
-        box-shadow: 0 0 0 2px var(--text);
-    }
-
-    .cal-day--today-empty {
-        background: var(--butter);
-        color: var(--text);
-        font-weight: 600;
-        border: none;
-    }
-
-    .write-today-cta {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        margin-top: 16px;
-        padding: 8px 18px;
-        background: var(--butter);
-        border: none;
-        border-radius: 50px;
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--text);
-        cursor: pointer;
-        transition: all 0.2s;
-        text-decoration: none;
-        width: fit-content;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .write-today-cta:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    }
-
-    .cal-toggle {
-        display: flex;
-        background: rgba(75, 46, 31, 0.05);
-        border-radius: 20px;
-        padding: 2px;
-    }
-
-    .cal-tab {
-        background: transparent;
-        border: none;
-        border-radius: 18px;
-        padding: 4px 12px;
-        font-size: 10px;
-        color: var(--muted);
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .cal-tab.active {
-        background: var(--surface);
-        color: var(--text);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-        font-weight: 500;
+    
+    .legend-text {
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        color: #3A3A3C !important;
     }
 
 
@@ -1859,213 +2088,209 @@
 
 {% block content %}
 <main>
-    <!-- SECTION 1: INSIGHTS & ATMOSPHERE -->
-    <div class="insights-section">
-        <div class="greeting-block">
-            <h1>{{ greeting }}</h1>
-            <div class="stats-block">
-                {{ stats_msg }}
-                <span
-                    style="color: var(--muted); opacity: 0.8; display: block; margin-top: 4px; font-size: 13px; font-weight: 400; line-height: 1.4;">
-                    {{ trend.msg }}
-                </span>
-            </div>
+    <!-- SECTION 1: GREETING & DASHBOARD GRID -->
+    <div class="greeting-block" style="text-align: center; margin-top: 40px; margin-bottom: 24px;">
+        <h1>{{ greeting }}</h1>
+        <div class="stats-block">
+            {{ stats_msg }}
+            <span style="color: var(--muted); opacity: 0.8; display: block; margin-top: 4px; font-size: 13px; font-weight: 400; line-height: 1.4;">
+                {{ trend.msg }}
+            </span>
         </div>
+    </div>
 
-        <div class="left-column">
-            {% if current_streak > 0 %}
-            <div class="streak-widget">
-                <div class="streak-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
-                <div class="streak-text">
-                    <span class="streak-count">{{ current_streak }} Day Streak</span>
-                    <span class="streak-label">You're blooming!</span>
+    <!-- 2-COLUMN DASHBOARD GRID -->
+    <div class="dashboard-grid">
+        <!-- LEFT COLUMN: ANALYTICS & INSIGHTS -->
+        <div class="dashboard-col">
+            {% if weekly %}
+            <div class="weekly-wrap-card" style="margin-top: 0; width: 100%; max-width: 100%;">
+                <div class="ww-subtitle">
+                    In week {{ weekly.date_range }}<br>you were active during:
+                </div>
+                <div class="ww-stats">
+                    <span class="ww-big">{{ weekly.days }}</span><span class="ww-arrow-{{ weekly.days_dir }}"><i class="fa-solid fa-arrow-{{ 'up' if weekly.days_dir == 'up' else 'down' }}"></i></span>
+                    <span class="ww-muted">days, with</span> <span class="ww-big">{{ weekly.entries }}</span><span class="ww-arrow-{{ weekly.entries_dir }}"><i class="fa-solid fa-arrow-{{ 'up' if weekly.entries_dir == 'up' else 'down' }}"></i></span><br>
+                    <span class="ww-muted">new entries and</span><br>
+                    <span class="ww-big">{{ weekly.minutes }}m {{ weekly.seconds }}s</span><span class="ww-arrow-{{ weekly.time_dir }}"><i class="fa-solid fa-arrow-{{ 'up' if weekly.time_dir == 'up' else 'down' }}"></i></span>
+                    <span class="ww-muted">of<br>writing time</span>
                 </div>
             </div>
             {% endif %}
 
-            <!-- 3D JOURNAL SPOTLIGHT -->
-            <div class="journal-spotlight">
-                <div class="scene">
-                    <div class="journal" id="journal3d">
-                        <!-- COVERS -->
-                        <div class="wing left-half" id="leftHalf">
-                            <div class="cover-inside">
-                                <div class="spine-shadow"></div>
-                            </div>
-                            <div class="front-cover-design">
-                                <div class="elastic"></div>
-                                <div class="cover-label">
-                                    <div class="lbl-small">a memory from</div>
-                                    <div class="lbl-big" id="cover-date">{{ all_entries[0].created_at.strftime('%b
-                                        %d') if all_entries else 'May 14' }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="wing right-wing" id="rightWing">
-                            <div class="back-cover-design"></div>
-                            <div class="cover-inside">
-                                <div class="spine-shadow"></div>
-                            </div>
-                        </div>
-
-                        <!-- STACKED PAGES (5) -->
-                        <div class="page" style="z-index: 10;" data-page="1">
-                            <div class="page-front style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                            <div class="page-back style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                        </div>
-                        <div class="page" style="z-index: 9;" data-page="2">
-                            <div class="page-front style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                            <div class="page-back style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                        </div>
-                        <div class="page" style="z-index: 8;" data-page="3">
-                            <div class="page-front style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                            <div class="page-back style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                        </div>
-                        <div class="page" style="z-index: 7;" data-page="4">
-                            <div class="page-front style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                            <div class="page-back style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                        </div>
-                        <div class="page" style="z-index: 6;" data-page="5">
-                            <div class="page-front style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                            <div class="page-back style-lined">
-                                <div class="spine-shadow"></div>
-                            </div>
-                        </div>
-
+            {% if insights %}
+            <div class="predictive-card" style="margin-top: 24px; width: 100%;">
+                <div class="pred-header">
+                    <div class="pred-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <div>
+                        <h4 class="pred-title">Predictive Intelligence</h4>
+                        <p class="pred-subtitle">Linear Regression Forecast</p>
                     </div>
                 </div>
-                <div class="journal-controls" style="margin-top: 40px; text-align: center;">
-                    <button class="btn-journal" onclick="toggleJournal3D()" id="btn-journal-toggle">Open
-                        Journal</button>
+                <div class="pred-body">
+                    <div class="pred-insight">
+                        <div class="pred-stat">
+                            <span class="pred-val">{{ insights.word_slope }}%</span>
+                            <span class="pred-lbl">Clarity Correlation</span>
+                        </div>
+                        <p class="pred-text">{{ insights.word_msg }}</p>
+                    </div>
+                    <div class="pred-insight">
+                        <div class="pred-stat">
+                            <span class="pred-val">{{ insights.predicted_energy }}%</span>
+                            <span class="pred-lbl">Velocity Projection</span>
+                        </div>
+                        <p class="pred-text">Predicted energy for tomorrow: <strong>{{ insights.predicted_label }}</strong>.</p>
+                    </div>
+                    <div class="pred-footer">
+                        <i class="fa-solid fa-clock-rotate-left"></i> {{ insights.time_msg }}
+                    </div>
                 </div>
-                <div class="picker-wrap-3d" id="pickerWrap3D">
-                    <div class="picker-label"
-                        style="font-family:'Balsamiq Sans',cursive; font-size:10px; color:rgba(0,0,0,0.3); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">
-                        page style</div>
-                    <div class="style-picker"
-                        style="display:flex; background:white; border:1px solid rgba(0,0,0,0.1); border-radius:50px; overflow:hidden;">
-                        <button class="style-btn" onclick="setStyle3D('lined')"
-                            style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">lined</button>
-                        <button class="style-btn" onclick="setStyle3D('grid')"
-                            style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">grid</button>
-                        <button class="style-btn" onclick="setStyle3D('blank')"
-                            style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer;">blank</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- RIGHT COLUMN: MOODBLOB & CALENDAR -->
+        <div class="dashboard-col flex-center-contents">
+            <div class="blob-card" id="blobCard" style="margin-top: 0; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto; --base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s; --mspeed: 4s;">
+                <div class="blob-stage">
+                    <div class="blob-main" id="blobMain">
+                        <div class="blob-body" id="blobBody"></div>
+                        <div class="blob-mini m1" id="mini1"></div>
+                        <div class="blob-mini m2" id="mini2"></div>
+                        <div class="blob-face">
+                            <div class="blob-eyes">
+                                <div class="blob-eye"></div>
+                                <div class="blob-eye"></div>
+                            </div>
+                            <div class="blob-mouth">
+                                <svg id="mouthSvg" width="22" height="10" viewBox="0 0 22 10" fill="none">
+                                    <path id="mouthPath" d="{{ companion.mouth }}" stroke="rgba(0,0,0,0.55)" stroke-width="2" stroke-linecap="round" fill="none" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="blob-score-num" id="scoreNum">{{ companion.score }}</div>
+                <div class="blob-score-label">Energy Level</div>
+                <div class="blob-entry-hint" id="entryHint">{{ companion.label }} · from today's entry</div>
+            </div>
+
+            <div class="cal-wrap" id="aw" style="margin-top: 24px !important; width: 100%; max-width: 320px !important; margin-left: auto; margin-right: auto;">
+                <h2 class="sr-only">Navigable emotion calendar</h2>
+                <div class="cal-header">
+                    <div class="cal-title">
+                        <span class="cal-month-label" id="monthLabel"></span>
+                        <span class="cal-year-label" id="yearLabel"></span>
+                    </div>
+                    <div class="cal-nav">
+                        <button class="nav-btn" id="prevBtn">‹</button>
+                        <button class="today-pill" id="todayBtn">Today</button>
+                        <button class="nav-btn" id="nextBtn">›</button>
+                    </div>
+                </div>
+
+                <div class="cal-grid" id="calGrid"></div>
+                
+                <div class="legend">
+                    <div class="legend-grid">
+                        <div class="legend-row"><div class="legend-dot" style="background:#F5E6B0"></div><div class="legend-text">Joy</div></div>
+                        <div class="legend-row"><div class="legend-dot" style="background:#BDDDF0"></div><div class="legend-text">Sadness</div></div>
+                        <div class="legend-row"><div class="legend-dot" style="background:#F5C0BE"></div><div class="legend-text">Anger</div></div>
+                        <div class="legend-row"><div class="legend-dot" style="background:#DBC8F0"></div><div class="legend-text">Fear</div></div>
+                        <div class="legend-row"><div class="legend-dot" style="background:#B8EACC"></div><div class="legend-text">Disgust</div></div>
+                        <div class="legend-row"><div class="legend-dot" style="background:#D8D4C0"></div><div class="legend-text">Confusion</div></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="blob-card"
-            style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s;">
-            <div class="blob-stage">
-                <div class="blob-main">
-                    <div class="blob-body"></div>
-                    <div class="blob-face">
-                        <div class="blob-eyes">
-                            <div class="blob-eye"></div>
-                            <div class="blob-eye"></div>
-                        </div>
-                        <svg width="20" height="8" viewBox="0 0 22 10" fill="none">
-                            <path d="{{ companion.mouth }}" stroke="#3a2d22" stroke-width="2.5" stroke-linecap="round"
-                                fill="none" opacity="0.7" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div class="blob-score-num">{{ companion.score }}</div>
-                <div class="blob-score-label">Energy Level · {{ companion.label }}</div>
-            </div>
-        </div>
-
-        <!-- PREDICTIVE INTELLIGENCE CARD -->
-        {% if insights %}
-        <div class="predictive-card">
-            <div class="pred-header">
-                <div class="pred-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                <div>
-                    <h4 class="pred-title">Predictive Intelligence</h4>
-                    <p class="pred-subtitle">Linear Regression Forecast</p>
-                </div>
-            </div>
-            <div class="pred-body">
-                <div class="pred-insight">
-                    <div class="pred-stat">
-                        <span class="pred-val">{{ insights.word_slope }}%</span>
-                        <span class="pred-lbl">Clarity Correlation</span>
-                    </div>
-                    <p class="pred-text">{{ insights.word_msg }}</p>
-                </div>
-                <div class="pred-insight">
-                    <div class="pred-stat">
-                        <span class="pred-val">{{ insights.predicted_energy }}%</span>
-                        <span class="pred-lbl">Velocity Projection</span>
-                    </div>
-                    <p class="pred-text">Predicted energy for tomorrow: <strong>{{ insights.predicted_label }}</strong>.</p>
-                </div>
-                <div class="pred-footer">
-                    <i class="fa-solid fa-clock-rotate-left"></i> {{ insights.time_msg }}
-                </div>
-            </div>
-        </div>
-        {% endif %}
     </div>
 
-    <div class="chart-container" id="aw">
-        <div class="mood-map-header">
-            <div>
-                <p class="mm-title" id="mm-month-title">Mood Map</p>
-                <p class="mm-subtitle">Your emotional chronicle</p>
-            </div>
-            <div style="display:flex; gap:12px; align-items:center;">
-                <div class="cal-toggle">
-                    <button id="btn-weekly" class="cal-tab active" onclick="setCalMode('weekly')">Weekly</button>
-                    <button id="btn-monthly" class="cal-tab" onclick="setCalMode('monthly')">Monthly</button>
-                </div>
-                <button id="emotion-set-toggle"
-                    onclick="document.getElementById('emotion-set-container').style.display='block'; this.style.display='none';"
-                    style="background:var(--surface); border:1px solid var(--rule); border-radius:20px; padding:5px 14px; font-size:10px; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;"><i
-                        class="fas fa-smile"></i> Legend</button>
-            </div>
-        </div>
+    <!-- DEDICATED 3D JOURNAL SPOTLIGHT -->
+    <div class="journal-spotlight-section">
+        <div class="journal-spotlight">
+            <div class="scene">
+                <div class="journal" id="journal3d">
+                    <!-- COVERS -->
+                    <div class="wing left-half" id="leftHalf">
+                        <div class="cover-inside">
+                            <div class="spine-shadow"></div>
+                        </div>
+                        <div class="front-cover-design">
+                            <div class="elastic"></div>
+                            <div class="cover-label">
+                                <div class="lbl-small">a memory from</div>
+                                <div class="lbl-big" id="cover-date">{{ all_entries[0].created_at.strftime('%b %d') if all_entries else 'May 14' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wing right-wing" id="rightWing">
+                        <div class="back-cover-design"></div>
+                        <div class="cover-inside">
+                            <div class="spine-shadow"></div>
+                        </div>
+                    </div>
 
-        <div id="emotion-set-container" style="display:none; margin-bottom:16px;">
-            <div style="background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <span class="mbs" style="margin:0;">AI-detected emotion set</span>
-                    <button
-                        onclick="document.getElementById('emotion-set-container').style.display='none'; document.getElementById('emotion-set-toggle').style.display='inline-flex';"
-                        style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--muted);">✕</button>
+                    <!-- STACKED PAGES (5) -->
+                    <div class="page" style="z-index: 10;" data-page="1">
+                        <div class="page-front style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                        <div class="page-back style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                    </div>
+                    <div class="page" style="z-index: 9;" data-page="2">
+                        <div class="page-front style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                        <div class="page-back style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                    </div>
+                    <div class="page" style="z-index: 8;" data-page="3">
+                        <div class="page-front style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                        <div class="page-back style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                    </div>
+                    <div class="page" style="z-index: 7;" data-page="4">
+                        <div class="page-front style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                        <div class="page-back style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                    </div>
+                    <div class="page" style="z-index: 6;" data-page="5">
+                        <div class="page-front style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                        <div class="page-back style-lined">
+                            <div class="spine-shadow"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="fg" id="fg"></div>
+            </div>
+            <div class="journal-controls" style="margin-top: 40px; text-align: center;">
+                <button class="btn-journal" onclick="toggleJournal3D()" id="btn-journal-toggle">Open Journal</button>
+            </div>
+            <div class="picker-wrap-3d" id="pickerWrap3D">
+                <div class="picker-label" style="font-family:'Balsamiq Sans',cursive; font-size:10px; color:rgba(0,0,0,0.3); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">page style</div>
+                <div class="style-picker" style="display:flex; background:white; border:1px solid rgba(0,0,0,0.1); border-radius:50px; overflow:hidden;">
+                    <button class="style-btn" onclick="setStyle3D('lined')" style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">lined</button>
+                    <button class="style-btn" onclick="setStyle3D('grid')" style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.1);">grid</button>
+                    <button class="style-btn" onclick="setStyle3D('blank')" style="padding:8px 20px; border:none; background:transparent; font-family:'Balsamiq Sans',cursive; font-size:12px; cursor:pointer;">blank</button>
+                </div>
             </div>
         </div>
-
-        <div class="mood-map-body">
-            <script id="chart-labels" type="application/json">{{ chart_labels | tojson | safe }}</script>
-            <script id="chart-scores" type="application/json">{{ chart_scores | tojson | safe }}</script>
-            <script id="chart-moods" type="application/json">{{ chart_moods | tojson | safe }}</script>
-            <div id="mood-calendar"></div>
+    </div>ow"><div class="legend-dot" style="background:#B8EACC"></div><div class="legend-text">Disgust</div></div>
+                <div class="legend-row"><div class="legend-dot" style="background:#D8D4C0"></div><div class="legend-text">Confusion</div></div>
+            </div>
         </div>
-    </div> <!-- Closes insights-section -->
+    </div>
     </div> <!-- Closes main content wrapper if any -->
 
     <!-- UNIFIED LIBRARY SECTION -->
@@ -2341,159 +2566,152 @@
     });
     // Overlay logic is handled via openEntryFromCalendar
 
-    // ── NEW ATMOSPHERE MAP LOGIC ─────────────────────────────────
-    setTimeout(() => {
-        const labels = JSON.parse(document.getElementById('chart-labels').textContent);
-        const scores = JSON.parse(document.getElementById('chart-scores').textContent);
-        const moods = JSON.parse(document.getElementById('chart-moods').textContent);
+    // ── NAVIGABLE APPLE EMOTION CALENDAR ─────────────────────────
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const NOW = new Date();
+    const TODAY_Y = NOW.getFullYear();
+    const TODAY_M = NOW.getMonth();
+    const TODAY_D = NOW.getDate();
 
-        const SK = '#3a2d22';
-        const FACES = [
-            { e: 'happy', c: '#9AD6A0', s: 3, sc: 9 },
-            { e: 'excited', c: '#F2DD66', s: 7, sc: 9 },
-            { e: 'grateful', c: '#FFB4D1', s: 11, sc: 8 },
-            { e: 'hopeful', c: '#85D0E8', s: 15, sc: 7 },
-            { e: 'calm', c: '#A8DADC', s: 19, sc: 7 },
-            { e: 'neutral', c: '#DFDAC9', s: 23, sc: 5 },
-            { e: 'confused', c: '#C5C6D0', s: 27, sc: 4 },
-            { e: 'tired', c: '#CDB3DF', s: 31, sc: 3 },
-            { e: 'anxious', c: '#B6AEE6', s: 35, sc: 3 },
-            { e: 'sad', c: '#A8C1ED', s: 39, sc: 2 },
-            { e: 'lonely', c: '#839BCC', s: 43, sc: 2 },
-            { e: 'angry', c: '#FF9AA2', s: 47, sc: 1 },
-        ];
+    let curYear = TODAY_Y;
+    let curMonth = TODAY_M;
 
-        const FEATS = {
-            happy: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 62 Q50 72 64 62" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-            excited: `<circle cx="39" cy="46" r="4.5" fill="${SK}"/><circle cx="61" cy="46" r="4.5" fill="${SK}"/><path d="M33 62 Q50 78 67 62" stroke="${SK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
-            grateful: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 63 Q50 74 64 63" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-            hopeful: `<circle cx="39" cy="47" r="2.8" fill="${SK}"/><circle cx="61" cy="47" r="2.8" fill="${SK}"/><path d="M40 63 Q50 68 60 63" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
-            calm: `<circle cx="39" cy="47" r="2.8" fill="${SK}"/><circle cx="61" cy="47" r="2.8" fill="${SK}"/><path d="M42 63 L58 63" stroke="${SK}" stroke-width="2" stroke-linecap="round"/>`,
-            neutral: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 63 L62 63" stroke="${SK}" stroke-width="2.2" stroke-linecap="round"/>`,
-            confused: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M40 63 Q45 61 50 63 Q55 65 60 63" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-            tired: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M42 64 Q50 66 58 64" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
-            anxious: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 64 Q44 62 50 64 Q56 66 62 64" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-            sad: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M38 66 Q50 58 62 66" stroke="${SK}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
-            lonely: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M40 66 Q50 60 60 66" stroke="${SK}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
-            angry: `<circle cx="39" cy="46" r="3" fill="${SK}"/><circle cx="61" cy="46" r="3" fill="${SK}"/><path d="M36 66 Q50 54 64 66" stroke="${SK}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
-        };
+    const entriesByDate = {};
+    ENTRIES_DATA.forEach(e => {
+        if (e.iso_date) entriesByDate[e.iso_date] = e;
+    });
 
-        const grid = document.getElementById('fg');
-        if (grid && !grid.hasChildNodes()) {
-            FACES.forEach((f, i) => {
-                const id = `fg${i}`;
-                const cell = document.createElement('div');
-                cell.className = 'fc';
-                cell.innerHTML = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="${f.c}"/>${FEATS[f.e]}
-              </svg><span class="fl">${f.e}</span>`;
-                grid.appendChild(cell);
-            });
+    function getEntryForDay(y, m, d) {
+        const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        return entriesByDate[dateStr];
+    }
+
+    const EMOTIONS = ['e-joy', 'e-sadness', 'e-anger', 'e-fear', 'e-disgust', 'e-confuse'];
+
+    function hash(y, m, d) {
+        let s = y * 10000 + m * 100 + d;
+        s = ((s ^ (s >> 4)) * 0x45d9f3b) & 0xffffffff;
+        s = ((s ^ (s >> 15)) * 0x45d9f3b) & 0xffffffff;
+        s ^= s >> 4;
+        return Math.abs(s);
+    }
+
+    function emotionClassForEntry(entry, y, m, d) {
+        if (entry) {
+            const score = entry.mood_score;
+            if (score >= 7) return 'e-joy';
+            if (score === 6) return 'e-disgust';
+            if (score === 5) return 'e-none';
+            if (score === 4) return 'e-confuse';
+            if (score === 3) return 'e-fear';
+            if (score === 2) return 'e-sadness';
+            if (score === 1) return 'e-anger';
         }
+        
+        // Fallback to Claude's deterministic hash randomizer to populate the preview
+        const h = hash(y, m, d);
+        if (h % 4 === 0) return 'e-none';
+        return EMOTIONS[h % EMOTIONS.length];
+    }
 
-        let calMode = 'weekly';
-        window.setCalMode = function (mode) {
-            calMode = mode;
-            document.getElementById('btn-weekly').classList.toggle('active', mode === 'weekly');
-            document.getElementById('btn-monthly').classList.toggle('active', mode === 'monthly');
-            renderCalendar();
-        };
+    function isFuture(y, m, d) {
+        if (y > TODAY_Y) return true;
+        if (y === TODAY_Y && m > TODAY_M) return true;
+        if (y === TODAY_Y && m === TODAY_M && d > TODAY_D) return true;
+        return false;
+    }
 
-        const entriesByDate = {};
-        ENTRIES_DATA.forEach(e => {
-            if (e.iso_date) entriesByDate[e.iso_date] = e;
+    function renderCalendar() {
+        const monthLabel = document.getElementById('monthLabel');
+        const yearLabel = document.getElementById('yearLabel');
+        if (monthLabel) monthLabel.textContent = MONTHS[curMonth];
+        if (yearLabel) yearLabel.textContent = curYear;
+
+        const grid = document.getElementById('calGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        // Render Weekday headers (Monday-start: M, T, W, T, F, S, S)
+        ['M','T','W','T','F','S','S'].forEach(d => {
+            const el = document.createElement('div');
+            el.className = 'cal-dow';
+            el.textContent = d;
+            grid.appendChild(el);
         });
 
-        const calContainer = document.getElementById('mood-calendar');
+        // Determine the offset for the first day of the month (Monday-start)
+        const firstDay = new Date(curYear, curMonth, 1).getDay();
+        const offset = firstDay === 0 ? 6 : firstDay - 1;
+        const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
 
-        function renderCalendar() {
-            if (!calContainer) return;
-
-            let displayDate = new Date();
-            if (ENTRIES_DATA.length > 0 && ENTRIES_DATA[0].iso_date) {
-                displayDate = new Date(ENTRIES_DATA[0].iso_date);
-            }
-
-            const today = new Date();
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-            let html = `<div class="cal-weekdays">
-                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-            </div>`;
-
-            html += `<div class="cal-grid">`;
-
-            let hasToday = false;
-
-            function renderDay(y, m, d) {
-                const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                const entry = entriesByDate[dateStr];
-                const isTodayCell = (today.getFullYear() === y && today.getMonth() === m && today.getDate() === d);
-                const todayCls = isTodayCell ? ' cal-day--today' : '';
-
-                let out = '';
-                if (entry) {
-                    const eLower = entry.mood_label.toLowerCase();
-                    const fD = FACES.find(f => f.e === eLower) || FACES[5];
-                    out = `<div class="cal-day cal-day--mood${todayCls}" style="background:${fD.c}; overflow:hidden; cursor:pointer;" title="${entry.mood_label}" onclick="openEntryFromCalendar('${entry.id}')">
-                        <svg viewBox="0 0 100 100" style="position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; opacity:0.65;">
-                           ${FEATS[fD.e] || FEATS['neutral']}
-                        </svg>
-                        <span style="position:relative; z-index:1; font-weight:600; text-shadow:0 1px 3px rgba(0,0,0,0.25);">${d}</span>
-                        <span class="cal-tooltip">${fD.e}</span>
-                    </div>`;
-                } else {
-                    if (isTodayCell) {
-                        hasToday = true;
-                        out = `<div class="cal-day cal-day--today-empty cal-day--today">${d}</div>`;
-                    } else {
-                        out = `<div class="cal-day cal-day--empty">${d}</div>`;
-                    }
-                }
-                return out;
-            }
-
-            if (calMode === 'monthly') {
-                const year = displayDate.getFullYear();
-                const month = displayDate.getMonth();
-                const headerTitle = document.getElementById('mm-month-title');
-                if (headerTitle) headerTitle.textContent = monthNames[month] + ' ' + year;
-
-                const firstDay = new Date(year, month, 1).getDay();
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-                for (let i = 0; i < firstDay; i++) {
-                    html += `<div></div>`;
-                }
-                for (let d = 1; d <= daysInMonth; d++) {
-                    html += renderDay(year, month, d);
-                }
-            } else {
-                // Weekly mode
-                let weekStart = new Date(displayDate);
-                weekStart.setDate(displayDate.getDate() - displayDate.getDay()); // go to Sunday
-
-                const headerTitle = document.getElementById('mm-month-title');
-                if (headerTitle) headerTitle.textContent = monthNames[weekStart.getMonth()] + ' ' + weekStart.getFullYear();
-
-                for (let i = 0; i < 7; i++) {
-                    let cd = new Date(weekStart);
-                    cd.setDate(weekStart.getDate() + i);
-                    html += renderDay(cd.getFullYear(), cd.getMonth(), cd.getDate());
-                }
-            }
-
-            html += `</div>`;
-
-            if (hasToday) {
-                html += `<a href="/writing" class="write-today-cta"><i class="fas fa-feather-alt"></i> Write today's entry</a>`;
-            }
-
-            calContainer.innerHTML = html;
+        for (let i = 0; i < offset; i++) {
+            const el = document.createElement('div');
+            el.className = 'cal-day'; // empty element
+            grid.appendChild(el);
         }
 
-        renderCalendar();
-    }, 100);
+        for (let d = 1; d <= daysInMonth; d++) {
+            const el = document.createElement('div');
+            const future = isFuture(curYear, curMonth, d);
+            const entry = getEntryForDay(curYear, curMonth, d);
+
+            el.className = 'cal-day';
+            if (future) {
+                el.classList.add('e-future');
+            } else {
+                const emoClass = emotionClassForEntry(entry, curYear, curMonth, d);
+                el.classList.add(emoClass);
+            }
+
+            if (d === TODAY_D && curMonth === TODAY_M && curYear === TODAY_Y) {
+                el.classList.add('today-ring');
+            }
+            el.textContent = d;
+
+            if (entry) {
+                el.setAttribute('title', `${entry.mood_label} · Click to read`);
+                el.addEventListener('click', () => {
+                    openEntryFromCalendar(entry.id);
+                });
+            } else if (!future) {
+                el.setAttribute('title', `No entry · Click to write`);
+                el.addEventListener('click', () => {
+                    window.location.href = '/writing';
+                });
+            }
+
+            grid.appendChild(el);
+        }
+    }
+
+    // Set up navigation listeners
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const todayBtn = document.getElementById('todayBtn');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            curMonth--; 
+            if (curMonth < 0) { curMonth = 11; curYear--; } 
+            renderCalendar();
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            curMonth++; 
+            if (curMonth > 11) { curMonth = 0; curYear++; } 
+            renderCalendar();
+        });
+    }
+    if (todayBtn) {
+        todayBtn.addEventListener('click', () => {
+            curYear = TODAY_Y; 
+            curMonth = TODAY_M; 
+            renderCalendar();
+        });
+    }
+
+    renderCalendar();
 
     // ── VIEW SWITCHER ───────────────────────────────────────────────────
     let libGrid, btnNewVol;

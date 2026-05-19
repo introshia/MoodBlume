@@ -8,6 +8,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Sunshiney&family=Balsamiq+Sans:wght@400;700&display=swap"
     rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -63,70 +64,76 @@
       font-weight: 300
     }
 
-    /* Bottom navigation dock */
+    /* Bottom navigation dock - Matches global _navbar.html exactly */
     #bottom-dock {
       position: fixed;
-      bottom: 28px;
+      bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 20;
+      z-index: 9999;
       display: flex;
-      gap: 0px;
-      align-items: center;
-      background: rgba(255, 235, 200, 0.12);
-      border: 1px solid rgba(255, 200, 140, 0.30);
-      border-radius: 40px;
-      padding: 9px 28px;
-      pointer-events: all;
-      opacity: 0.28;
-      transition: opacity 0.3s ease;
-      backdrop-filter: blur(10px);
+      gap: 8px;
+      background: rgba(42, 26, 14, 0.85) !important; /* Premium dark espresso wood */
+      border: 1px solid rgba(246, 243, 238, 0.08) !important;
+      padding: 8px !important;
+      border-radius: 24px !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      align-items: center !important;
+      pointer-events: auto !important;
+      opacity: 1 !important;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important;
     }
 
     #bottom-dock:hover {
-      opacity: 1;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55) !important;
+      opacity: 1 !important;
     }
 
     .dock-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      padding: 12px 28px;
-      cursor: pointer;
-      text-decoration: none;
-      border-right: 1px solid rgba(255, 200, 140, 0.18);
-      transition: all 0.2s;
-    }
-
-    .dock-link:last-child {
-      border-right: none;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 4px !important;
+      color: #F6F3EE !important; /* Cozy Old Lace color */
+      text-decoration: none !important;
+      font-family: 'Balsamiq Sans', cursive !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.02em !important;
+      padding: 8px 24px !important;
+      border-radius: 18px !important;
+      opacity: 0.65 !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
 
     .dock-link .dock-icon {
-      font-size: 14px;
-      opacity: 0.70;
-      transition: opacity 0.2s, transform 0.2s;
-      filter: drop-shadow(0 0 4px rgba(255, 200, 120, 0.3));
+      font-size: 16px !important;
+      opacity: 1 !important;
+      filter: none !important;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
 
     .dock-link .dock-label {
-      font-family: 'Balsamiq Sans', cursive;
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255, 210, 160, 0.72);
-      transition: color 0.2s;
+      font-family: 'Balsamiq Sans', cursive !important;
+      font-size: 11px !important;
+      letter-spacing: 0.02em !important;
+      text-transform: none !important;
+      color: inherit !important;
+      transition: none !important;
+    }
+
+    .dock-link:hover {
+      opacity: 1 !important;
+      background: rgba(246, 243, 238, 0.06) !important;
+      transform: scale(1.08) translateY(-2px) !important;
     }
 
     .dock-link:hover .dock-icon {
-      opacity: 1;
-      transform: translateY(-2px);
-      filter: drop-shadow(0 0 6px rgba(255, 200, 120, 0.65));
-    }
-
-    .dock-link:hover .dock-label {
-      color: rgba(255, 235, 190, 1);
+      opacity: 1 !important;
+      transform: scale(1.12) !important;
     }
 
     .links a {
@@ -353,12 +360,15 @@
 
   <div id="bottom-dock" onclick="event.stopPropagation()">
     <a class="dock-link" href="/archive">
+      <i class="fa-solid fa-book-bookmark dock-icon"></i>
       <span class="dock-label">Archive</span>
     </a>
     <a class="dock-link" href="/writing">
+      <i class="fa-solid fa-pen-nib dock-icon"></i>
       <span class="dock-label">Journal</span>
     </a>
     <a class="dock-link" href="/profile">
+      <i class="fa-solid fa-user-gear dock-icon"></i>
       <span class="dock-label">Profile</span>
     </a>
   </div>

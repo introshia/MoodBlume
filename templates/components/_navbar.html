@@ -100,6 +100,100 @@
 .dropdown-item.logout:hover {
     background: #FFF7ED;
 }
+
+/* Bottom macOS Floating Dock */
+.bottom-dock-container {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    pointer-events: none; /* Let clicks pass through container gaps */
+}
+
+.bottom-dock {
+    pointer-events: auto; /* Enable clicks on the dock itself */
+    display: flex;
+    gap: 8px;
+    background: rgba(246, 243, 238, 0.85);
+    border: 1px solid rgba(75, 46, 31, 0.08);
+    padding: 8px;
+    border-radius: 24px;
+    box-shadow: 0 12px 32px rgba(75, 46, 31, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.bottom-dock:hover {
+    box-shadow: 0 16px 40px rgba(75, 46, 31, 0.18);
+}
+
+body.dark-theme .bottom-dock {
+    background: rgba(42, 26, 14, 0.85);
+    border: 1px solid rgba(246, 243, 238, 0.08);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-theme .bottom-dock:hover {
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+.dock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--text-black);
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 8px 24px;
+    border-radius: 18px;
+    opacity: 0.65;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dock-item i {
+    font-size: 16px;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dock-item:hover {
+    opacity: 1;
+    background: rgba(75, 46, 31, 0.05);
+    transform: scale(1.08) translateY(-2px);
+}
+
+.dock-item:hover i {
+    transform: scale(1.12);
+}
+
+body.dark-theme .dock-item:hover {
+    background: rgba(246, 243, 238, 0.06);
+}
+
+.dock-item.active {
+    opacity: 1;
+    background: var(--color-gold) !important;
+    color: #4B2E1F !important;
+    box-shadow: 0 4px 12px rgba(75, 46, 31, 0.08);
+}
+
+body.dark-theme .dock-item.active {
+    background: var(--color-gold) !important;
+    color: #4B2E1F !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure content is not cut off at the bottom when Dock is visible */
+body.user-logged-in {
+    padding-bottom: 100px !important;
+}
 </style>
     <!-- NAVBAR -->
     <div class="navbar-container">
@@ -107,11 +201,7 @@
             <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}?v=1.3" alt="MoodBlume Logo" style="height: 90px; width: auto; display: block;">
         </a>
         <div class="navbar-center">
-            {% if session.get('user_id') %}
-            <a href="{{ url_for('archive') }}" class="navbar-link {% if request.endpoint == 'archive' %}active{% endif %}">Archive</a>
-            <a href="{{ url_for('sanctuary') }}" class="navbar-link {% if request.endpoint == 'sanctuary' %}active{% endif %}">Sanctuary</a>
-            <a href="{{ url_for('writing') }}" class="navbar-link {% if request.endpoint == 'writing' %}active{% endif %}">Writing</a>
-            {% else %}
+            {% if not session.get('user_id') %}
             <a href="{{ url_for('index') }}#features" class="navbar-link">Features</a>
             <a href="{{ url_for('index') }}#how-it-works" class="navbar-link">How it Works</a>
             <a href="{{ url_for('index') }}#benefits" class="navbar-link">Benefits</a>
@@ -154,6 +244,24 @@
             {% endif %}
         </div>
     </div>
+
+    {% if session.get('user_id') %}
+    <div class="bottom-dock-container">
+        <div class="bottom-dock">
+            <a href="{{ url_for('archive') }}" class="dock-item {% if request.endpoint == 'archive' %}active{% endif %}">
+                <i class="fa-solid fa-book-bookmark"></i>
+                <span>Archive</span>
+            </a>
+            <a href="{{ url_for('sanctuary') }}" class="dock-item {% if request.endpoint == 'sanctuary' %}active{% endif %}">
+                <i class="fa-solid fa-leaf"></i>
+                <span>Sanctuary</span>
+            </a>
+        </div>
+    </div>
+    <script>
+        document.body.classList.add('user-logged-in');
+    </script>
+    {% endif %}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
