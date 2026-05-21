@@ -212,7 +212,7 @@ body.user-logged-in {
     <!-- NAVBAR -->
     <div class="navbar-container">
         <a href="{% if session.get('user_id') %}{{ url_for('archive') }}{% else %}{{ url_for('index') }}{% endif %}" class="navbar-logo">
-            <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}?v=1.3" alt="MoodBlume Logo" style="height: 90px; width: auto; display: block;">
+            <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}?v=1.3" alt="MoodBlume Logo" style="height: 36px; width: auto; display: block;">
         </a>
         <div class="navbar-center">
             {% if not session.get('user_id') %}
