@@ -223,9 +223,6 @@ body.user-logged-in {
         </div>
 
         <div class="navbar-right">
-            <button id="theme-toggle" class="theme-btn" aria-label="Toggle Dark Mode">
-                <i class="fa-solid fa-moon"></i>
-            </button>
             {% if session.get('user_id') %}
             <div class="nav-profile-container">
                 <button class="nav-profile-widget" id="profile-trigger" aria-label="Profile menu">
@@ -240,6 +237,10 @@ body.user-logged-in {
                         </svg>
                         Account
                     </a>
+                    <button id="theme-toggle" class="dropdown-item" style="background: none; border: none; width: calc(100% - 16px); text-align: left; cursor: pointer; font-family: inherit;">
+                        <i class="fa-solid fa-moon" style="font-size: 16px; width: 18px; text-align: center; margin-right: 4px; color: currentColor;"></i>
+                        <span id="theme-text">Dark Mode</span>
+                    </button>
                     <div class="dropdown-divider"></div>
                     <a href="{{ url_for('logout') }}" class="dropdown-item logout">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
