@@ -1735,11 +1735,14 @@
 
     /* Collections title (upper-left label) */
     .collections-title {
-        font-size: 15px;
-        font-weight: 600;
+        font-size: 18px;
+        font-weight: 700;
         color: var(--text);
-        margin-right: 18px;
         white-space: nowrap;
+    }
+
+    .collections-header {
+        padding: 18px 52px 8px;
     }
 
     .library-nav {
@@ -2304,8 +2307,10 @@
 
     <!-- UNIFIED LIBRARY SECTION -->
     <section class="library-section mode-carousel" style="margin-top: 40px;">
-        <div class="library-nav">
+        <div class="collections-header">
             <div class="collections-title">Your Collections</div>
+        </div>
+        <div class="library-nav">
             <div class="view-tabs">
                 <button class="view-tab active" data-view="monthly">Monthly</button>
                 <button class="view-tab" data-view="mood">By Mood</button>
