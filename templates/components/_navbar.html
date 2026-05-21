@@ -1,31 +1,35 @@
 <style>
+/* Profile Avatar Trigger */
+.nav-profile-container {
+    position: relative;
+    display: inline-block;
+}
+
 .nav-profile-widget {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px 6px 6px;
-    border-radius: 6px;
-    text-decoration: none;
-    color: var(--text-black);
-    font-weight: 500;
-    transition: background 0.2s;
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border: none;
+    padding: 0;
+    background: none;
 }
+
+.nav-profile-widget img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 .nav-profile-widget:hover {
-    background: rgba(0, 0, 0, 0.04);
-}
-.nav-profile-avatar {
-    width: 24px;
-    height: 24px;
-    background: #E4DFD6;
-    color: #554C42;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    opacity: 0.85;
+    transform: scale(1.05);
 }
 .nav-profile-name {
     font-size: 14.5px;
@@ -34,29 +38,25 @@
     color: var(--text-black);
 }
 
-/* Dropdown Menu Styles */
-.nav-profile-container {
-    position: relative;
-    display: inline-block;
-}
-
+/* Dropdown Container */
 .profile-dropdown {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 12px);
     right: 0;
-    background: rgba(255, 255, 255, 0.88);
+    background: #FFFFFF;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(82, 44, 14, 0.08);
-    border-radius: 12px;
-    min-width: 180px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    min-width: 240px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(10px);
+    transform: translateY(8px);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 2000;
-    padding: 8px;
+    padding: 12px 0;
+    overflow: hidden;
 }
 
 .profile-dropdown.show {
@@ -65,40 +65,54 @@
     transform: translateY(0);
 }
 
+/* Dropdown Items */
 .dropdown-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 14px;
-    color: var(--text-black);
+    padding: 12px 16px;
+    color: #1F2937;
     text-decoration: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'DM Sans', sans-serif;
     font-size: 14px;
+    font-weight: 500;
     border-radius: 8px;
-    transition: background 0.2s;
+    transition: background 0.2s ease;
+    margin: 0 8px;
 }
 
 .dropdown-item:hover {
-    background: rgba(82, 44, 14, 0.04);
+    background: #F3F4F6;
 }
 
-.dropdown-item i {
-    font-size: 14px;
-    opacity: 0.6;
+.dropdown-item svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+}
+
+/* Divider */
+.dropdown-divider {
+    height: 1px;
+    background: #E5E7EB;
+    margin: 8px 0;
 }
 
 .dropdown-divider {
-    height: 1px;
-    background: rgba(82, 44, 14, 0.06);
-    margin: 6px 0;
+    display: none;
 }
 
 .dropdown-item.logout {
-    color: #C2410C;
+    color: #DC2626;
 }
 
 .dropdown-item.logout:hover {
-    background: #FFF7ED;
+    background: #FEE2E2;
 }
 
 /* Bottom macOS Floating Dock */
@@ -214,27 +228,25 @@ body.user-logged-in {
             </button>
             {% if session.get('user_id') %}
             <div class="nav-profile-container">
-                <a href="javascript:void(0)" class="nav-profile-widget" id="profile-trigger">
-                    <div class="nav-profile-avatar">{{ session.get('username', 'U')[0]|upper }}</div>
-                    <div class="nav-profile-name">{{ session.get('username', 'Profile') }}</div>
-                    <i class="fa-solid fa-chevron-down" style="font-size: 10px; opacity: 0.4; margin-left: 4px;"></i>
-                </a>
+                <button class="nav-profile-widget" id="profile-trigger" aria-label="Profile menu">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ session.get('username', 'user') }}" alt="Profile">
+                </button>
                 
                 <div class="profile-dropdown" id="profile-menu">
                     <a href="{{ url_for('profile') }}" class="dropdown-item">
-                        <i class="fa-solid fa-user-gear"></i>
-                        Settings
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M 12 14 C 8 14 5 16 5 20 L 5 22 L 19 22 L 19 20 C 19 16 16 14 12 14 Z"/>
+                        </svg>
+                        Account
                     </a>
-                    {% if request.endpoint != 'archive' %}
-                    <a href="{{ url_for('archive') }}" class="dropdown-item">
-                        <i class="fa-solid fa-book-bookmark"></i>
-                        My Archive
-                    </a>
-                    {% endif %}
                     <div class="dropdown-divider"></div>
                     <a href="{{ url_for('logout') }}" class="dropdown-item logout">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Log Out
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 9 3 L 5 3 C 3.9 3 3 3.9 3 5 L 3 19 C 3 20.1 3.9 21 5 21 L 9 21"/>
+                            <path d="M 16 17 L 21 12 M 21 12 L 16 7 M 21 12 L 9 12"/>
+                        </svg>
+                        Sign out
                     </a>
                 </div>
             </div>

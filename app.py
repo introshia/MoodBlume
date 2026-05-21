@@ -379,7 +379,7 @@ def sanctuary():
     
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT id, content FROM journal_entries WHERE user_id = %s ORDER BY entry_date DESC LIMIT 30", (user_id,))
+    cursor.execute("SELECT id, content, entry_date FROM journal_entries WHERE user_id = %s ORDER BY entry_date DESC LIMIT 30", (user_id,))
     recent_entries = cursor.fetchall()
     
     # Determine the "current journal" style based on the latest entry's collection
@@ -402,8 +402,34 @@ def sanctuary():
     
     processed_entries = []
     for e in recent_entries:
-        text = get_preview_text(e['content'])
-        processed_entries.append({"id": e['id'], "text": text, "location": "", "cats": [], "fav": False})
+        content_str = e['content'] or ""
+        text = ""
+        location = ""
+        cats = []
+        fav = False
+        
+        if content_str.strip().startswith('{') and content_str.strip().endswith('}'):
+            import json
+            try:
+                data = json.loads(content_str)
+                text = data.get('text', '').strip()
+                location = data.get('location', '')
+                cats = data.get('cats', [])
+                fav = data.get('fav', False)
+            except Exception:
+                text = get_preview_text(content_str)
+        else:
+            text = get_preview_text(content_str)
+            
+        formatted_date = e['entry_date'].strftime("%b %d") if e.get('entry_date') else ""
+        processed_entries.append({
+            "id": e['id'], 
+            "text": text, 
+            "location": location, 
+            "cats": cats, 
+            "fav": fav, 
+            "formatted_date": formatted_date
+        })
         
     processed_entries.reverse()
     
@@ -781,19 +807,51 @@ def save_entry():
         # Optional: assign to a collection on save
         collection_id = data.get('collection_id', None)
 
-        # Save to database
+        # Check for id to see if it's an update
+        entry_id = data.get('id', None)
+        if not entry_id:
+            try:
+                import json
+                content_data = json.loads(content)
+                if isinstance(content_data, dict):
+                    entry_id = content_data.get('id', None)
+            except Exception:
+                pass
+
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO journal_entries (content, mood_score, theme, user_id, collection_id) VALUES (%s, %s, %s, %s, %s)",
-            (content, mood_score, 'Default', user_id, collection_id)
-        )
-        conn.commit()
+        
+        saved_id = None
+        if entry_id:
+            # Check if this entry exists and belongs to the user
+            cursor.execute("SELECT id FROM journal_entries WHERE id = %s AND user_id = %s", (entry_id, user_id))
+            existing = cursor.fetchone()
+            if existing:
+                # Update existing entry
+                cursor.execute(
+                    "UPDATE journal_entries SET content = %s, mood_score = %s, collection_id = %s WHERE id = %s AND user_id = %s",
+                    (content, mood_score, collection_id, entry_id, user_id)
+                )
+                conn.commit()
+                saved_id = entry_id
+            else:
+                entry_id = None
+                
+        if not entry_id:
+            # Save to database (Insert)
+            cursor.execute(
+                "INSERT INTO journal_entries (content, mood_score, theme, user_id, collection_id) VALUES (%s, %s, %s, %s, %s)",
+                (content, mood_score, 'Default', user_id, collection_id)
+            )
+            conn.commit()
+            saved_id = cursor.lastrowid
+            
         conn.close()
         
         return {
             'success': True,
             'message': 'Entry saved successfully',
+            'id': saved_id,
             'ai_analysis': ai_result,
             'quote': quote.get('text') if quote else None
         }, 200

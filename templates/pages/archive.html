@@ -839,24 +839,29 @@
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
-        border-radius: 2px 4px 4px 2px;
+        border-radius: 2px 24px 24px 2px; /* Uniform Moleskine shape */
     }
 
     .cover-front {
         z-index: 2;
-        box-shadow: 4px 10px 25px rgba(0, 0, 0, 0.12);
-    }
-
-    .cover-front svg {
-        width: 100%;
-        height: 100%;
-        display: block;
+        box-shadow: 6px 12px 30px rgba(0, 0, 0, 0.35);
+        background: linear-gradient(to right,
+                rgba(0, 0, 0, 0.3) 0%,
+                rgba(255, 255, 255, 0.05) 2%,
+                transparent 5%,
+                rgba(0, 0, 0, 0.2) 6%,
+                rgba(0, 0, 0, 0.4) 7%,
+                transparent 9%), #3D2B1F; /* Unified brown cover background */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
     }
 
     .cover-back {
         transform: rotateY(180deg);
-        background: #ECE5D8;
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        background: #3D2B1F;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -864,16 +869,55 @@
         padding: 20px;
     }
 
+    .premium-book .cover-label {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: center;
+        z-index: 4;
+        pointer-events: none;
+        padding: 0 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .premium-book .cover-label .lbl-small {
+        font-family: 'Lora', serif;
+        font-style: italic;
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.5) !important;
+        margin-bottom: 4px;
+        text-transform: lowercase;
+        letter-spacing: 0.05em;
+        display: block;
+    }
+
+    .premium-book .cover-label .lbl-big {
+        font-family: 'Lora', serif;
+        font-size: 13px;
+        font-weight: 500;
+        color: #FFFFFF !important;
+        line-height: 1.25;
+        text-align: center;
+        display: block;
+    }
+
     .elastic-band {
         position: absolute;
-        top: 0;
-        bottom: 0;
+        top: 4px;
+        bottom: 4px;
         right: 18%;
-        width: 5px;
+        width: 6px;
         z-index: 3;
-        box-shadow: -1px 0 4px rgba(0, 0, 0, 0.15);
+        box-shadow: -1px 0 4px rgba(0, 0, 0, 0.25);
         opacity: 0.9;
         transition: opacity 0.3s;
+        background: linear-gradient(to right, #0a0a0a, #222222 50%, #0a0a0a);
+        border-radius: 2px;
     }
 
     .book-cover.open .elastic-band {
@@ -2298,12 +2342,7 @@
                 </div>
             </div>
         </div>
-    </div>ow"><div class="legend-dot" style="background:#B8EACC"></div><div class="legend-text">Disgust</div></div>
-                <div class="legend-row"><div class="legend-dot" style="background:#D8D4C0"></div><div class="legend-text">Confusion</div></div>
-            </div>
-        </div>
     </div>
-    </div> <!-- Closes main content wrapper if any -->
 
     <!-- UNIFIED LIBRARY SECTION -->
     <section class="library-section mode-carousel" style="margin-top: 40px;">
@@ -2734,24 +2773,21 @@
     // Use the 3D book markup instead of the flat cards
     // Use the 3D book markup instead of the flat cards
     function cardHTML(e, idx) {
-        const arts = ['botanical', 'linen', 'face', 'wood', 'clouds'];
-        const bgs = ["#C8D898", "#EDE4D2", "#A8C4E4", "#DDBEAA", "#F0EAD6"];
-        const elastics = ["#1a2810", "#222222", "#283858", "#604818", "#1A1A1A"];
-
-        const art = arts[idx % arts.length];
-        const bg = bgs[idx % bgs.length];
-        const elastic = elastics[idx % elastics.length];
-
         return `
         <div class="lib-journal-item" data-id="${e.id}" style="cursor: pointer;">
             <div class="premium-book" id="lib-book-${e.id}">
                 <div class="book-pages"></div>
                 <div class="book-cover">
-                    <div class="cover-front">${generateSVG(art, bg)}</div>
+                    <div class="cover-front">
+                        <div class="cover-label">
+                            <span class="lbl-small">a memory from</span>
+                            <span class="lbl-big">${e.formatted_date}</span>
+                        </div>
+                    </div>
                     <div class="cover-back">
                         <span style="font-family:'Lora',serif; font-size:10px; color:#B0A090; letter-spacing:0.2em; text-transform:uppercase;">Ex Libris</span>
                     </div>
-                    <div class="elastic-band" style="background-color: ${elastic}"></div>
+                    <div class="elastic-band"></div>
                 </div>
             </div>
             <div class="flat-meta"><h3>${e.formatted_date}</h3></div>
@@ -2803,15 +2839,6 @@
             ENTRIES_DATA.forEach(e => { (groups[e.month_label] = groups[e.month_label] || []).push(e); });
             const monthCards = Object.keys(groups).map((month, idx) => {
                 const entries = groups[month];
-                // Reuse 3D book style for the month book too
-                const arts = ['linen', 'wood', 'botanical', 'face', 'clouds'];
-                const bgs = ["#C8D898", "#EDE4D2", "#A8C4E4", "#DDBEAA", "#F0EAD6"];
-                const elastics = ["#1a2810", "#222222", "#283858", "#604818", "#1A1A1A"];
-
-                const art = arts[idx % arts.length];
-                const bg = bgs[idx % bgs.length];
-                const elastic = elastics[idx % elastics.length];
-
                 const [mon, yr] = month.split(' ');
 
                 return `
@@ -2820,14 +2847,13 @@
                         <div class="book-pages"></div>
                         <div class="book-cover">
                             <div class="cover-front">
-                                ${generateSVG(art, bg)}
-                                <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none;">
-                                    <span style="font-family:'Lora',serif; font-size:18px; color:rgba(255,255,255,0.9);">${mon}</span>
-                                    <span style="font-size:9px; color:rgba(255,255,255,0.6); letter-spacing:0.1em; margin-top:4px;">${yr}</span>
+                                <div class="cover-label">
+                                    <span class="lbl-small">memories from</span>
+                                    <span class="lbl-big">${mon}<br><span style="font-size:9px; opacity:0.6; font-weight:normal;">${yr}</span></span>
                                 </div>
                             </div>
                             <div class="cover-back"></div>
-                            <div class="elastic-band" style="background-color: ${elastic}"></div>
+                            <div class="elastic-band"></div>
                         </div>
                     </div>
                     <div class="flat-meta">
