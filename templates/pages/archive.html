@@ -1247,7 +1247,7 @@
         transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
         cursor: pointer;
         user-select: none;
-        overflow: hidden;
+        overflow: visible;
         pointer-events: none;
         /* Allow clicks to pass through to covers */
     }
@@ -1277,12 +1277,16 @@
     }
 
     .journal-spotlight .page-front,
+    .journal-spotlight .page-back {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
     .journal-spotlight .right-wing .cover-inside {
         padding-left: 10px;
         /* Matched to side border */
     }
 
-    .journal-spotlight .page-back,
     .journal-spotlight .left-half .cover-inside {
         padding-right: 10px;
         /* Matched to side border */
@@ -1295,16 +1299,16 @@
 
     .journal-spotlight .page-front {
         left: 0;
-        right: 10px;
+        width: 294px;
         /* Balanced side border */
         border-radius: 0 28px 28px 0;
         z-index: 2;
     }
 
     .journal-spotlight .page-back {
-        left: 10px;
+        left: 0;
+        width: 294px;
         /* Balanced side border */
-        right: 0;
         border-radius: 28px 0 0 28px;
         transform: rotateY(180deg);
         z-index: 1;
@@ -1330,6 +1334,7 @@
     .journal-spotlight .page-back .spine-shadow,
     .journal-spotlight .left-half .cover-inside .spine-shadow {
         right: 0;
+        left: auto;
         background: linear-gradient(to left, rgba(0, 0, 0, 0.12) 0%, transparent 100%);
     }
 
@@ -2139,6 +2144,58 @@
     .btn-create:hover {
         opacity: 0.8;
     }
+
+    /* Journal Writing Areas */
+    .journal-spotlight .page-writing-area {
+        position: absolute;
+        inset: 0;
+        line-height: 32px;
+        background: transparent;
+        outline: none;
+        border: none;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 15px;
+        color: #3D2820;
+        cursor: text;
+        user-select: text;
+        -webkit-user-select: text;
+        overflow: hidden;
+        z-index: 5;
+        white-space: pre-wrap;
+        word-break: break-word;
+        caret-color: rgba(150, 128, 96, 0.9);
+    }
+
+    .journal-spotlight .page-front .page-writing-area {
+        padding: 4px 22px 16px 38px;
+    }
+
+    .journal-spotlight .page-back .page-writing-area {
+        padding: 4px 38px 16px 22px;
+    }
+
+    .journal-spotlight .page-writing-placeholder {
+        position: absolute;
+        top: 4px;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 15px;
+        font-style: italic;
+        line-height: 32px;
+        color: rgba(150, 128, 96, 0.35);
+        pointer-events: none;
+        z-index: 4;
+    }
+
+    .journal-spotlight .page-flip-strip {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 30px;
+        z-index: 10;
+        background: transparent;
+        cursor: pointer;
+    }
+
 </style>
 {% endblock %}
 
@@ -3151,25 +3208,9 @@
 
         // 3D Journal Listeners
         updateZIndices();
-        allPages.forEach((page, index) => {
-            page.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (!isOpen3D || isAnimating3D) return;
-                const isFlipped = page.classList.contains('flipped');
-                if (!isFlipped) {
-                    const nextToFlip = Array.from(allPages).find(p => !p.classList.contains('flipped'));
-                    if (page === nextToFlip) {
-                        page.classList.add('flipped');
-                        updateZIndices();
-                    }
-                } else {
-                    const flipped = Array.from(allPages).filter(p => p.classList.contains('flipped'));
-                    if (page === flipped[flipped.length - 1]) {
-                        page.classList.remove('flipped');
-                        updateZIndices();
-                    }
-                }
-            });
+        allPages.forEach((page) => {
+            // Stop propagation so document click doesn't close the journal when writing
+            page.addEventListener('click', (e) => { e.stopPropagation(); });
         });
 
         journal3d?.addEventListener('click', (e) => {
@@ -3183,7 +3224,8 @@
                 const isScene = e.target.closest('.scene');
                 const isPage = e.target.closest('.page');
                 const isControls = e.target.closest('.journal-controls');
-                if ((isCoverInside || isWing || isScene) && !isPage && !isControls) {
+                const isWritingArea = e.target.closest('.page-writing-area');
+                if ((isCoverInside || isWing || isScene) && !isPage && !isControls && !isWritingArea) {
                     toggleJournal3D();
                 }
             }
@@ -3203,5 +3245,107 @@
         const faces = document.querySelectorAll('.journal-spotlight .page-front, .journal-spotlight .page-back');
         faces.forEach(el => el.classList.add('style-' + style));
     };
+
+    // --- Journal Writing Areas ---
+    (function initWritingAreas() {
+        function addWritingArea(el, id, placeholderText, isBack) {
+            const ph = document.createElement('div');
+            ph.className = 'page-writing-placeholder';
+            ph.textContent = placeholderText;
+            ph.style.left = isBack ? '22px' : '38px';
+
+            const area = document.createElement('div');
+            area.className = 'page-writing-area';
+            area.contentEditable = 'true';
+            area.spellcheck = false;
+            area.dataset.pageId = id;
+
+            const saved = localStorage.getItem('journal-page-' + id);
+            if (saved) area.innerHTML = saved;
+
+            // textContent works regardless of display:none (unlike innerText which needs layout)
+            const isEmpty = () => area.textContent.trim() === '';
+            const syncPh = () => { ph.style.display = isEmpty() ? '' : 'none'; };
+            area.addEventListener('input', () => {
+                syncPh();
+                localStorage.setItem('journal-page-' + id, area.innerHTML);
+            });
+            syncPh();
+
+            el.appendChild(ph);
+            el.appendChild(area);
+            return { area, ph, isEmpty };
+        }
+
+        document.querySelectorAll('.journal-spotlight .page').forEach((page, i) => {
+            const pageNum = i + 1;
+            const front = page.querySelector('.page-front');
+            const back  = page.querySelector('.page-back');
+
+            const { area: frontArea, ph: frontPh, isEmpty: frontEmpty } = addWritingArea(
+                front, 'p' + pageNum + '-front',
+                pageNum === 1 ? 'begin here...' : 'write freely...', false);
+            const { area: backArea, ph: backPh, isEmpty: backEmpty } = addWritingArea(
+                back, 'p' + pageNum + '-back', 'write freely...', true);
+
+            // Initialize pointer-events based on current state
+            const initFlipped = page.classList.contains('flipped');
+            front.style.pointerEvents = initFlipped ? 'none' : 'auto';
+            back.style.pointerEvents  = initFlipped ? 'auto' : 'none';
+
+            // Back starts hidden so Grammarly doesn't track the inactive face
+            backArea.style.display = 'none';
+            backPh.style.display   = 'none';
+
+            new MutationObserver(() => {
+                const flipped = page.classList.contains('flipped');
+                front.style.pointerEvents = flipped ? 'none' : 'auto';
+                back.style.pointerEvents  = flipped ? 'auto' : 'none';
+
+                frontArea.style.display = flipped ? 'none' : '';
+                frontPh.style.display   = flipped ? 'none' : (frontEmpty() ? '' : 'none');
+                backArea.style.display  = flipped ? ''     : 'none';
+                // textContent-based check works now that backArea is visible (display:'')
+                backPh.style.display    = flipped ? (backEmpty() ? '' : 'none') : 'none';
+            }).observe(page, { attributes: true, attributeFilter: ['class'] });
+
+            // Flip strips — invisible 30px edge zones that trigger page turns
+            // page-front: outer edge is at right:0  (normal coordinate system)
+            // page-back:  outer edge is also right:0 (mirrored system — right = visual left outer edge)
+            const frontStrip = document.createElement('div');
+            frontStrip.className = 'page-flip-strip';
+            frontStrip.style.right = '0';
+            front.appendChild(frontStrip);
+
+            const backStrip = document.createElement('div');
+            backStrip.className = 'page-flip-strip';
+            backStrip.style.left = '0';  // unmirrored: left=0 is the visual outer-left edge
+            back.appendChild(backStrip);
+
+            frontStrip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!isOpen3D || isAnimating3D) return;
+                if (!page.classList.contains('flipped')) {
+                    const nextToFlip = Array.from(allPages).find(p => !p.classList.contains('flipped'));
+                    if (page === nextToFlip) {
+                        page.classList.add('flipped');
+                        updateZIndices();
+                    }
+                }
+            });
+
+            backStrip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!isOpen3D || isAnimating3D) return;
+                if (page.classList.contains('flipped')) {
+                    const flipped = Array.from(allPages).filter(p => p.classList.contains('flipped'));
+                    if (page === flipped[flipped.length - 1]) {
+                        page.classList.remove('flipped');
+                        updateZIndices();
+                    }
+                }
+            });
+        });
+    })();
 </script>
 {% endblock %}
