@@ -16,6 +16,12 @@
         <div class="sidebar-section">
             <ul class="sidebar-nav-list">
                 <li>
+                    <a href="{{ url_for('home') }}" class="sidebar-nav-item {% if request.endpoint == 'home' %}active{% endif %}">
+                        <i class="ti ti-home nav-icon"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ url_for('sanctuary') }}" class="sidebar-nav-item {% if request.endpoint == 'sanctuary' %}active{% endif %}">
                         <i class="ti ti-leaf nav-icon"></i>
                         <span>Sanctuary</span>
@@ -27,27 +33,18 @@
                         <span>Archive</span>
                     </a>
                 </li>
-            </ul>
-        </div>
-
-        <div class="sidebar-divider"></div>
-
-        <!-- Collections Section -->
-        <div class="sidebar-section">
-            <span class="sidebar-section-label">Collections</span>
-            <ul class="sidebar-nav-list" id="sidebar-collections-list">
-                {% if user_collections %}
-                    {% for c in user_collections %}
-                    <li>
-                        <a href="{{ url_for('archive') }}?collection={{ c.id }}" class="sidebar-nav-item">
-                            <span class="collection-dot" style="background-color: {{ c.cover_color or '#F4E6A6' }};"></span>
-                            <span class="collection-name">{{ c.name }}</span>
-                        </a>
-                    </li>
-                    {% endfor %}
-                {% else %}
-                    <li class="sidebar-empty-hint">No collections yet</li>
-                {% endif %}
+                <li>
+                    <a href="{{ url_for('journal') }}" class="sidebar-nav-item {% if request.endpoint == 'journal' %}active{% endif %}">
+                        <i class="ti ti-notebook nav-icon"></i>
+                        <span>Journal</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('your_collections') }}" class="sidebar-nav-item {% if request.endpoint == 'your_collections' %}active{% endif %}">
+                        <i class="ti ti-books nav-icon"></i>
+                        <span>Your Collections</span>
+                    </a>
+                </li>
             </ul>
         </div>
 

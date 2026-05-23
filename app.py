@@ -382,8 +382,56 @@ def logout():
 @app.route('/')
 def index():
     if 'user_id' in session:
-        return redirect(url_for('archive'))
+        return redirect(url_for('home'))
     return render_template('pages/index.html')
+
+
+@app.route('/home')
+def home():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('pages/home.html')
+
+
+@app.route('/journal')
+def journal():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM journal_entries WHERE user_id = %s ORDER BY entry_date DESC LIMIT 1", (user_id,))
+    latest_entry = cursor.fetchone()
+    conn.close()
+    return render_template('pages/journal.html', latest_entry=latest_entry)
+
+
+@app.route('/your-collections')
+def your_collections():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT
+            DATE_FORMAT(entry_date, '%M') AS month_name,
+            YEAR(entry_date) AS year,
+            DATE_FORMAT(entry_date, '%Y-%m') AS month_key,
+            COUNT(*) AS entry_count
+        FROM journal_entries
+        WHERE user_id = %s
+        GROUP BY month_key, month_name, year
+        ORDER BY month_key DESC
+    """, (user_id,))
+    monthly_groups = cursor.fetchall()
+    cursor.execute("SELECT * FROM collections WHERE user_id = %s ORDER BY created_at DESC", (user_id,))
+    custom_collections = cursor.fetchall()
+    conn.close()
+    return render_template('pages/your_collections.html',
+                           monthly_groups=monthly_groups,
+                           custom_collections=custom_collections)
+
 
 @app.route('/sanctuary')
 def sanctuary():

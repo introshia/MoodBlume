@@ -1,0 +1,41 @@
+{% extends 'pages/base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<style>
+    .home-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        padding: 40px 48px;
+    }
+
+    .home-coming-soon {
+        text-align: center;
+        color: var(--muted);
+    }
+
+    .home-coming-soon h1 {
+        font-family: 'Lora', serif;
+        font-size: 28px;
+        font-weight: 400;
+        color: var(--text);
+        margin-bottom: 12px;
+    }
+
+    .home-coming-soon p {
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="home-page">
+    <div class="home-coming-soon">
+        <h1>Home</h1>
+        <p>Your dashboard — greetings, energy levels, and recent entries — is coming soon.</p>
+    </div>
+</div>
+{% endblock %}
