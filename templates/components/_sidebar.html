@@ -28,21 +28,15 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('archive') }}" class="sidebar-nav-item {% if request.endpoint == 'archive' %}active{% endif %}">
-                        <i class="ti ti-archive nav-icon"></i>
-                        <span>Archive</span>
-                    </a>
-                </li>
-                <li>
                     <a href="{{ url_for('journal') }}" class="sidebar-nav-item {% if request.endpoint == 'journal' %}active{% endif %}">
                         <i class="ti ti-notebook nav-icon"></i>
                         <span>Journal</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('your_collections') }}" class="sidebar-nav-item {% if request.endpoint == 'your_collections' %}active{% endif %}">
+                    <a href="{{ url_for('archive') }}" class="sidebar-nav-item {% if request.endpoint == 'archive' %}active{% endif %}">
                         <i class="ti ti-books nav-icon"></i>
-                        <span>Your Collections</span>
+                        <span>Archive</span>
                     </a>
                 </li>
             </ul>

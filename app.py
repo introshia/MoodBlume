@@ -390,7 +390,98 @@ def index():
 def home():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('pages/home.html')
+
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM journal_entries WHERE user_id = %s ORDER BY entry_date DESC", (user_id,))
+    all_entries = cursor.fetchall()
+    cursor.execute("SELECT * FROM collections WHERE user_id = %s ORDER BY created_at DESC", (user_id,))
+    user_collections = cursor.fetchall()
+    conn.close()
+
+    now = datetime.now()
+    current_month_str = now.strftime("%B %Y")
+    shelves_data = {}
+    color_map = {5: 'c-sage', 4: 'c-slate', 3: 'c-ochre', 2: 'c-terr', 1: 'c-rose', 'default': 'c-dust'}
+    arts = ['botanical', 'linen', 'face', 'wood', 'clouds']
+    bgs = ["#C8D898", "#EDE4D2", "#A8C4E4", "#DDBEAA", "#F0EAD6"]
+    elastics = ["#1a2810", "#222222", "#283858", "#604818", "#1A1A1A"]
+    featured_journals = []
+    mood_label_map = {1: 'Angry', 2: 'Sad', 3: 'Anxious', 4: 'Confused', 5: 'Neutral', 6: 'Calm', 7: 'Hopeful', 8: 'Grateful', 9: 'Excited'}
+
+    for i, entry in enumerate(all_entries):
+        display_text = get_preview_text(entry['content'])
+        entry['display_text'] = (display_text[:60] + '...') if len(display_text) > 60 else display_text
+        entry['color_class'] = color_map.get(entry['mood_score'], color_map['default'])
+        entry['formatted_date'] = entry['entry_date'].strftime("%b %d")
+        entry['mood_label'] = mood_label_map.get(entry['mood_score'], 'Steady')
+        entry['month_label'] = entry['entry_date'].strftime("%B %Y")
+        if not entry.get('collection_id'):
+            month_year = entry['month_label']
+            if month_year not in shelves_data:
+                shelves_data[month_year] = []
+            shelves_data[month_year].append(entry)
+        if i < 5:
+            featured_journals.append({
+                "id": entry['id'],
+                "title": entry['formatted_date'],
+                "pages": entry['theme'] if (entry['theme'] and entry['theme'] != 'Default') else "Personal Chronicle",
+                "elastic": elastics[i % len(elastics)],
+                "bg": bgs[i % len(bgs)],
+                "art": arts[i % len(arts)],
+                "content_preview": entry['display_text']
+            })
+
+    all_entries_json = [{
+        'id': e['id'], 'content': e['content'], 'display_text': e['display_text'],
+        'color_class': e['color_class'], 'formatted_date': e['formatted_date'],
+        'iso_date': e['entry_date'].strftime("%Y-%m-%d"), 'mood_score': e['mood_score'],
+        'mood_label': e['mood_label'], 'month_label': e['month_label'],
+        'collection_id': e.get('collection_id'),
+    } for e in all_entries]
+
+    user_collections_json = [{'id': c['id'], 'name': c['name'], 'cover_color': c['cover_color']} for c in user_collections]
+
+    ordered_shelves = []
+    if current_month_str in shelves_data:
+        entries = shelves_data[current_month_str]
+        ordered_shelves.append({"label": "Currently Writing", "featured": entries[:3], "archive_count": max(0, len(entries) - 3)})
+        del shelves_data[current_month_str]
+    else:
+        ordered_shelves.append({"label": "Currently Writing", "featured": [], "archive_count": 0})
+    for month in sorted(shelves_data.keys(), key=lambda x: datetime.strptime(x, "%B %Y"), reverse=True):
+        entries = shelves_data[month]
+        ordered_shelves.append({"label": month, "featured": entries[:3], "archive_count": max(0, len(entries) - 3)})
+
+    for col in user_collections:
+        col['entry_count'] = sum(1 for e in all_entries if e.get('collection_id') == col['id'])
+
+    trend = calculate_mood_trend(all_entries)
+    config_map = {9: {"c": "#F2DD66"}, 8: {"c": "#FFB4D1"}, 7: {"c": "#85D0E8"}, 6: {"c": "#A8DADC"}, 5: {"c": "#DFDAC9"}, 4: {"c": "#C5C6D0"}, 3: {"c": "#B6AEE6"}, 2: {"c": "#A8C1ED"}, 1: {"c": "#FF9AA2"}}
+    mood_name_map = {9: "excited", 8: "grateful", 7: "hopeful", 6: "calm", 5: "neutral", 4: "confused", 3: "anxious", 2: "sad", 1: "angry"}
+    chart_points = [{"label": e['entry_date'].strftime("%b %d"), "val": e['mood_score'], "color": config_map.get(e['mood_score'], config_map[3])["c"], "mood": mood_name_map.get(e['mood_score'], "neutral")} for e in reversed(all_entries[:15])]
+
+    hour = now.hour
+    greeting_prefix = "Good morning" if hour < 12 else "Good afternoon" if hour < 17 else "Good evening"
+    clean_username = session.get('username', 'friend').replace('_', ' ').title()
+    greeting = f"{greeting_prefix}, {clean_username}."
+    stats_msg = f"You've inscribed {len(all_entries)} memories in your Archive this year."
+    latest_text = get_preview_text(all_entries[0]['content']) if all_entries else ""
+
+    return render_template('pages/archive.html',
+                           shelves=ordered_shelves, user_collections=user_collections,
+                           all_entries_json=all_entries_json, user_collections_json=user_collections_json,
+                           featured_journals=featured_journals, greeting=greeting, stats_msg=stats_msg,
+                           trend=trend, insights=calculate_advanced_insights(all_entries),
+                           chart_labels=[p["label"] for p in chart_points],
+                           chart_scores=[p["val"] for p in chart_points],
+                           chart_colors=[p["color"] for p in chart_points],
+                           chart_moods=[p["mood"] for p in chart_points],
+                           companion=calculate_energy_data(latest_text),
+                           weekly=calculate_weekly_wrapup(all_entries),
+                           current_streak=calculate_streak(user_id))
 
 
 @app.route('/journal')
@@ -408,29 +499,7 @@ def journal():
 
 @app.route('/your-collections')
 def your_collections():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    user_id = session['user_id']
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT
-            DATE_FORMAT(entry_date, '%M') AS month_name,
-            YEAR(entry_date) AS year,
-            DATE_FORMAT(entry_date, '%Y-%m') AS month_key,
-            COUNT(*) AS entry_count
-        FROM journal_entries
-        WHERE user_id = %s
-        GROUP BY month_key, month_name, year
-        ORDER BY month_key DESC
-    """, (user_id,))
-    monthly_groups = cursor.fetchall()
-    cursor.execute("SELECT * FROM collections WHERE user_id = %s ORDER BY created_at DESC", (user_id,))
-    custom_collections = cursor.fetchall()
-    conn.close()
-    return render_template('pages/your_collections.html',
-                           monthly_groups=monthly_groups,
-                           custom_collections=custom_collections)
+    return redirect(url_for('archive'))
 
 
 @app.route('/sanctuary')
@@ -506,171 +575,23 @@ def sanctuary():
 def archive():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-        
     user_id = session['user_id']
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    
-    # 1. Fetch ALL entries for shelves
-    cursor.execute("SELECT * FROM journal_entries WHERE user_id = %s ORDER BY entry_date DESC", (user_id,))
-    all_entries = cursor.fetchall()
-
-    # 1b. Fetch user's custom collections
+    cursor.execute("""
+        SELECT DATE_FORMAT(entry_date, '%M') AS month_name, YEAR(entry_date) AS year,
+               DATE_FORMAT(entry_date, '%Y-%m') AS month_key, COUNT(*) AS entry_count
+        FROM journal_entries WHERE user_id = %s
+        GROUP BY month_key, month_name, year ORDER BY month_key DESC
+    """, (user_id,))
+    monthly_groups = cursor.fetchall()
     cursor.execute("SELECT * FROM collections WHERE user_id = %s ORDER BY created_at DESC", (user_id,))
-    user_collections = cursor.fetchall()
+    custom_collections = cursor.fetchall()
     conn.close()
+    return render_template('pages/your_collections.html',
+                           monthly_groups=monthly_groups,
+                           custom_collections=custom_collections)
 
-    # 2. Process entries
-    now = datetime.now()
-    current_month_str = now.strftime("%B %Y")
-    shelves_data = {}
-
-    color_map = {
-        5: 'c-sage', 4: 'c-slate', 3: 'c-ochre', 2: 'c-terr', 1: 'c-rose', 'default': 'c-dust'
-    }
-
-    arts = ['botanical', 'linen', 'face', 'wood', 'clouds']
-    bgs = ["#C8D898", "#EDE4D2", "#A8C4E4", "#DDBEAA", "#F0EAD6"]
-    elastics = ["#1a2810", "#222222", "#283858", "#604818", "#1A1A1A"]
-    featured_journals = []
-
-    # Map collection_id -> collection name for quick lookup
-    collection_map = {c['id']: c for c in user_collections}
-
-    mood_label_map = {1: 'Angry', 2: 'Sad', 3: 'Anxious', 4: 'Confused', 5: 'Neutral', 6: 'Calm', 7: 'Hopeful', 8: 'Grateful', 9: 'Excited'}
-
-    for i, entry in enumerate(all_entries):
-        display_text = get_preview_text(entry['content'])
-        entry['display_text'] = (display_text[:60] + '...') if len(display_text) > 60 else display_text
-        entry['color_class'] = color_map.get(entry['mood_score'], color_map['default'])
-        entry['formatted_date'] = entry['entry_date'].strftime("%b %d")
-        entry['mood_label'] = mood_label_map.get(entry['mood_score'], 'Steady')
-        entry['month_label'] = entry['entry_date'].strftime("%B %Y")
-
-        # Monthly shelves fallback (for Jinja no-JS)
-        if not entry.get('collection_id'):
-            month_year = entry['month_label']
-            if month_year not in shelves_data:
-                shelves_data[month_year] = []
-            shelves_data[month_year].append(entry)
-
-        # Prepare first 5 for the 3D Featured Shelf with variety
-        if i < 5:
-            featured_journals.append({
-                "id": entry['id'],
-                "title": entry['formatted_date'],
-                "pages": entry['theme'] if (entry['theme'] and entry['theme'] != 'Default') else "Personal Chronicle",
-                "elastic": elastics[i % len(elastics)],
-                "bg": bgs[i % len(bgs)],
-                "art": arts[i % len(arts)],
-                "content_preview": entry['display_text']
-            })
-
-    # Build JSON-serialisable snapshots for the client-side view switcher
-    all_entries_json = [{
-        'id': e['id'],
-        'content': e['content'],
-        'display_text': e['display_text'],
-        'color_class': e['color_class'],
-        'formatted_date': e['formatted_date'],
-        'iso_date': e['entry_date'].strftime("%Y-%m-%d"),
-        'mood_score': e['mood_score'],
-        'mood_label': e['mood_label'],
-        'month_label': e['month_label'],
-        'collection_id': e.get('collection_id'),
-    } for e in all_entries]
-
-    user_collections_json = [
-        {'id': c['id'], 'name': c['name'], 'cover_color': c['cover_color']}
-        for c in user_collections
-    ]
-
-    # 3. Organize Monthly Shelves (uncollected entries only)
-    ordered_shelves = []
-    if current_month_str in shelves_data:
-        entries = shelves_data[current_month_str]
-        ordered_shelves.append({
-            "label": "Currently Writing",
-            "featured": entries[:3],
-            "archive_count": max(0, len(entries) - 3)
-        })
-        del shelves_data[current_month_str]
-    else:
-        ordered_shelves.append({"label": "Currently Writing", "featured": [], "archive_count": 0})
-
-    sorted_months = sorted(shelves_data.keys(), key=lambda x: datetime.strptime(x, "%B %Y"), reverse=True)
-    for month in sorted_months:
-        entries = shelves_data[month]
-        ordered_shelves.append({
-            "label": month,
-            "featured": entries[:3],
-            "archive_count": max(0, len(entries) - 3)
-        })
-
-    # 4. Enrich collections with their entry count
-    for col in user_collections:
-        col['entry_count'] = sum(1 for e in all_entries if e.get('collection_id') == col['id'])
-
-    # 5. AI Mood Trend (Linear Regression)
-    trend = calculate_mood_trend(all_entries)
-    
-    # 6. Chart Data
-    chart_points = []
-    # Map 1-9 score to the 12 specific faces based on subtle randomization or exact mapping
-    config_map = {
-        9: {"c": "#F2DD66", "label": "excited"},
-        8: {"c": "#FFB4D1", "label": "grateful"},
-        7: {"c": "#85D0E8", "label": "hopeful"},
-        6: {"c": "#A8DADC", "label": "calm"},
-        5: {"c": "#DFDAC9", "label": "neutral"},
-        4: {"c": "#C5C6D0", "label": "confused"},
-        3: {"c": "#B6AEE6", "label": "anxious"},
-        2: {"c": "#A8C1ED", "label": "sad"},
-        1: {"c": "#FF9AA2", "label": "angry"}
-    }
-    for i, e in enumerate(reversed(all_entries[:15])):
-        d_str = e['entry_date'].strftime("%b %d")
-        score = e['mood_score']
-        chart_points.append({
-            "label": d_str,
-            "val": score,
-            "color": config_map.get(score, config_map[3])["c"],
-            "mood": config_map.get(score, config_map[3])["label"]
-        })
-    
-    chart_labels = [p["label"] for p in chart_points]
-    chart_scores = [p["val"] for p in chart_points]
-    chart_colors = [p["color"] for p in chart_points]
-    chart_moods = [p["mood"] for p in chart_points]
-
-    # Greeting & Stats
-    hour = now.hour
-    greeting_prefix = "Good morning" if hour < 12 else "Good afternoon" if hour < 17 else "Good evening"
-    raw_username = session.get('username', 'Alex')
-    clean_username = raw_username.replace('_', ' ').title()
-    greeting = f"{greeting_prefix}, {clean_username}."
-    stats_msg = f"You've inscribed {len(all_entries)} memories in your Archive this year."
-
-    # 7. Atmosphere Companion (Energy Widget)
-    latest_text = get_preview_text(all_entries[0]['content']) if all_entries else ""
-    companion_data = calculate_energy_data(latest_text)
-
-    return render_template('pages/archive.html',
-                          shelves=ordered_shelves,
-                          user_collections=user_collections,
-                          all_entries_json=all_entries_json,
-                          user_collections_json=user_collections_json,
-                          featured_journals=featured_journals,
-                          greeting=greeting,
-                          stats_msg=stats_msg,
-                          trend=trend, insights=calculate_advanced_insights(all_entries),
-                          chart_labels=chart_labels,
-                          chart_scores=chart_scores,
-                          chart_colors=chart_colors,
-                          chart_moods=chart_moods,
-                          companion=companion_data,
-                          weekly=calculate_weekly_wrapup(all_entries),
-                          current_streak=calculate_streak(user_id))
 
 
 # ── COLLECTION API ROUTES ──────────────────────────────────────────────────────
