@@ -2,15 +2,12 @@
 {% block title %}Home{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/archive.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="home-page">
     <header class="home-hero">
-        <div class="home-hero-deco home-hero-deco--left" aria-hidden="true">✿</div>
-        <div class="home-hero-deco home-hero-deco--right" aria-hidden="true">✦</div>
 
         <div class="dashboard-blob-container custom-tooltip-trigger home-blob-wrap"
             style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s; --mspeed: 4s;">
@@ -40,116 +37,43 @@
         <h1 class="home-greeting">{{ greeting }}</h1>
         <p class="home-subline">{{ stats_msg }}</p>
 
-        <div class="home-stats" aria-label="This week's activity">
-            <span class="home-stat-pill home-stat-pill--label">This week · {{ weekly.date_range }}</span>
-            <span class="home-stat-pill">{{ weekly.days }} days active</span>
-            <span class="home-stat-pill">{{ weekly.entries }} new {% if weekly.entries == 1 %}entry{% else %}entries{% endif %}</span>
-            <span class="home-stat-pill">{{ weekly.minutes }}m {{ weekly.seconds }}s writing</span>
-        </div>
-
         <div class="home-hero-actions">
             <a href="{{ url_for('main.sanctuary', open_journal='true') }}" class="home-write-btn">
                 <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
                 Write Today's Entry
             </a>
-            <a href="{{ url_for('main.archive') }}" class="home-secondary-btn">Browse collections</a>
         </div>
     </header>
 
-    <section class="home-dashboard" aria-label="Your dashboard">
-        <article class="home-card home-card--memory">
-            <h2 class="home-card-label">On this day</h2>
-            {% if memory_entry %}
-            <div class="memory-card home-nested-memory">
-                <div class="memory-header">
-                    <div>
-                        <div class="memory-time-label">{{ memory_entry.label }}</div>
-                        <div class="memory-date">{{ memory_entry.date }}</div>
+    <section class="home-week-section">
+        <h2 class="home-week-title">This Week's Garden</h2>
+        <div class="home-week-strip">
+            {% for day in week_days %}
+                {% if day.has_entry %}
+                    <div class="home-week-day has-entry" style="--day-color: {{ day.mood_color }};" 
+                         title="{{ day.day_name }} {{ day.day_num }} · {{ day.mood_label }} · Click to read"
+                         onclick="window.location.href='/sanctuary?entry_id={{ day.entry_id }}&open_journal=true'">
+                        <span class="home-week-day-name">{{ day.day_name }}</span>
+                        <div class="home-week-dot">
+                            <span class="home-week-dot-inner"></span>
+                        </div>
                     </div>
-                </div>
-                <div class="memory-divider"></div>
-                <blockquote class="memory-quote">"{{ memory_entry.preview }}"</blockquote>
-                <div class="memory-mood">
-                    <span class="memory-mood-dot" style="background: {{ memory_entry.mood_color }};"></span>
-                    {{ memory_entry.mood_label }}
-                </div>
-            </div>
-            {% else %}
-            <div class="home-empty-memory">
-                <p>Keep writing — a memory from this day in past years will appear here when the time is right.</p>
-                <a href="{{ url_for('main.sanctuary', open_journal='true') }}" class="home-empty-link">Start today's page →</a>
-            </div>
-            {% endif %}
-        </article>
-
-        <article class="home-card home-card--calendar">
-            <h2 class="home-card-label">Mood garden</h2>
-            <div class="cal-wrap home-nested-cal" id="aw">
-                <h3 class="sr-only">Navigable emotion calendar</h3>
-                <div class="cal-header">
-                    <div class="cal-title">
-                        <span class="cal-month-label" id="monthLabel"></span>
-                        <span class="cal-year-label" id="yearLabel"></span>
+                {% else %}
+                    <div class="home-week-day no-entry {{ day.color_class }}" 
+                         title="{{ day.day_name }} {{ day.day_num }} · No Entry">
+                        <span class="home-week-day-name">{{ day.day_name }}</span>
+                        <div class="home-week-dot">
+                            <span class="home-week-dot-num">{{ day.day_num }}</span>
+                        </div>
                     </div>
-                    <div class="cal-nav">
-                        <button type="button" class="nav-btn" id="prevBtn" aria-label="Previous month">‹</button>
-                        <button type="button" class="today-pill" id="todayBtn">Today</button>
-                        <button type="button" class="nav-btn" id="nextBtn" aria-label="Next month">›</button>
-                    </div>
-                </div>
-                <div class="cal-grid" id="calGrid"></div>
-                <div class="legend">
-                    <div class="legend-grid">
-                        <div class="legend-row"><div class="legend-dot" style="background:#F5E6B0"></div><div class="legend-text">Joy</div></div>
-                        <div class="legend-row"><div class="legend-dot" style="background:#BDDDF0"></div><div class="legend-text">Sadness</div></div>
-                        <div class="legend-row"><div class="legend-dot" style="background:#F5C0BE"></div><div class="legend-text">Anger</div></div>
-                        <div class="legend-row"><div class="legend-dot" style="background:#DBC8F0"></div><div class="legend-text">Fear</div></div>
-                        <div class="legend-row"><div class="legend-dot" style="background:#B8EACC"></div><div class="legend-text">Disgust</div></div>
-                        <div class="legend-row"><div class="legend-dot" style="background:#D8D4C0"></div><div class="legend-text">Confusion</div></div>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </section>
-
-    <div id="obo-modal" class="obo-wrap">
-        <button type="button" class="obo-close" id="obo-close-btn" aria-label="Close">&times;</button>
-        <div class="obo-content">
-            <div class="obo-header">
-                <h2 class="obo-title" id="obo-dyn-title">--</h2>
-                <p class="obo-pages" id="obo-dyn-pages">--</p>
-            </div>
-            <div class="obo-spread-wrap">
-                <div class="obo-book-body">
-                    <div class="obo-left">
-                        <span class="obo-left-text">EX LIBRIS</span>
-                        <div class="obo-left-hr"></div>
-                    </div>
-                    <div class="obo-right">
-                        <div class="obo-lines"></div>
-                        <div class="obo-crease"></div>
-                        <div class="obo-shadow"></div>
-                        <span class="obo-right-title" id="obo-dyn-writ">--</span>
-                    </div>
-                </div>
-                <div class="obo-fanned">
-                    <div class="fpage" style="left:0px; width:6px; background:#F2EDE5; opacity:0.45;"></div>
-                    <div class="fpage" style="left:5px; width:7px; background:#EDE8DF; opacity:0.515;"></div>
-                    <div class="fpage" style="left:10px; width:8px; background:#F2EDE5; opacity:0.58;"></div>
-                    <div class="fpage" style="left:15px; width:9px; background:#EDE8DF; opacity:0.645;"></div>
-                    <div class="fpage" style="left:20px; width:10px; background:#F2EDE5; opacity:0.71;"></div>
-                    <div class="fpage" style="left:25px; width:11px; background:#EDE8DF; opacity:0.775;"></div>
-                    <div class="fpage" style="left:30px; width:12px; background:#F2EDE5; opacity:0.84;"></div>
-                </div>
-            </div>
+                {% endif %}
+            {% endfor %}
         </div>
-    </div>
+        <div class="home-history-link-wrap">
+            <a href="{{ url_for('main.archive') }}" class="home-history-link">
+                View full history <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+            </a>
+        </div>
+    </section>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script id="featured-data" type="application/json">{{ featured_journals | tojson | safe }}</script>
-<script id="entries-data" type="application/json">{{ all_entries_json | tojson | safe }}</script>
-<script id="collections-data" type="application/json">{{ user_collections_json | tojson | safe }}</script>
-<script src="{{ url_for('static', filename='js/archive.js') }}"></script>
 {% endblock %}

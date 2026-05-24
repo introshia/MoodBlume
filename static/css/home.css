@@ -20,17 +20,6 @@
     margin-bottom: 12px;
 }
 
-.home-hero-deco {
-    position: absolute;
-    top: 12px;
-    font-size: 14px;
-    color: rgba(138, 154, 112, 0.45);
-    pointer-events: none;
-}
-
-.home-hero-deco--left { left: 8%; }
-.home-hero-deco--right { right: 8%; }
-
 .home-blob-wrap {
     margin: 0 auto 12px;
     width: fit-content;
@@ -152,136 +141,134 @@
     text-decoration: none;
 }
 
-/* Dashboard grid */
-.home-dashboard {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: stretch;
-}
-
-.home-card {
+/* Weekly Mood Tracker Section */
+.home-week-section {
+    max-width: 580px;
+    margin: 40px auto 0;
+    text-align: center;
     background: linear-gradient(165deg, #fffdf8 0%, #faf6ef 100%);
-    border: 1px solid rgba(75, 46, 31, 0.1);
-    border-radius: 22px;
-    padding: 22px 24px 24px;
-    box-shadow:
+    border: 1px solid rgba(75, 46, 31, 0.08);
+    border-radius: 20px;
+    padding: 24px 32px 28px;
+    box-shadow: 
         0 1px 0 rgba(255, 255, 255, 0.9) inset,
-        0 14px 40px rgba(75, 46, 31, 0.07);
-    display: flex;
-    flex-direction: column;
-    min-height: 320px;
+        0 10px 30px rgba(75, 46, 31, 0.04);
 }
 
-.home-card-label {
+.home-week-title {
     font-family: 'Caveat', cursive;
-    font-size: 1.35rem;
-    font-weight: 600;
-    color: rgba(138, 154, 112, 0.95);
-    margin: 0 0 16px;
-    line-height: 1;
-}
-
-/* Nested memory card — strip duplicate chrome */
-.home-page .home-nested-memory.memory-card {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    animation: none;
-}
-
-.home-page .memory-quote {
-    flex: 1;
-    font-size: 15px;
-    line-height: 1.75;
-    margin-bottom: 16px;
-    border: none;
-    padding: 0;
-}
-
-.home-page .memory-time-label {
-    font-size: 1.35rem;
-}
-
-.home-page .memory-mood {
-    font-weight: 500;
-    color: rgba(75, 46, 31, 0.7);
-}
-
-.home-empty-memory {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 12px 0;
-}
-
-.home-empty-memory p {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem;
-    font-style: italic;
-    line-height: 1.65;
-    color: rgba(75, 46, 31, 0.55);
-    margin: 0 0 16px;
-}
-
-.home-empty-link {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-size: 1.55rem;
     font-weight: 600;
     color: #8A9A70;
+    margin: 0 0 20px;
+}
+
+.home-week-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.home-week-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.home-week-day-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(75, 46, 31, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.home-week-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Day with entry */
+.home-week-day.has-entry {
+    cursor: pointer;
+}
+
+.home-week-day.has-entry .home-week-dot {
+    background-color: var(--day-color);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.home-week-day.has-entry:hover .home-week-dot {
+    transform: scale(1.12);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.home-week-dot-inner {
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+/* Day without entry */
+.home-week-day.no-entry .home-week-dot {
+    border: 1px dashed rgba(75, 46, 31, 0.18);
+    color: rgba(75, 46, 31, 0.4);
+    background: transparent;
+}
+
+/* Future days */
+.home-week-day.no-entry.e-future .home-week-dot {
+    border: 1px dashed rgba(75, 46, 31, 0.08);
+    color: rgba(75, 46, 31, 0.2);
+}
+
+.home-week-dot-num {
+    font-weight: 500;
+}
+
+/* History Link */
+.home-history-link-wrap {
+    margin-top: 12px;
+}
+
+.home-history-link {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(138, 154, 112, 0.85);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.home-history-link:hover {
+    color: #6a7a52;
     text-decoration: none;
 }
 
-.home-empty-link:hover {
-    color: #6a7a52;
-    text-decoration: underline;
+.home-history-link i {
+    transition: transform 0.2s ease;
 }
 
-/* Nested calendar */
-.home-page .home-nested-cal.cal-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    max-width: none !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-}
-
-.home-page .home-nested-cal .cal-grid {
-    flex: 1;
-}
-
-.home-page .home-nested-cal .legend {
-    margin-top: auto;
-    padding-top: 12px;
-}
-
-.home-page .cal-month-label {
-    font-family: 'Caveat', cursive !important;
-    font-size: 1.5rem !important;
-}
-
-.home-page .nav-btn,
-.home-page .today-pill {
-    border-color: rgba(75, 46, 31, 0.15) !important;
-    box-shadow: none !important;
-}
-
-.home-page .nav-btn:hover,
-.home-page .today-pill:hover {
-    background: rgba(138, 154, 112, 0.1) !important;
+.home-history-link:hover i {
+    transform: translateX(3px);
 }
 
 /* Tooltip position on home */
@@ -289,37 +276,44 @@
     bottom: -20px;
 }
 
-@media (max-width: 860px) {
-    .home-dashboard {
-        grid-template-columns: 1fr;
-    }
-
-    .home-card {
-        min-height: auto;
-    }
-}
-
 @media (max-width: 768px) {
     .home-page {
         padding: 24px 20px 64px;
         padding-right: 56px;
     }
-
-    .home-hero-deco {
-        display: none;
-    }
 }
 
 /* Dark theme */
-body.dark-theme .home-card {
+body.dark-theme .home-week-section {
     background: linear-gradient(165deg, #2c2822 0%, #262218 100%);
-    border-color: rgba(212, 201, 176, 0.12);
+    border-color: rgba(212, 201, 176, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-body.dark-theme .home-stat-pill {
-    background: rgba(44, 40, 34, 0.9);
-    border-color: rgba(212, 201, 176, 0.15);
-    color: rgba(212, 201, 176, 0.85);
+body.dark-theme .home-week-title {
+    color: #C8D898;
+}
+
+body.dark-theme .home-week-day-name {
+    color: rgba(232, 224, 208, 0.45);
+}
+
+body.dark-theme .home-week-day.no-entry .home-week-dot {
+    border-color: rgba(212, 201, 176, 0.25);
+    color: rgba(212, 201, 176, 0.55);
+}
+
+body.dark-theme .home-week-day.no-entry.e-future .home-week-dot {
+    border-color: rgba(212, 201, 176, 0.12);
+    color: rgba(212, 201, 176, 0.3);
+}
+
+body.dark-theme .home-history-link {
+    color: rgba(200, 216, 152, 0.85);
+}
+
+body.dark-theme .home-history-link:hover {
+    color: #c8d898;
 }
 
 body.dark-theme .home-greeting {

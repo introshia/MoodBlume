@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from ..extensions import get_db_connection
 from ..ai.helpers import (
@@ -101,11 +101,46 @@ def home():
     stats_msg        = f"You've inscribed {len(all_entries)} memories in your Archive this year."
     latest_text      = get_preview_text(all_entries[0]['content']) if all_entries else ""
 
+    # Calculate current week's dates (Monday to Sunday) and map entries
+    today = now.date()
+    start_of_week = today - timedelta(days=today.weekday())
+    week_days = []
+    for i in range(7):
+        day_date = start_of_week + timedelta(days=i)
+        entry_on_day = None
+        for e in all_entries:
+            if e['entry_date'].date() == day_date:
+                entry_on_day = e
+                break
+        
+        if entry_on_day:
+            week_days.append({
+                "day_name": day_date.strftime("%a"),
+                "day_num": day_date.day,
+                "has_entry": True,
+                "mood_score": entry_on_day['mood_score'],
+                "mood_label": entry_on_day['mood_label'],
+                "mood_color": _CONFIG_MAP.get(entry_on_day['mood_score'], _CONFIG_MAP[5])["c"],
+                "color_class": entry_on_day['color_class'],
+                "entry_id": entry_on_day['id']
+            })
+        else:
+            week_days.append({
+                "day_name": day_date.strftime("%a"),
+                "day_num": day_date.day,
+                "has_entry": False,
+                "mood_score": None,
+                "mood_label": "No Entry",
+                "mood_color": "transparent",
+                "color_class": "e-future" if day_date > today else "e-none",
+                "entry_id": None
+            })
+
     return render_template('pages/home.html',
         shelves=ordered_shelves, user_collections=user_collections,
         all_entries_json=all_entries_json, user_collections_json=user_collections_json,
         featured_journals=featured_journals, greeting=greeting, stats_msg=stats_msg,
-        trend=trend, memory_entry=get_memory_entry(all_entries),
+        trend=trend, week_days=week_days,
         chart_labels=[p["label"] for p in chart_points],
         chart_scores=[p["val"]   for p in chart_points],
         chart_colors=[p["color"] for p in chart_points],
@@ -275,10 +310,27 @@ def archive():
         col['sticker_primary'] = '📖'
         col['sticker_secondary'] = (col.get('name') or 'V')[:1].upper()
 
+    all_entries_json = [{
+        'id': e['id'],
+        'content': e['content'],
+        'display_text': (get_preview_text(e['content'])[:60] + '...') if len(get_preview_text(e['content'])) > 60 else get_preview_text(e['content']),
+        'color_class': _COLOR_MAP.get(e['mood_score'], _COLOR_MAP['default']),
+        'formatted_date': e['entry_date'].strftime("%b %d"),
+        'iso_date': e['entry_date'].strftime("%Y-%m-%d"),
+        'mood_score': e['mood_score'],
+        'mood_label': _MOOD_LABEL_MAP.get(e['mood_score'], 'Steady'),
+        'month_label': e['entry_date'].strftime("%B %Y"),
+        'collection_id': e.get('collection_id'),
+    } for e in entries_for_folders]
+
+    user_collections_json = [{'id': c['id'], 'name': c['name'], 'cover_color': c['cover_color']} for c in custom_collections]
+
     return render_template('pages/your_collections.html',
         monthly_groups=monthly_groups,
         mood_groups=mood_groups,
-        custom_collections=custom_collections)
+        custom_collections=custom_collections,
+        all_entries_json=all_entries_json,
+        user_collections_json=user_collections_json)
 
 
 @main_bp.route('/writing')

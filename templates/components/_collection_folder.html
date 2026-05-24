@@ -7,6 +7,13 @@
         <div class="folder-journals folder-journals--{{ folder_variant | default('entries') }}" aria-hidden="true">
 
             {% if folder_variant == 'book' %}
+            {% set shown = previews[:3] if previews else [] %}
+            {% for entry in shown %}
+            <div class="folder-memory-card">
+                <div class="folder-memory-thumb" style="--memory-accent: {{ accent_color }};"></div>
+                <span class="folder-memory-line"></span>
+            </div>
+            {% endfor %}
             <div class="folder-journal-card folder-journal-card--book">
                 <div class="mini-bound-journal" style="--cover-color: {{ journal_cover | default('#3D2B1F') }};">
                     <div class="mini-bound-pages" aria-hidden="true"></div>
