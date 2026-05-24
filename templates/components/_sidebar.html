@@ -1,84 +1,82 @@
 <aside class="app-sidebar" id="app-sidebar">
-    <div class="sidebar-inner">
 
-        <!-- Top Bar: Workspace + Collapse -->
-        <div class="sidebar-top-bar">
-            <div class="sidebar-workspace">
-                <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}" alt="MoodBlume" class="workspace-icon">
-                <span class="workspace-label">MoodBlume</span>
-            </div>
-            <button class="sidebar-collapse-btn" id="sidebar-close-btn" title="Collapse sidebar" aria-label="Collapse sidebar">
-                <i class="ti ti-layout-sidebar-left-collapse"></i>
-            </button>
+    <div class="paper-sidebar-note" id="paper-sidebar-note">
+
+        <!-- Paperclip SVG -->
+        <svg class="paper-clip-svg" viewBox="0 0 38 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 19,4 Q 34,4 34,20 L 34,76 Q 34,92 19,92 Q 4,92 4,76 L 4,24 Q 4,12 14,10 Q 24,8 24,20 L 24,72 Q 24,80 19,80 Q 14,80 14,72 L 14,22"
+                stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M 6,26 L 6,76 Q 6,88 19,89" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.35"/>
+            <path d="M 19,5 Q 32,5 32,20" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+        </svg>
+
+        <!-- Collapse button -->
+        <button class="paper-collapse-btn" id="sidebar-close-btn" title="Collapse sidebar" aria-label="Collapse sidebar">×</button>
+
+        <!-- Brand / Logo -->
+        <div class="paper-brand">
+            <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}" alt="MoodBlume" class="paper-brand-logo">
+            <div class="paper-brand-name">MoodBlume</div>
         </div>
 
         <!-- Main Nav -->
-        <div class="sidebar-section">
-            <ul class="sidebar-nav-list">
+        <nav class="paper-main-nav">
+            <ul>
                 <li>
-                    <a href="{{ url_for('home') }}" class="sidebar-nav-item {% if request.endpoint == 'home' %}active{% endif %}">
-                        <i class="ti ti-home nav-icon"></i>
-                        <span>Home</span>
+                    <a href="{{ url_for('home') }}" class="paper-link {% if request.endpoint == 'home' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'home' %}→{% else %}&thinsp;{% endif %}</span>Home
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('sanctuary') }}" class="sidebar-nav-item {% if request.endpoint == 'sanctuary' %}active{% endif %}">
-                        <i class="ti ti-leaf nav-icon"></i>
-                        <span>Sanctuary</span>
+                    <a href="{{ url_for('sanctuary') }}" class="paper-link {% if request.endpoint == 'sanctuary' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'sanctuary' %}→{% else %}&thinsp;{% endif %}</span>Sanctuary
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('journal') }}" class="sidebar-nav-item {% if request.endpoint == 'journal' %}active{% endif %}">
-                        <i class="ti ti-notebook nav-icon"></i>
-                        <span>Journal</span>
+                    <a href="{{ url_for('journal') }}" class="paper-link {% if request.endpoint == 'journal' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'journal' %}→{% else %}&thinsp;{% endif %}</span>Journal
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('archive') }}" class="sidebar-nav-item {% if request.endpoint == 'archive' %}active{% endif %}">
-                        <i class="ti ti-books nav-icon"></i>
-                        <span>Archive</span>
+                    <a href="{{ url_for('archive') }}" class="paper-link {% if request.endpoint == 'archive' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'archive' %}→{% else %}&thinsp;{% endif %}</span>Archive
                     </a>
                 </li>
             </ul>
-        </div>
+        </nav>
 
-        <!-- Spacer -->
-        <div style="flex: 1;"></div>
+        <!-- Spacer between nav sections -->
+        <div style="height: 24px;"></div>
 
-        <div class="sidebar-divider"></div>
+        <!-- Decorative divider -->
+        <div class="paper-rule">~·~</div>
 
-        <!-- Footer -->
-        <div class="sidebar-footer">
-            <ul class="sidebar-nav-list">
+        <!-- Footer Nav -->
+        <nav class="paper-footer-nav">
+            <ul>
                 <li>
-                    <button class="sidebar-nav-item" id="sidebar-new-journal-btn">
-                        <i class="ti ti-pencil-plus nav-icon"></i>
-                        <span>New Entry</span>
-                        <span class="nav-shortcut">⌘O</span>
+                    <button class="paper-link paper-btn" id="sidebar-new-journal-btn">
+                        New Entry <span class="paper-shortcut">⌘O</span>
                     </button>
                 </li>
                 <li>
-                    <a href="{{ url_for('profile') }}" class="sidebar-nav-item {% if request.endpoint == 'profile' %}active{% endif %}">
-                        <i class="ti ti-user-circle nav-icon"></i>
-                        <span>Account</span>
+                    <a href="{{ url_for('profile') }}" class="paper-link {% if request.endpoint == 'profile' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'profile' %}→{% else %}&thinsp;{% endif %}</span>Account
                     </a>
                 </li>
                 <li>
-                    <button class="sidebar-nav-item" id="sidebar-theme-btn">
-                        <i class="ti ti-moon nav-icon" id="sidebar-theme-icon"></i>
+                    <button class="paper-link paper-btn" id="sidebar-theme-btn">
                         <span id="sidebar-theme-label">Dark Mode</span>
                     </button>
                 </li>
                 <li>
-                    <a href="{{ url_for('logout') }}" class="sidebar-nav-item logout-item">
-                        <i class="ti ti-logout nav-icon"></i>
-                        <span>Sign out</span>
-                    </a>
+                    <a href="{{ url_for('logout') }}" class="paper-link paper-logout">Sign out</a>
                 </li>
             </ul>
-        </div>
+        </nav>
 
     </div>
+
 </aside>
 
 <!-- Button shown when sidebar is collapsed -->
@@ -169,12 +167,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Theme Toggle ---
     const themeBtn = document.getElementById('sidebar-theme-btn');
-    const themeIcon = document.getElementById('sidebar-theme-icon');
     const themeLabel = document.getElementById('sidebar-theme-label');
 
     function syncThemeUI() {
         const isDark = document.body.classList.contains('dark-theme');
-        if (themeIcon) themeIcon.className = isDark ? 'ti ti-sun nav-icon' : 'ti ti-moon nav-icon';
         if (themeLabel) themeLabel.textContent = isDark ? 'Light Mode' : 'Dark Mode';
     }
 

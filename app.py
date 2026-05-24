@@ -99,6 +99,31 @@ def analyze_sentiment(content):
         "reflection": reflection
     }
 
+def generate_letter(compound_score, username='friend'):
+    import random
+    name = (username or 'friend').replace('_', ' ').title()
+
+    if compound_score >= 0.3:
+        options = [
+            f"Dear {name},\n\nSomething in the way you wrote today felt lighter — more alive. Like you were writing from a place of genuine warmth.\n\nWhatever is filling your days with that feeling, hold onto it gently. Not too tightly, just enough to remember it's there.\n\nI'm glad today was a good one.",
+            f"Dear {name},\n\nToday's words carry a brightness to them. There's something lovely about a day that leaves you with something worth writing down.\n\nKeep going. You're doing beautifully.",
+            f"Dear {name},\n\nYou wrote today with something that sounded a lot like joy — or maybe just ease. Either way, it looked good on you.\n\nSee you on the next page.",
+        ]
+    elif compound_score <= -0.3:
+        options = [
+            f"Dear {name},\n\nHard days have a weight that's difficult to put into words — and yet here you are, doing just that.\n\nThat takes more courage than you might realize. Writing through the difficult moments is its own kind of bravery.\n\nTomorrow is a fresh page.",
+            f"Dear {name},\n\nIt sounds like today asked a lot of you. I hope you're being as gentle with yourself as you deserve.\n\nSome days we write to feel better. Some days we write just to survive them. Both are enough.",
+            f"Dear {name},\n\nNot every day is easy, and this one doesn't seem to have been. But you're still here, still writing.\n\nThat matters more than you know. Rest well tonight.",
+        ]
+    else:
+        options = [
+            f"Dear {name},\n\nNot every day needs to be extraordinary. Some days are simply lived — and those quiet, steady days are worth remembering too.\n\nThank you for showing up and writing anyway. That says something good about you.",
+            f"Dear {name},\n\nThere's something peaceful about a day in the middle. Not too high, not too low — just present.\n\nYou took a moment to reflect, and that's never wasted. See you on the next page.",
+            f"Dear {name},\n\nToday was a day. And you wrote about it. That's more than most people do.\n\nSee you tomorrow.",
+        ]
+
+    return random.choice(options)
+
 def get_quote_for_entry(content):
     content = content.lower()
     category = 'happy'
@@ -833,12 +858,16 @@ def save_entry():
             
         conn.close()
         
+        username = session.get('username', 'friend')
+        letter = generate_letter(ai_result['compound'], username)
+
         return {
             'success': True,
             'message': 'Entry saved successfully',
             'id': saved_id,
             'ai_analysis': ai_result,
-            'quote': quote.get('text') if quote else None
+            'quote': quote.get('text') if quote else None,
+            'letter': letter
         }, 200
         
     except Exception as e:

@@ -6,8 +6,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
     :root {
-        --bg: #FFF9FD;
-        /* Soft Pinkish White */
+        --bg: #f4f3f1;
+        /* Soft Neutral Gray */
         --surface: #FFFFFF;
         --text: #4B2E1F;
         /* Freshly Roasted */
@@ -21,6 +21,13 @@
         --bw: 170px;
         --bh: 240px;
         --sw: 18px;
+
+        --journal-w: 800px;
+        --journal-h: 550px;
+        --page-w: calc(var(--journal-w) / 2);
+        --page-inner-w: calc(var(--page-w) - 12px);
+        --journal-scale: 1;
+        --journal-origin: center center;
     }
 
     body {
@@ -82,25 +89,28 @@
 
     .greeting-block {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 28px;
+        padding: 0 24px;
     }
 
     .greeting-block h1 {
         font-family: 'Lora', serif;
-        font-size: 32px;
+        font-size: 30px;
         font-weight: 400;
         color: var(--text);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
+        letter-spacing: -0.2px;
     }
 
     .stats-block {
-        font-size: 14px;
+        font-size: 13px;
         color: var(--muted);
         font-weight: 300;
-        margin-bottom: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
+        gap: 2px;
+        line-height: 1.5;
     }
 
 
@@ -158,45 +168,59 @@
         background-size: cover;
     }
 
-    .ww-subtitle {
+    .ww-week-label {
+        font-family: 'Lora', serif;
+        font-size: 15px;
+        font-weight: 400;
+        color: var(--text);
+        margin-bottom: 20px;
+    }
+
+    .ww-date-range {
+        font-size: 12px;
         color: #8E8E93;
-        font-size: 13px;
-        line-height: 1.4;
-        margin-bottom: 12px;
+        font-style: italic;
+        margin-left: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .ww-stats {
-        font-size: 34px;
-        line-height: 1.1;
-        letter-spacing: -1px;
+    .ww-stat-row {
+        display: flex;
+        align-items: center;
     }
 
-    .ww-big {
-        color: #000;
-        font-weight: 500;
+    .ww-stat-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 0 8px;
     }
 
-    .ww-muted {
+    .ww-stat-num {
+        font-family: 'Lora', serif;
+        font-size: 28px;
+        font-weight: 600;
+        color: #1C1C1E;
+        line-height: 1;
+        letter-spacing: -0.5px;
+    }
+
+    .ww-stat-lbl {
+        font-size: 10px;
         color: #8E8E93;
-        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .ww-arrow-up {
-        color: #34C759; /* Premium Visible iOS Green */
-        font-size: 20px;
-        margin-left: 4px;
-        margin-right: 8px;
-        display: inline-block;
-        transform: translateY(-4px);
-    }
-
-    .ww-arrow-down {
-        color: #FF3B30; /* Premium Visible iOS Red */
-        font-size: 20px;
-        margin-left: 4px;
-        margin-right: 8px;
-        display: inline-block;
-        transform: translateY(-4px);
+    .ww-stat-divider {
+        width: 1px;
+        height: 36px;
+        background: rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
     }
 
     .streak-count {
@@ -1050,19 +1074,18 @@
 
     .journal-spotlight .journal {
         position: relative;
-        width: 612px;
-        /* Exactly 2x 306px */
-        height: 420px;
+        width: var(--journal-w);
+        height: var(--journal-h);
         transform-style: preserve-3d;
         transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        transform: translateX(-153px) rotateX(2deg);
-        /* Adjusted for 612px */
+        transform: scale(var(--journal-scale)) translateX(calc(-1 * var(--page-w) / 2)) rotateX(2deg);
+        transform-origin: var(--journal-origin);
     }
 
     .journal-spotlight .journal::before {
         content: '';
         position: absolute;
-        left: 306px;
+        left: var(--page-w);
         top: 25px;
         bottom: 25px;
         width: 1px;
@@ -1084,13 +1107,14 @@
     }
 
     .journal-spotlight .journal.spread-open {
-        transform: rotateX(10deg);
+        transform: scale(var(--journal-scale)) rotateX(10deg);
+        transform-origin: var(--journal-origin);
     }
 
     .journal-spotlight .wing {
         position: absolute;
         top: 0;
-        width: 306px;
+        width: var(--page-w);
         /* Original stable width */
         height: 100%;
         transform-style: preserve-3d;
@@ -1102,7 +1126,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 306px;
+        width: var(--page-w);
         height: 100%;
         transform-origin: right center;
         transform: rotateY(180deg) translateZ(-0.5px);
@@ -1185,8 +1209,8 @@
     .journal-spotlight .right-wing {
         position: absolute;
         top: 0;
-        left: 306px;
-        width: 306px;
+        left: var(--page-w);
+        width: var(--page-w);
         height: 100%;
         transform-origin: left center;
         transform: rotateY(0deg) translateZ(-0.5px);
@@ -1237,9 +1261,9 @@
     /* Page Stack Base - Original Stable Setup */
     .journal-spotlight .page {
         position: absolute;
-        left: 306px;
+        left: var(--page-w);
         top: 0;
-        width: 306px;
+        width: var(--page-w);
         height: 100%;
         transform-origin: left center;
         /* Pivot exactly at the meeting line */
@@ -1299,7 +1323,7 @@
 
     .journal-spotlight .page-front {
         left: 0;
-        width: 294px;
+        width: var(--page-inner-w);
         /* Balanced side border */
         border-radius: 0 28px 28px 0;
         z-index: 2;
@@ -1307,7 +1331,7 @@
 
     .journal-spotlight .page-back {
         left: 0;
-        width: 294px;
+        width: var(--page-inner-w);
         /* Balanced side border */
         border-radius: 28px 0 0 28px;
         transform: rotateY(180deg);
@@ -2201,19 +2225,59 @@
         cursor: pointer;
     }
 
+    @media (max-width: 900px) {
+        :root {
+            --journal-scale: 0.85;
+            --journal-origin: top center;
+        }
+        .journal-spotlight-section {
+            padding: 0 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        :root {
+            --journal-scale: 0.7;
+        }
+    }
+
+    @media (max-width: 520px) {
+        :root {
+            --journal-scale: 0.48;
+        }
+    }
+
+    @media (max-width: 380px) {
+        :root {
+            --journal-scale: 0.38;
+        }
+    }
+
+    .img-block {
+        display: inline-block;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .img-block img {
+        display: block;
+        height: auto;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        pointer-events: none;
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
 <main>
     <!-- SECTION 1: GREETING & DASHBOARD GRID -->
-    <div class="greeting-block" style="text-align: center; margin-top: 40px; margin-bottom: 24px;">
+    <div class="greeting-block" style="margin-top: 40px;">
         <h1>{{ greeting }}</h1>
         <div class="stats-block">
-            {{ stats_msg }}
-            <span style="color: var(--muted); opacity: 0.8; display: block; margin-top: 4px; font-size: 13px; font-weight: 400; line-height: 1.4;">
-                {{ trend.msg }}
-            </span>
+            <span>{{ stats_msg }}</span>
+            <span>{{ trend.msg }}</span>
         </div>
     </div>
 
@@ -2223,40 +2287,47 @@
         <div class="dashboard-col">
             {% if weekly %}
             <div class="weekly-wrap-card" style="margin-top: 0; width: 100%; max-width: 100%;">
-                <div class="ww-subtitle">
-                    In week {{ weekly.date_range }}<br>you were active during:
-                </div>
-                <div class="ww-stats">
-                    <span class="ww-big">{{ weekly.days }}</span><span class="ww-arrow-{{ weekly.days_dir }}"><i class="fa-solid fa-arrow-{{ 'up' if weekly.days_dir == 'up' else 'down' }}"></i></span>
-                    <span class="ww-muted">days, with</span> <span class="ww-big">{{ weekly.entries }}</span><span class="ww-arrow-{{ weekly.entries_dir }}"><i class="fa-solid fa-arrow-{{ 'up' if weekly.entries_dir == 'up' else 'down' }}"></i></span><br>
-                    <span class="ww-muted">new entries and</span><br>
-                    <span class="ww-big">{{ weekly.minutes }}m {{ weekly.seconds }}s</span><span class="ww-arrow-{{ weekly.time_dir }}"><i class="fa-solid fa-arrow-{{ 'up' if weekly.time_dir == 'up' else 'down' }}"></i></span>
-                    <span class="ww-muted">of<br>writing time</span>
+                <div class="ww-week-label">This week <span class="ww-date-range">{{ weekly.date_range }}</span></div>
+                <div class="ww-stat-row">
+                    <div class="ww-stat-item">
+                        <span class="ww-stat-num">{{ weekly.days }}</span>
+                        <span class="ww-stat-lbl">days active</span>
+                    </div>
+                    <div class="ww-stat-divider"></div>
+                    <div class="ww-stat-item">
+                        <span class="ww-stat-num">{{ weekly.entries }}</span>
+                        <span class="ww-stat-lbl">new entries</span>
+                    </div>
+                    <div class="ww-stat-divider"></div>
+                    <div class="ww-stat-item">
+                        <span class="ww-stat-num">{{ weekly.minutes }}m {{ weekly.seconds }}s</span>
+                        <span class="ww-stat-lbl">writing time</span>
+                    </div>
                 </div>
             </div>
             {% endif %}
 
             {% if insights %}
-            <div class="predictive-card" style="margin-top: 24px; width: 100%;">
+            <div class="predictive-card" style="margin-top: 0; width: 100%;">
                 <div class="pred-header">
-                    <div class="pred-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <div class="pred-icon"><i class="fa-solid fa-seedling"></i></div>
                     <div>
-                        <h4 class="pred-title">Predictive Intelligence</h4>
-                        <p class="pred-subtitle">Linear Regression Forecast</p>
+                        <h4 class="pred-title">Mood Forecast</h4>
+                        <p class="pred-subtitle">Based on your patterns</p>
                     </div>
                 </div>
                 <div class="pred-body">
                     <div class="pred-insight">
                         <div class="pred-stat">
                             <span class="pred-val">{{ insights.word_slope }}%</span>
-                            <span class="pred-lbl">Clarity Correlation</span>
+                            <span class="pred-lbl">Writing & Mood</span>
                         </div>
                         <p class="pred-text">{{ insights.word_msg }}</p>
                     </div>
                     <div class="pred-insight">
                         <div class="pred-stat">
                             <span class="pred-val">{{ insights.predicted_energy }}%</span>
-                            <span class="pred-lbl">Velocity Projection</span>
+                            <span class="pred-lbl">Tomorrow's Energy</span>
                         </div>
                         <p class="pred-text">Predicted energy for tomorrow: <strong>{{ insights.predicted_label }}</strong>.</p>
                     </div>

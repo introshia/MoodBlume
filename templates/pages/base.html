@@ -20,10 +20,10 @@
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/moodblume_app_icon.png') }}">
 
     <!-- Core Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=9">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=12">
     {% if session.get('user_id') %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}?v=2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}?v=6">
     {% endif %}
 
     {% block head %}{% endblock %}

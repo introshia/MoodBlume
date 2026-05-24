@@ -4,8 +4,8 @@
 */
 
 :root {
-    --bg-canvas: #F6F3EE;
-    /* Old Lace          */
+    --bg-canvas: #f4f3f1;
+    /* Soft Neutral Gray */
     --text-black: #4B2E1F;
     /* Freshly Roasted   */
     --text-gray: rgba(75, 46, 31, 0.55);
@@ -27,6 +27,7 @@
 body.dark-theme {
     --bg-canvas: #1C1008;
     /* Deep Espresso     */
+    --bg: #1C1008;
     --text-black: #F6F3EE;
     /* Old Lace on dark  */
     --text-gray: rgba(246, 243, 238, 0.60);
