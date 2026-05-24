@@ -4,8 +4,8 @@
 :root {
     --sb-width: 268px;
     --paper-bg: #ffffff;
-    --paper-text: #5a5040;
-    --paper-muted: #9a8a70;
+    --paper-text: #3d3428;
+    --paper-muted: #6b5d48;
     --paper-hover: rgba(90, 80, 64, 0.09);
     --paper-rule-color: rgba(140, 120, 90, 0.35);
     --paper-shadow: rgba(0, 0, 0, 0.18);
@@ -218,7 +218,7 @@ body.dark-theme {
     font-size: 14px;
     font-style: italic;
     font-weight: 400;
-    color: var(--paper-text);
+    color: var(--paper-muted);
     text-decoration: none;
     background: none;
     border: none;
@@ -239,6 +239,7 @@ body.dark-theme {
 .paper-link.active {
     font-style: normal;
     font-weight: 600;
+    color: var(--paper-text);
 }
 
 .paper-arrow {

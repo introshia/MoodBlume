@@ -1,0 +1,87 @@
+from flask import Blueprint, request, session
+from ..extensions import get_db_connection
+
+collections_bp = Blueprint('collections', __name__)
+
+
+@collections_bp.route('/collections', methods=['GET'])
+def list_collections():
+    if 'user_id' not in session:
+        return {'success': False, 'message': 'Unauthorized'}, 401
+    user_id = session['user_id']
+    conn    = get_db_connection()
+    cursor  = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM collections WHERE user_id = %s ORDER BY created_at DESC", (user_id,))
+    collections = cursor.fetchall()
+    conn.close()
+    for c in collections:
+        if c.get('created_at'):
+            c['created_at'] = c['created_at'].isoformat()
+    return {'success': True, 'collections': collections}, 200
+
+
+@collections_bp.route('/collections', methods=['POST'])
+def create_collection():
+    if 'user_id' not in session:
+        return {'success': False, 'message': 'Unauthorized'}, 401
+    try:
+        data       = request.get_json()
+        name       = data.get('name', '').strip()
+        cover_color = data.get('cover_color', '#C8D898')
+        art_style  = data.get('art_style', 'linen')
+        if not name:
+            return {'success': False, 'message': 'A collection needs a name.'}, 400
+        user_id = session['user_id']
+        conn    = get_db_connection()
+        cursor  = conn.cursor()
+        cursor.execute(
+            "INSERT INTO collections (user_id, name, cover_color, art_style) VALUES (%s, %s, %s, %s)",
+            (user_id, name, cover_color, art_style)
+        )
+        new_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        return {'success': True, 'id': new_id, 'name': name, 'cover_color': cover_color, 'art_style': art_style}, 201
+    except Exception as e:
+        return {'success': False, 'message': str(e)}, 500
+
+
+@collections_bp.route('/collections/<int:collection_id>', methods=['DELETE'])
+def delete_collection(collection_id):
+    if 'user_id' not in session:
+        return {'success': False, 'message': 'Unauthorized'}, 401
+    user_id = session['user_id']
+    conn    = get_db_connection()
+    cursor  = conn.cursor()
+    cursor.execute("SELECT id FROM collections WHERE id = %s AND user_id = %s", (collection_id, user_id))
+    if not cursor.fetchone():
+        conn.close()
+        return {'success': False, 'message': 'Not found or unauthorized'}, 404
+    cursor.execute("UPDATE journal_entries SET collection_id = NULL WHERE collection_id = %s", (collection_id,))
+    cursor.execute("DELETE FROM collections WHERE id = %s", (collection_id,))
+    conn.commit()
+    conn.close()
+    return {'success': True}, 200
+
+
+@collections_bp.route('/collections/<int:collection_id>/assign', methods=['POST'])
+def assign_entry_to_collection(collection_id):
+    """Assign or re-assign an existing entry to a collection."""
+    if 'user_id' not in session:
+        return {'success': False, 'message': 'Unauthorized'}, 401
+    try:
+        data     = request.get_json()
+        entry_id = data.get('entry_id')
+        user_id  = session['user_id']
+        conn     = get_db_connection()
+        cursor   = conn.cursor()
+        cursor.execute("SELECT id FROM journal_entries WHERE id = %s AND user_id = %s", (entry_id, user_id))
+        if not cursor.fetchone():
+            conn.close()
+            return {'success': False, 'message': 'Entry not found'}, 404
+        cursor.execute("UPDATE journal_entries SET collection_id = %s WHERE id = %s", (collection_id, entry_id))
+        conn.commit()
+        conn.close()
+        return {'success': True}, 200
+    except Exception as e:
+        return {'success': False, 'message': str(e)}, 500

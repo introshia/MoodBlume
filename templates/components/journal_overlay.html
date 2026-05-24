@@ -726,7 +726,7 @@
     // Auto-open logic with URL cleanup
     window.addEventListener('load', function() {
         const urlParams = new URLSearchParams(window.location.search);
-        var forceOpen = "{{ open_journal }}" === "True" || urlParams.get('open') === 'journal' || urlParams.get('open_journal') === 'true';
+        var forceOpen = "{{ open_journal }}" === "True" || urlParams.get('open') === 'main.journal' || urlParams.get('open_journal') === 'true';
         if (forceOpen) {
             document.getElementById('desk-overlay').classList.add('show');
             setTimeout(startOpenJournal, 500);

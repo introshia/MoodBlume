@@ -1,0 +1,1091 @@
+
+    // ── STATE ─────────────────────────────────────────────────────
+    var lampOn = true, time = 0, hov = null;
+    var mouseX = 0.5, mouseY = 0.5;
+    var journalDays = 0; // replace with: Number("{{ streak_days|default(0) }}")
+    var weatherType = 'clear';
+    var raindrops = [], snowflakes = [];
+    var musicOn = false, rainSoundOn = false;
+
+    // Nav books on the bookshelf (glowing featured books)
+    // Each maps to a shelf row and a position on that shelf
+    var NAV_BOOKS = [
+      { label: 'Archive', icon: '\u2395', href: '/archive', shelf: 1, slotFrac: 0.25, col: '#7A3030', glowCol: 'rgba(220,90,60,', bw: 0.018, bh: 0.095 },
+      { label: 'Journal', icon: '\u2393', href: '/writing', shelf: 2, slotFrac: 0.50, col: '#1E4A28', glowCol: 'rgba(60,200,100,', bw: 0.018, bh: 0.095 },
+    ];
+    var navBookZones = [];
+
+    // Fireflies
+    var fireflies = [];
+    for (var _fi = 0; _fi < 10; _fi++) {
+      fireflies.push({
+        ox: 0.363 + Math.random() * 0.016, oy: 0.495 + Math.random() * 0.042,
+        phase: Math.random() * Math.PI * 2, spd: 0.010 + Math.random() * 0.010,
+        col: Math.random() > 0.5 ? '180,255,120' : '255,230,100'
+      });
+    }
+
+    // Dust motes
+    var dust = [];
+    for (var _di = 0; _di < 24; _di++) dust.push(resetDust({}));
+    function resetDust(d) {
+      d.x = 0.05 + Math.random() * 0.65; d.y = 0.14 + Math.random() * 0.52;
+      d.vx = (Math.random() - 0.5) * 0.00028; d.vy = -Math.random() * 0.00038 - 0.00009;
+      d.life = Math.random(); d.sz = 0.35 + Math.random() * 1.05; return d;
+    }
+
+    // Weather
+    var WEATHERS = ['clear', 'rain', 'snow', 'clear', 'clear'], weatherIdx = 0;
+    setInterval(function () { weatherIdx = (weatherIdx + 1) % WEATHERS.length; weatherType = WEATHERS[weatherIdx]; initWeather(); }, 40000);
+    function initWeather() {
+      raindrops = []; snowflakes = [];
+      if (weatherType === 'rain') for (var i = 0; i < 110; i++) raindrops.push(newRain());
+      else if (weatherType === 'snow') for (var i = 0; i < 55; i++) snowflakes.push(newSnow());
+    }
+    function newRain() { return { x: Math.random(), y: Math.random() - .2, spd: 0.006 + Math.random() * 0.005, len: 0.026 + Math.random() * 0.016, a: 0.22 + Math.random() * 0.3 }; }
+    function newSnow() { return { x: Math.random(), y: Math.random() - .1, spd: 0.0008 + Math.random() * 0.0007, drift: Math.random() * 6, a: 0.4 + Math.random() * 0.4, r: 1 + Math.random() * 2 }; }
+    initWeather();
+
+    function toggleLamp() { lampOn = !lampOn; document.getElementById('lamptgl').innerHTML = lampOn ? '&#9789; lamp' : '&#9788; lamp'; }
+    function toggleMusic() { musicOn = !musicOn; document.getElementById('btn-music').classList.toggle('on', musicOn); }
+    function toggleRain() { rainSoundOn = !rainSoundOn; document.getElementById('btn-rain').classList.toggle('on', rainSoundOn); }
+    window.toggleLamp = toggleLamp; window.toggleMusic = toggleMusic; window.toggleRain = toggleRain;
+
+    // Modals
+    var MODALS = {
+      home: ['Your Room', 'Welcome home. Everything you have written lives here, waiting.'],
+      write: ['Writing Desk', 'Open your journal and begin. A blank page is a kind of freedom.'],
+      archive: ['Journal Archive', 'All your past entries, organised by season, mood and memory.'],
+      jar: ['Firefly Jar', 'Each light holds a word from your most uplifting entries. Small glowing thoughts.']
+    };
+    function openM(key) {
+      var d = MODALS[key] || [key, ''];
+      document.getElementById('m-title').textContent = d[0];
+      document.getElementById('m-body').textContent = d[1];
+      document.getElementById('modal').classList.add('show');
+    }
+    function closeM() { document.getElementById('modal').classList.remove('show'); }
+
+    // ═══════════════════════════════════════════════════════════
+    // DAILY PROMPTS & SCENES
+    // ═══════════════════════════════════════════════════════════
+    var DAILY_PROMPTS = [
+      { title: 'Give It My All', icon: '◎', time: '11:00 PM', quote: 'I just do it, without worrying about the result. If it\'s not successful, I accept the outcome.', caption: 'A silence that held all the answers.', scene: 0 },
+      { title: 'Small Steps', icon: '◈', time: '8:30 AM', quote: 'Every tiny movement forward is still progress. I honor the courage it takes to begin.', caption: 'A morning that asked nothing of me.', scene: 1 },
+      { title: 'Let It Be', icon: '◉', time: '9:15 PM', quote: 'There is freedom in releasing what I cannot control. My peace does not depend on how things turn out.', caption: 'Waves that know where they belong.', scene: 2 },
+      { title: 'Root Down', icon: '◆', time: '7:00 AM', quote: 'I am allowed to be still. To rest and grow quietly, without explanation or urgency.', caption: 'Mountains that have always known patience.', scene: 3 },
+      { title: 'Open Hands', icon: '◇', time: '3:00 PM', quote: 'What is meant for me will not pass me by. I release my grip and trust the path ahead.', caption: 'A garden that keeps its promises.', scene: 4 },
+      { title: 'Infinite Sky', icon: '✦', time: '11:45 PM', quote: 'I am more than my worries. There is a vastness inside me that fear has never touched.', caption: 'Stars that remember every wish.', scene: 5 },
+      { title: 'Let Go', icon: '◉', time: '5:30 PM', quote: 'I release what has already passed. Every ending creates space for something beautiful.', caption: 'Leaves that dance on their way down.', scene: 6 },
+      { title: 'Be Here', icon: '◎', time: '10:00 AM', quote: 'This moment is enough. I do not need to be anywhere else or anyone other than who I am right now.', caption: 'A field that holds its own warmth.', scene: 7 },
+      { title: 'MoodBlume Gently', icon: '◈', time: '6:15 AM', quote: 'I do not have to rush my becoming. Growth has its own perfect timing, and I trust mine.', caption: 'Petals that know their own season.', scene: 8 },
+      { title: 'Still Waters', icon: '◉', time: '8:00 PM', quote: 'Beneath all the noise, there is a quiet part of me that has always known what matters.', caption: 'A reflection that tells the truth.', scene: 9 }
+    ];
+
+    function getSceneSVG(idx) {
+      var s = idx % 10;
+      var scenes = [
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s0sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1A3D28"/><stop offset="100%" stop-color="#4A7840"/></linearGradient><radialGradient id="s0sun" cx="52%" cy="32%" r="55%"><stop offset="0%" stop-color="#FFD080" stop-opacity="0.55"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><rect fill="url(#s0sky)" width="200" height="200"/><rect fill="url(#s0sun)" width="200" height="200"/><ellipse cx="55" cy="125" rx="32" ry="46" fill="#0E2A1A" opacity="0.92"/><ellipse cx="148" cy="115" rx="36" ry="55" fill="#0A2014" opacity="0.9"/><rect x="51" y="145" width="9" height="55" fill="#2A1A0C"/><rect x="144" y="148" width="9" height="52" fill="#2A1A0C"/><ellipse cx="100" cy="188" rx="85" ry="22" fill="#162E12"/><circle cx="100" cy="162" r="9" fill="#F5C89A"/><ellipse cx="100" cy="173" rx="12" ry="7" fill="#8A6850"/><ellipse cx="76" cy="181" rx="9" ry="5" fill="#C07040"/><ellipse cx="122" cy="183" rx="7" ry="4" fill="#D8D8C8"/><ellipse cx="132" cy="180" rx="5" ry="3" fill="#C0C0B0"/><line x1="100" y1="28" x2="65" y2="155" stroke="rgba(255,220,100,0.14)" stroke-width="20"/><line x1="100" y1="28" x2="135" y2="148" stroke="rgba(255,220,100,0.10)" stroke-width="15"/></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s1sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#0E1830"/><stop offset="60%" stop-color="#2A3870"/><stop offset="100%" stop-color="#5060A8"/></linearGradient><linearGradient id="s1sea" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1A2858"/><stop offset="100%" stop-color="#0A1020"/></linearGradient></defs><rect fill="url(#s1sky)" width="200" height="200"/><ellipse cx="100" cy="95" rx="28" ry="28" fill="rgba(255,220,140,0.18)"/><ellipse cx="100" cy="95" rx="16" ry="16" fill="rgba(255,240,180,0.45)"/><rect fill="url(#s1sea)" x="0" y="110" width="200" height="90"/><path d="M0 120 Q50 112 100 120 Q150 128 200 120 L200 200 L0 200Z" fill="rgba(20,40,100,0.6)"/><path d="M0 135 Q40 130 80 135 Q120 140 160 135 Q180 132 200 135" stroke="rgba(100,150,255,0.25)" stroke-width="2" fill="none"/><path d="M20 150 Q60 145 100 150 Q140 155 180 150" stroke="rgba(100,150,255,0.15)" stroke-width="1.5" fill="none"/><circle cx="30" cy="65" r="1.5" fill="rgba(255,255,200,0.8)"/><circle cx="75" cy="40" r="1" fill="rgba(255,255,200,0.7)"/><circle cx="150" cy="55" r="1.5" fill="rgba(255,255,200,0.8)"/><circle cx="170" cy="30" r="1" fill="rgba(255,255,200,0.6)"/><circle cx="55" cy="25" r="1" fill="rgba(255,255,200,0.6)"/></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s2bg" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1A2030"/><stop offset="100%" stop-color="#101520"/></linearGradient></defs><rect fill="url(#s2bg)" width="200" height="200"/><rect x="10" y="10" width="180" height="180" fill="rgba(60,100,140,0.12)" rx="6"/><line x1="100" y1="10" x2="100" y2="190" stroke="rgba(80,120,160,0.3)" stroke-width="3"/><line x1="10" y1="100" x2="190" y2="100" stroke="rgba(80,120,160,0.3)" stroke-width="3"/><g stroke="rgba(160,210,255,0.45)" stroke-width="1.2" stroke-linecap="round"><line x1="30" y1="5" x2="25" y2="30"/><line x1="55" y1="0" x2="50" y2="25"/><line x1="80" y1="8" x2="75" y2="33"/><line x1="120" y1="3" x2="115" y2="28"/><line x1="155" y1="0" x2="150" y2="25"/><line x1="178" y1="6" x2="173" y2="31"/><line x1="40" y1="40" x2="35" y2="65"/><line x1="70" y1="45" x2="65" y2="70"/><line x1="105" y1="38" x2="100" y2="63"/><line x1="140" y1="42" x2="135" y2="67"/><line x1="170" y1="40" x2="165" y2="65"/><line x1="20" y1="80" x2="15" y2="105"/><line x1="60" y1="85" x2="55" y2="110"/><line x1="95" y1="78" x2="90" y2="103"/><line x1="130" y1="82" x2="125" y2="107"/><line x1="165" y1="80" x2="160" y2="105"/><line x1="35" y1="120" x2="30" y2="145"/><line x1="75" y1="125" x2="70" y2="150"/><line x1="115" y1="118" x2="110" y2="143"/><line x1="150" y1="122" x2="145" y2="147"/><line x1="185" y1="120" x2="180" y2="145"/></g><circle cx="50" cy="30" r="2.5" fill="rgba(180,220,255,0.4)"/><circle cx="130" cy="65" r="2" fill="rgba(180,220,255,0.35)"/><circle cx="75" cy="110" r="3" fill="rgba(180,220,255,0.3)"/></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s3sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#080C20"/><stop offset="100%" stop-color="#1A1A3A"/></linearGradient></defs><rect fill="url(#s3sky)" width="200" height="200"/><polygon points="100,20 45,110 155,110" fill="#1A1A38"/><polygon points="100,20 45,110 155,110" fill="rgba(200,200,255,0.06)"/><polygon points="100,30 55,110 92,110" fill="#E8E8F5" opacity="0.85"/><polygon points="100,30 108,110 155,110" fill="#D0D0E8" opacity="0.7"/><polygon points="40,70 0,140 85,140" fill="#14142E"/><polygon points="40,70 10,140 55,140" fill="#E0E0F0" opacity="0.6"/><polygon points="160,60 115,140 200,140" fill="#14142E"/><polygon points="160,60 148,140 195,140" fill="#E0E0F0" opacity="0.55"/><rect x="0" y="140" width="200" height="60" fill="#0C0C1E"/><path d="M0 145 Q50 140 100 145 Q150 150 200 145 L200 200 L0 200Z" fill="#10101C"/><circle cx="35" cy="25" r="1.2" fill="rgba(255,255,200,0.9)"/><circle cx="80" cy="15" r="0.9" fill="rgba(255,255,200,0.8)"/><circle cx="165" cy="20" r="1.2" fill="rgba(255,255,200,0.9)"/><circle cx="140" cy="10" r="0.9" fill="rgba(255,255,200,0.8)"/></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s4sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1A3020"/><stop offset="100%" stop-color="#2A4830"/></linearGradient></defs><rect fill="url(#s4sky)" width="200" height="200"/><ellipse cx="100" cy="110" rx="55" ry="16" fill="rgba(20,60,20,0.7)"/><path d="M85 200 L92 110 L108 110 L115 200Z" fill="#2A3818"/><path d="M88 200 L94 115 L106 115 L112 200Z" fill="#3A5025"/><ellipse cx="20" cy="150" rx="25" ry="35" fill="#0E2210"/><ellipse cx="25" cy="145" rx="20" ry="28" fill="#142E14"/><ellipse cx="180" cy="145" rx="25" ry="35" fill="#0E2210"/><ellipse cx="175" cy="140" rx="20" ry="28" fill="#142E14"/><circle cx="40" cy="130" r="8" fill="#1A3A10"/><circle cx="160" cy="125" r="8" fill="#1A3A10"/><circle cx="50" cy="160" r="5" fill="#FF6080" opacity="0.7"/><circle cx="42" cy="168" r="4" fill="#FF80A0" opacity="0.6"/><circle cx="152" cy="155" r="5" fill="#FF6080" opacity="0.7"/><rect x="0" y="170" width="200" height="30" fill="#1A2810"/><path d="M90 120 Q95 140 100 170 Q105 140 110 120" fill="#2A4018" opacity="0.5"/><circle cx="100" cy="60" r="20" fill="rgba(255,220,100,0.12)"/><circle cx="100" cy="60" r="10" fill="rgba(255,220,100,0.25)"/></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="s5bg" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#12183A"/><stop offset="100%" stop-color="#060810"/></radialGradient><radialGradient id="s5glow" cx="30%" cy="25%" r="40%"><stop offset="0%" stop-color="rgba(100,130,255,0.18)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><rect fill="url(#s5bg)" width="200" height="200"/><rect fill="url(#s5glow)" width="200" height="200"/><g fill="rgba(255,255,220,1)"><circle cx="20" cy="18" r="1.3"/><circle cx="45" cy="8" r="1.8" opacity="0.9"/><circle cx="70" cy="22" r="1.1"/><circle cx="98" cy="12" r="1.5"/><circle cx="130" cy="5" r="1.2"/><circle cx="158" cy="18" r="1.8" opacity="0.9"/><circle cx="178" cy="9" r="1.1"/><circle cx="12" cy="45" r="1.2"/><circle cx="55" cy="38" r="1.5"/><circle cx="85" cy="50" r="1.1"/><circle cx="115" cy="35" r="1.3"/><circle cx="145" cy="42" r="1.6"/><circle cx="172" cy="32" r="1.2"/><circle cx="30" cy="70" r="1.4"/><circle cx="62" cy="62" r="1.1"/><circle cx="92" cy="75" r="1.5"/><circle cx="122" cy="60" r="1.2"/><circle cx="150" cy="68" r="1.4"/><circle cx="185" cy="55" r="1.1"/></g><path d="M100 30 L102 38 L110 38 L104 43 L106 51 L100 46 L94 51 L96 43 L90 38 L98 38Z" fill="rgba(255,240,160,0.55)" transform="scale(0.7) translate(43,30)"/><ellipse cx="100" cy="175" rx="80" ry="25" fill="#080C18"/><path d="M20 160 Q60 155 100 160 Q140 165 180 160" stroke="rgba(60,80,160,0.2)" stroke-width="1.5" fill="none"/></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s6sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1A100C"/><stop offset="100%" stop-color="#2E1808"/></linearGradient></defs><rect fill="url(#s6sky)" width="200" height="200"/><rect x="0" y="165" width="200" height="35" fill="#1A0C08"/><rect x="90" y="100" width="8" height="65" fill="#2A1404"/><ellipse cx="94" cy="90" rx="42" ry="48" fill="#1A1008"/><ellipse cx="80" cy="80" rx="28" ry="32" fill="#1E1208"/><ellipse cx="108" cy="85" rx="24" ry="28" fill="#1A1008"/><g opacity="0.9"><ellipse cx="55" cy="60" rx="12" ry="8" fill="#C04010" transform="rotate(-30 55 60)"/><ellipse cx="145" cy="50" rx="10" ry="7" fill="#E05010" transform="rotate(20 145 50)"/><ellipse cx="35" cy="100" rx="9" ry="6" fill="#A03010" transform="rotate(-45 35 100)"/><ellipse cx="168" cy="85" rx="11" ry="7" fill="#D04810" transform="rotate(35 168 85)"/><ellipse cx="70" cy="145" rx="10" ry="7" fill="#B03808" transform="rotate(-20 70 145)"/><ellipse cx="130" cy="140" rx="9" ry="6" fill="#C04010" transform="rotate(15 130 140)"/><ellipse cx="100" cy="155" rx="8" ry="5" fill="#E06018" transform="rotate(-10 100 155)"/><ellipse cx="50" cy="170" rx="12" ry="8" fill="#A03010" transform="rotate(40 50 170)"/><ellipse cx="155" cy="165" rx="10" ry="7" fill="#D04818" transform="rotate(-25 155 165)"/></g></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s7sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1A1E30"/><stop offset="100%" stop-color="#2A3050"/></linearGradient></defs><rect fill="url(#s7sky)" width="200" height="200"/><ellipse cx="100" cy="92" rx="50" ry="50" fill="rgba(230,235,255,0.06)"/><rect x="0" y="130" width="200" height="70" fill="#1A2030"/><path d="M0 130 Q50 122 100 130 Q150 138 200 130 L200 200 L0 200Z" fill="#141820"/><path d="M0 142 Q40 136 80 142 Q120 148 160 142 Q180 139 200 142" stroke="rgba(200,215,255,0.2)" stroke-width="1.5" fill="none"/><g stroke="rgba(200,220,255,0.5)" stroke-linecap="round" stroke-width="1.2"><line x1="30" y1="90" x2="30" y2="100"/><line x1="25" y1="95" x2="35" y2="95"/><line x1="27" y1="91" x2="33" y2="99"/><line x1="33" y1="91" x2="27" y2="99"/><line x1="80" y1="55" x2="80" y2="65"/><line x1="75" y1="60" x2="85" y2="60"/><line x1="77" y1="56" x2="83" y2="64"/><line x1="83" y1="56" x2="77" y2="64"/><line x1="155" y1="80" x2="155" y2="90"/><line x1="150" y1="85" x2="160" y2="85"/><line x1="152" y1="81" x2="158" y2="89"/><line x1="158" y1="81" x2="152" y2="89"/></g><g fill="rgba(220,230,255,0.7)"><circle cx="25" cy="50" r="1.5"/><circle cx="60" cy="35" r="1.2"/><circle cx="110" cy="20" r="1.5"/><circle cx="165" cy="40" r="1.2"/><circle cx="185" cy="70" r="1"/></g><rect x="88" y="80" width="6" height="45" fill="#2A3848"/><ellipse cx="91" cy="76" rx="14" ry="18" fill="#1E2838"/></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s8sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1E1028"/><stop offset="100%" stop-color="#301828"/></linearGradient></defs><rect fill="url(#s8sky)" width="200" height="200"/><rect x="0" y="160" width="200" height="40" fill="#180C18"/><rect x="95" y="120" width="7" height="40" fill="#1C1014"/><path d="M98 120 Q70 100 50 70 Q80 80 98 120Z" fill="#1C1014"/><path d="M98 120 Q130 95 155 65 Q125 80 98 120Z" fill="#1C1014"/><path d="M98 120 Q75 85 85 45 Q100 75 98 120Z" fill="#1C1014"/><g opacity="0.85"><circle cx="60" cy="75" r="5" fill="#E8609A"/><circle cx="58" cy="80" r="4.5" fill="#F080B0"/><circle cx="55" cy="72" r="3.5" fill="#E060A0"/><circle cx="65" cy="78" r="4" fill="#F088B8"/><circle cx="85" cy="55" r="5" fill="#E8609A"/><circle cx="83" cy="60" r="4.5" fill="#F080B0"/><circle cx="90" cy="52" r="3.5" fill="#E060A0"/><circle cx="78" cy="58" r="4" fill="#F088B8"/><circle cx="140" cy="68" r="5" fill="#E8609A"/><circle cx="138" cy="73" r="4.5" fill="#F080B0"/><circle cx="145" cy="65" r="3.5" fill="#E060A0"/><circle cx="133" cy="70" r="4" fill="#F088B8"/><circle cx="108" cy="48" r="5" fill="#E8609A"/><circle cx="106" cy="53" r="4.5" fill="#F080B0"/></g><g fill="rgba(240,160,200,0.6)" font-size="6"><text x="30" y="120">❋</text><text x="155" y="130">❋</text><text x="68" y="150">❋</text><text x="120" y="158">❋</text><text x="45" y="165">❋</text><text x="170" y="155">❋</text></g></svg>',
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="s9sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#080E18"/><stop offset="100%" stop-color="#141C30"/></linearGradient><linearGradient id="s9water" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#0C1828"/><stop offset="100%" stop-color="#060E14"/></linearGradient></defs><rect fill="url(#s9sky)" width="200" height="100"/><rect fill="url(#s9water)" x="0" y="100" width="200" height="100"/><path d="M0 100 Q30 95 60 100 Q90 105 120 100 Q150 95 180 100 Q190 101 200 100" stroke="rgba(80,140,180,0.18)" stroke-width="1" fill="none"/><rect x="0" y="98" width="200" height="4" fill="rgba(40,80,120,0.3)"/><ellipse cx="60" cy="70" rx="22" ry="28" fill="#0A1820"/><ellipse cx="140" cy="65" rx="28" ry="34" fill="#0A1820"/><rect x="56" y="90" width="7" height="10" fill="#0A1018"/><rect x="136" y="90" width="7" height="10" fill="#0A1018"/><path d="M60 105 Q62 112 60 118 Q58 125 60 130 Q62 138 60 145" stroke="rgba(80,140,180,0.3)" stroke-width="18" stroke-linecap="round" fill="none"/><path d="M140 105 Q138 112 140 118 Q142 125 140 130 Q138 138 140 145" stroke="rgba(80,140,180,0.3)" stroke-width="22" stroke-linecap="round" fill="none"/><circle cx="100" cy="30" r="14" fill="rgba(255,220,120,0.18)"/><circle cx="100" cy="30" r="7" fill="rgba(255,220,120,0.4)"/><path d="M90 170 Q100 165 110 170 Q100 175 90 170Z" fill="rgba(255,220,120,0.35)"/><path d="M88 160 Q100 155 112 160" stroke="rgba(255,220,100,0.2)" stroke-width="2" fill="none"/></svg>'
+      ];
+      return scenes[s];
+    }
+
+    function getTodIcon() {
+      var h = new Date().getHours();
+      if (h >= 5 && h < 8) return '&#127748;';
+      if (h >= 8 && h < 18) return '&#9728;';
+      if (h >= 18 && h < 20) return '&#127747;';
+      return '&#9790;';
+    }
+
+
+
+    // ═══════════════════════════════════════════════════════════
+    // DESK VIEW (Triggers the overlay)
+    // ═══════════════════════════════════════════════════════════
+
+    document.getElementById('logo-btn').addEventListener('click', function () { location.href = '/archive'; });
+
+    // ── CANVAS ────────────────────────────────────────────────────
+    var canv = document.getElementById('c');
+    var ctx = canv.getContext('2d');
+    var DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0, books = [];
+
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      canv.width = W * DPR; canv.height = H * DPR;
+      canv.style.width = W + 'px'; canv.style.height = H + 'px';
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(DPR, DPR);
+      genBooks();
+    }
+    window.addEventListener('resize', resize);
+
+    // ── DRAW HELPERS ──────────────────────────────────────────────
+    function px(x) { return x * W; } function py(y) { return y * H; }
+
+    function fr(x, y, w, h, col, a) {
+      ctx.globalAlpha = (a == null) ? 1 : a;
+      ctx.fillStyle = col;
+      ctx.fillRect(px(x), py(y), px(w), py(h));
+      ctx.globalAlpha = 1;
+    }
+    function fp(pts, col, a) {
+      ctx.globalAlpha = (a == null) ? 1 : a;
+      ctx.fillStyle = col; ctx.beginPath();
+      ctx.moveTo(px(pts[0]), py(pts[1]));
+      for (var i = 2; i < pts.length; i += 2) ctx.lineTo(px(pts[i]), py(pts[i + 1]));
+      ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+    }
+    function linG(x0, y0, x1, y1, stops) {
+      var g = ctx.createLinearGradient(px(x0), py(y0), px(x1), py(y1));
+      for (var i = 0; i < stops.length; i++) g.addColorStop(stops[i][0], stops[i][1]);
+      return g;
+    }
+    function circ(x, y, r, col, a) {
+      ctx.globalAlpha = (a == null) ? 1 : a; ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(px(x), py(y), r, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    function h2(x, y) { var n = Math.sin(x * 127.1 + y * 311.7) * 43758.5; return n - Math.floor(n); }
+    function flk(t) { return 0.75 + Math.sin(t * 0.13) * 0.12 + Math.sin(t * 0.37) * 0.07; }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function plx(f) { return 0; } function ply(f) { return 0; }
+
+    // ── LAYOUT (Pixel Room — bookshelf left, window right) ────────────
+    // Window: right side of wall (substantially larger)
+    var WX = 0.32, WY = 0.05, WW = 0.64, WH = 0.58;
+    // Window panel open/close state
+    var leftOpen = false, rightOpen = false;
+    // Breeze particles
+    var breezeParticles = [];
+    for (var _bp = 0; _bp < 30; _bp++) {
+      breezeParticles.push({ x: WX + Math.random() * WW, y: WY + Math.random() * WH, vx: -0.0010 - Math.random() * 0.0010, vy: (Math.random() - 0.5) * 0.0004, a: Math.random(), life: Math.random() });
+    }
+    function resetBreeze(p, fromRight) {
+      p.x = fromRight ? WX + WW - 0.02 : WX + 0.02;
+      p.y = WY + 0.05 + Math.random() * (WH - 0.10);
+      p.vx = fromRight ? -0.0010 - Math.random() * 0.0012 : 0.0010 + Math.random() * 0.0012;
+      p.vy = (Math.random() - 0.5) * 0.0004;
+      p.a = 0.2 + Math.random() * 0.5; p.life = 0;
+    }
+    // Bookshelf: front-facing on the left
+    var SX = 0.00, SY = 0.04, SW = 0.20, SH = 0.78;
+    // Floor
+    var FY = 0.80;
+    // Desk layout (3D structure: top surface and vertical front face with drawers)
+    var DESK_TOP_Y = 0.65;   // Back edge of desk against the wall
+    var DESK_FRONT_Y = 0.82; // Front edge of the desk top surface
+    // Items on desk
+    var DX = 0.35, DY = 0.72, DW = 0.30, DH = 0.10; // for zone calculations
+    var LX = 0.26, LY = 0.55; // desk lamp position (moved to left side)
+
+    // Book generation (for left side wall shelf)
+    var BCOLS = ['#8B1A1A', '#1848A8', '#1E7830', '#C87A18', '#5C1A90', '#A83818', '#0A2E68', '#388014', '#8C2438', '#CA6820', '#1A5090', '#609830'];
+    function genBooks() {
+      books = [];
+      // In first-person the shelf is on the left side wall — books appear foreshortened
+      // We generate them as a flat list; draw loop handles the perspective skew
+      var SHL = [0.20, 0.38, 0.56, 0.73];
+      for (var si = 0; si < SHL.length; si++) {
+        var bx = 0.016;
+        while (bx < SW - 0.022) {
+          var bw = 0.013 + h2(si * 11, bx * 900) * 0.012;
+          var bh = 0.065 + h2(si * 7, bx * 400) * 0.065;
+          var ci = Math.floor(h2(si * 3, bx * 200) * BCOLS.length) % BCOLS.length;
+          books.push({ shelf: si, bx: bx, bh: bh, bw: bw, col: BCOLS[ci] });
+          bx += bw + 0.002 + h2(si, bx * 50) * 0.003;
+        }
+      }
+    }
+
+    // ── TIME OF DAY PALETTE ───────────────────────────────────────
+    function getTOD() { var h = new Date().getHours(); if (h >= 5 && h < 8) return 'dawn'; if (h >= 8 && h < 17) return 'day'; if (h >= 17 && h < 20) return 'dusk'; return 'night'; }
+    function getPal() {
+      var t = getTOD();
+      return ({
+        dawn: { w0: '#D4C4A0', w1: '#C0AD8A', ceil: '#6A4A30', wTint: 'rgba(255,225,185,.80)', wGlow: '255,210,160', aR: 245, aG: 175, aB: 110 },
+        day: { w0: '#EDE0C4', w1: '#D8CC9A', ceil: '#5A3A20', wTint: 'rgba(255,248,220,.90)', wGlow: '255,240,180', aR: 255, aG: 230, aB: 160 },
+        dusk: { w0: '#CEBA97', w1: '#B8A480', ceil: '#4A2A14', wTint: 'rgba(255,185,110,.78)', wGlow: '255,165,90', aR: 255, aG: 165, aB: 90 },
+        night: { w0: '#9A8E78', w1: '#7C7060', ceil: '#2A1A0E', wTint: 'rgba(80,100,185,.45)', wGlow: '100,130,225', aR: 120, aG: 148, aB: 225 }
+      })[t] || { w0: '#7A4828', w1: '#60341A', ceil: '#30180A', wTint: 'rgba(255,248,200,.86)', wGlow: '255,235,155', aR: 255, aG: 215, aB: 120 };
+    }
+
+    // ── MAIN DRAW (First-Person POV) ──────────────────────────────
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      var pal = getPal();
+      var tod = getTOD();
+      var anyOpen = leftOpen || rightOpen;
+
+      // ── 1. WALL & BACKGROUND ───────────────────────────────────────
+      ctx.fillStyle = linG(0.5, 0, 0.5, FY, [[0, pal.ceil], [0.08, pal.w0], [0.5, pal.w1], [1, pal.w1]]);
+      ctx.fillRect(0, 0, W, py(FY));
+
+      // Wallpaper texture (subtle)
+      ctx.globalAlpha = 0.045;
+      var STEP = Math.max(18, Math.round(W / 42));
+      for (var wx2 = 0; wx2 < W; wx2 += STEP) {
+        for (var wy2 = py(0.07); wy2 < py(FY); wy2 += STEP) {
+          var nx2 = wx2 / W;
+          if (nx2 >= WX - 0.01 && nx2 <= WX + WW + 0.01) continue;
+          if (nx2 <= SX + SW + 0.01) continue;
+          ctx.fillStyle = '#A08050';
+          ctx.save(); ctx.translate(wx2, wy2); ctx.rotate(Math.PI / 4);
+          var ss2 = STEP * 0.32; ctx.fillRect(-ss2, -ss2, ss2 * 2, ss2 * 2); ctx.restore();
+        }
+      }
+      ctx.globalAlpha = 1;
+
+      // Crown molding
+      fr(0, 0.040, 1, 0.016, 'rgba(0,0,0,.12)');
+      fr(0, 0.028, 1, 0.014, 'rgba(0,0,0,.08)');
+      // Baseboard
+      fr(SW, FY - 0.018, 1 - SW, 0.020, 'rgba(0,0,0,.18)');
+
+      // ── 2. SKY BACKGROUND ─────────────────────────────────────────
+      (function () {
+        var sT, sB;
+        if (tod === 'dawn') { sT = '#3A2050'; sB = '#D07848'; }
+        else if (tod === 'day') { sT = '#2A5CA8'; sB = '#6898D8'; }
+        else if (tod === 'dusk') { sT = '#18102A'; sB = '#A03810'; }
+        else { sT = '#050810'; sB = '#10122A'; }
+        var skyG = ctx.createLinearGradient(0, py(WY), 0, py(WY + WH));
+        skyG.addColorStop(0, sT); skyG.addColorStop(1, sB);
+        ctx.save();
+        ctx.beginPath(); ctx.rect(px(WX), py(WY), px(WW), py(WH)); ctx.clip();
+        ctx.fillStyle = skyG; ctx.fillRect(px(WX), py(WY), px(WW), py(WH));
+
+        // ── WEATHER (Inside window clip) ──────────────────────────
+        if (weatherType === 'rain' && anyOpen) {
+          ctx.strokeStyle = 'rgba(180,215,255,.55)'; ctx.lineWidth = 1;
+          for (var ri = 0; ri < raindrops.length; ri++) {
+            var rd = raindrops[ri]; rd.y += rd.spd; if (rd.y > 0.7) rd.y = -0.1;
+            ctx.beginPath(); ctx.moveTo(px(rd.x), py(rd.y)); ctx.lineTo(px(rd.x - 0.002), py(rd.y + rd.len)); ctx.stroke();
+          }
+        }
+        if (weatherType === 'snow' && anyOpen) {
+          for (var sni = 0; sni < snowflakes.length; sni++) {
+            var sf = snowflakes[sni]; sf.y += sf.spd; sf.x += Math.sin(time * 0.02 + sf.drift) * 0.0003;
+            if (sf.y > 0.7) sf.y = -0.1; circ(sf.x, sf.y, sf.r, 'rgba(218,232,255,1)', sf.a);
+          }
+        }
+        ctx.restore();
+      })();
+
+      // ── 3. FLOOR ──────────────────────────────────────────────────
+      ctx.fillStyle = linG(0.5, FY, 0.5, 1, [[0, '#5A3A18'], [0.3, '#4A2E10'], [1, '#2A1808']]);
+      ctx.fillRect(0, py(FY), W, py(1 - FY));
+
+      // ── 5. WINDOW GLOW ────────────────────────────────────────────
+      (function () {
+        var wa = lampOn ? 0.35 : 0.15; if (anyOpen) wa = Math.min(wa + 0.10, 0.65);
+        var wgg = ctx.createRadialGradient(px(WX + WW * 0.5), py(WY + WH * 0.5), px(0.01), px(WX + WW * 0.5), py(WY + WH * 0.5), px(WW * 0.6));
+        var gCol = lampOn ? '255,180,50' : pal.wGlow;
+        wgg.addColorStop(0, 'rgba(' + gCol + ',' + wa + ')'); wgg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = wgg; ctx.fillRect(px(WX - 0.1), py(WY - 0.1), px(WW + 0.2), py(WH + 0.2));
+      })();
+
+      // ── 7. WINDOW FRAME ───────────────────────────────────────────
+      var fT = 0.018;
+      fr(WX, WY, WW, fT, '#2E1408'); fr(WX, WY + WH - fT, WW, fT, '#2E1408');
+      fr(WX, WY, fT, WH, '#1A0804'); fr(WX + WW - fT, WY, fT, WH, '#1A0804');
+
+      // ── 8. WINDOW PANELS (Traditional detailed inward swing) ───────
+      // ── 8. WINDOW PANELS (Traditional detailed inward swing) ───────
+      function drawOutwardPanel(bx, by, pw, ph, isOpen, isLeft) {
+        ctx.save();
+        var barW = 0.012, grillCol = '#2A0E08';
+        var pC = (tod === 'night' || tod === 'dusk') ? 'rgba(40,55,110,.35)' : 'rgba(255,245,210,.25)';
+        if (isOpen) {
+          var swingW = pw * 0.40, hScale = 0.85, xOff = isLeft ? 0 : (pw - swingW);
+          var x1 = bx + xOff, x2 = x1 + swingW, y_s = by + (ph * (1 - hScale) * 0.5), h_s = ph * hScale;
+
+          // Glass Pane
+          ctx.fillStyle = pC; ctx.beginPath();
+          if (isLeft) {
+            ctx.moveTo(px(x1), py(by)); ctx.lineTo(px(x2), py(y_s));
+            ctx.lineTo(px(x2), py(y_s + h_s)); ctx.lineTo(px(x1), py(by + ph));
+          } else {
+            ctx.moveTo(px(x1), py(y_s)); ctx.lineTo(px(x2), py(by));
+            ctx.lineTo(px(x2), py(by + ph)); ctx.lineTo(px(x1), py(y_s + h_s));
+          }
+          ctx.closePath(); ctx.fill();
+
+          // Perspective Bar Helper
+          function pBar(h1, h2, t1, t2, col) {
+            ctx.fillStyle = col; ctx.beginPath();
+            var y1_l = by + ph * h1, y1_r = y_s + h_s * h1;
+            var y2_l = by + ph * h2, y2_r = y_s + h_s * h2;
+            if (isLeft) {
+              ctx.moveTo(px(x1), py(y1_l)); ctx.lineTo(px(x2), py(y1_r));
+              ctx.lineTo(px(x2), py(y2_r)); ctx.lineTo(px(x1), py(y2_l));
+            } else {
+              ctx.moveTo(px(x1), py(y1_r)); ctx.lineTo(px(x2), py(y1_l));
+              ctx.lineTo(px(x2), py(y2_l)); ctx.lineTo(px(x1), py(y2_r));
+            }
+            ctx.closePath(); ctx.fill();
+          }
+
+          // Vertical Perspective Bar Helper
+          function pBarV(x_norm, w_norm, col) {
+            ctx.fillStyle = col; ctx.beginPath();
+            var xl = x1 + (x2 - x1) * x_norm, xr = xl + (x2 - x1) * w_norm;
+            var yl_t = by + (y_s - by) * x_norm, yl_b = (by + ph) + ((y_s + h_s) - (by + ph)) * x_norm;
+            var yr_t = by + (y_s - by) * (x_norm + w_norm), yr_b = (by + ph) + ((y_s + h_s) - (by + ph)) * (x_norm + w_norm);
+            if (!isLeft) {
+              yl_t = y_s + (by - y_s) * x_norm; yl_b = (y_s + h_s) + ((by + ph) - (y_s + h_s)) * x_norm;
+              yr_t = y_s + (by - y_s) * (x_norm + w_norm); yr_b = (y_s + h_s) + ((by + ph) - (y_s + h_s)) * (x_norm + w_norm);
+            }
+            ctx.moveTo(px(xl), py(yl_t)); ctx.lineTo(px(xr), py(yr_t));
+            ctx.lineTo(px(xr), py(yr_b)); ctx.lineTo(px(xl), py(yl_b));
+            ctx.closePath(); ctx.fill();
+          }
+
+          // Top/Bottom Wood Edges (Horizontal)
+          var twe = 0.012 / ph;
+          pBar(0, twe, 0, 1, '#1A0804');
+          pBar(1 - twe, 1, 0, 1, '#1A0804');
+
+          // Horizontal Grill
+          var gh = 0.012 / ph;
+          pBar(0.5 - gh * 0.5, 0.5 + gh * 0.5, 0, 1, grillCol);
+
+          // Vertical Frame Bars & Grill
+          var vw = 0.008 / (x2 - x1);
+          pBarV(0, vw, '#1A0804'); // hinge side
+          pBarV(1 - vw, vw, '#1A0804'); // opening side
+
+          var vgw = 0.006 / (x2 - x1);
+          pBarV(0.5 - vgw * 0.5, vgw, grillCol); // middle vertical grill
+
+          // Brass Handle (Subtle)
+          ctx.fillStyle = '#FFD700'; var hW = 0.004, hH = 0.022;
+          var hX = isLeft ? (x2 - 0.008 + 0.002) : (x1 + 0.002);
+          var hY = y_s + h_s * 0.5 - hH * 0.5;
+          fr(hX, hY, hW, hH);
+          fr(hX + 0.001, hY + 0.003, 0.001, 0.016, 'rgba(255,255,255,0.4)'); // glint
+        } else {
+          var ex = 0.003, fw = pw + ex, fx = isLeft ? bx : (bx - ex);
+          fr(fx, by, fw, ph, pC);
+          fr(fx, by, fw, 0.012, '#1A0804'); fr(fx, by + ph - 0.012, fw, 0.012, '#1A0804');
+          fr(isLeft ? fx + fw - 0.012 : fx, by, 0.012, ph, '#1A0804');
+          fr(fx, by + ph * 0.5 - 0.006, fw, 0.012, grillCol);
+          fr(fx + fw * 0.5 - 0.003, by, 0.006, ph, grillCol);
+          // Standard handles (Gold)
+          // Standard handles (Gold)
+          var hX = isLeft ? (fx + fw - 0.010) : (fx + 0.006);
+          var hY = by + ph * 0.5 - 0.011;
+          ctx.fillStyle = '#FFD700';
+          fr(hX, hY, 0.004, 0.022);
+          fr(hX + 0.001, hY + 0.003, 0.001, 0.016, 'rgba(255,255,255,0.4)'); // handle glint
+        }
+        ctx.restore();
+      }
+      drawOutwardPanel(WX, WY + 0.002, WW / 2, WH - 0.004, leftOpen, true);
+      drawOutwardPanel(WX + WW * 0.5, WY + 0.002, WW / 2, WH - 0.004, rightOpen, false);
+
+      // ── 13. SILL & WALL BELOW (Drawn BEFORE Curtains) ────────────────
+      var wallBelowY = WY + WH;
+      fr(WX - 0.02, wallBelowY, WW + 0.04, 0.024, '#482410');
+      fr(SW, wallBelowY + 0.01, 1 - SW, FY - (wallBelowY + 0.01), pal.w1);
+
+      // ── 9. CURTAINS (Original premium wavy version) ──────────
+      var cFlutterL = anyOpen ? Math.sin(time * 0.07) * 0.012 : 0;
+      var cFlutterR = anyOpen ? Math.sin(time * 0.07 + 0.8) * 0.012 : 0;
+
+      function drawWavyCurtain(x1, y1, width, ybase, flutter, anchorRight) {
+        ctx.save();
+        var color = 'rgba(255, 140, 20, 0.22)', highlight = 'rgba(255, 200, 50, 0.35)', deep = 'rgba(180, 60, 0, 0.28)';
+        ctx.beginPath(); ctx.moveTo(px(x1), py(y1)); ctx.lineTo(px(x1 + width), py(y1));
+        var vSteps = 24;
+        for (var j = 1; j <= vSteps; j++) {
+          var vt = j / vSteps;
+          var wave = Math.sin(vt * Math.PI * 1.5 + time * 0.03) * 0.003;
+          var vbx = x1 + width + (anchorRight ? 0 : (vt * flutter)) + (anchorRight ? 0 : wave);
+          ctx.lineTo(px(vbx), py(y1 + vt * (ybase - y1)));
+        }
+        for (var i = 32; i >= 0; i--) {
+          var ht = i / 32;
+          var fOff = anchorRight ? ((1 - ht) * flutter) : (ht * flutter);
+          ctx.lineTo(px(x1 + ht * width + fOff), py(ybase + Math.sin(ht * Math.PI * 1.5 + time * 0.03) * 0.002));
+        }
+        for (var j = vSteps - 1; j >= 0; j--) {
+          var vt = j / vSteps;
+          var wave = Math.sin(vt * Math.PI * 1.5 + time * 0.03 + 0.8) * 0.003;
+          var vbx = x1 + (anchorRight ? (vt * flutter) : 0) + (anchorRight ? wave : 0);
+          ctx.lineTo(px(vbx), py(y1 + vt * (ybase - y1)));
+        }
+        ctx.closePath();
+        var g = ctx.createLinearGradient(px(x1), py(y1), px(x1 + width), py(y1));
+        g.addColorStop(0, deep); g.addColorStop(0.3, color); g.addColorStop(0.5, highlight); g.addColorStop(0.7, color); g.addColorStop(1, deep);
+        ctx.fillStyle = g; ctx.fill();
+        ctx.restore();
+      }
+      drawWavyCurtain(WX - 0.06, WY - 0.02, 0.12, FY, cFlutterL, false);
+      drawWavyCurtain(WX + WW - 0.06, WY - 0.02, 0.12, FY, cFlutterR, true);
+      fr(WX - 0.08, WY - 0.030, WW + 0.16, 0.020, '#4A2210'); // rod
+
+      // ── 14. BOOKSHELF (Drawn here so it's in front of wall shadows/lines) ──
+      drawFrontBookshelf();
+
+      // ── 14. DESK SURFACE (3D desk matching photo reference) ──────────
+      var dt_L = 0.18, dt_R = 0.98; // Width at the wall (aligned with window roughly)
+      var df_L = -0.05, df_R = 1.05; // Width at front edge (perspective spread)
+
+      // A. Top Surface (Trapezoid from wall to front edge)
+      var topG = ctx.createLinearGradient(0, py(DESK_TOP_Y), 0, py(DESK_FRONT_Y));
+      topG.addColorStop(0, '#754B2F');
+      topG.addColorStop(0.5, '#56341E');
+      topG.addColorStop(1, '#3B2212');
+      ctx.fillStyle = topG;
+      ctx.beginPath();
+      ctx.moveTo(px(dt_L), py(DESK_TOP_Y));
+      ctx.lineTo(px(dt_R), py(DESK_TOP_Y));
+      ctx.lineTo(px(df_R), py(DESK_FRONT_Y));
+      ctx.lineTo(px(df_L), py(DESK_FRONT_Y));
+      ctx.closePath(); ctx.fill();
+
+      // Wood grain lines (receding into distance on the top surface)
+      ctx.strokeStyle = 'rgba(20,10,0,.15)'; ctx.lineWidth = 1.2;
+      var vpX = px((dt_L + dt_R) / 2), vpY = py(0.2); // Vanishing point
+      for (var gi = 0; gi <= 24; gi++) {
+        var startX = px(df_L + (df_R - df_L) * (gi / 24));
+        ctx.beginPath();
+        ctx.moveTo(startX, py(DESK_FRONT_Y));
+        ctx.lineTo(vpX + (startX - vpX) * 0.45, py(DESK_TOP_Y));
+        ctx.stroke();
+      }
+
+      // B. Desk Front Lip (Thickness of the top wood panel)
+      var lipH = 0.018; // Thickness
+      ctx.fillStyle = '#261208';
+      ctx.beginPath();
+      ctx.moveTo(px(df_L), py(DESK_FRONT_Y));
+      ctx.lineTo(px(df_R), py(DESK_FRONT_Y));
+      ctx.lineTo(px(df_R), py(DESK_FRONT_Y + lipH));
+      ctx.lineTo(px(df_L), py(DESK_FRONT_Y + lipH));
+      ctx.closePath(); ctx.fill();
+      // Highlight on the top front edge
+      fr(df_L, DESK_FRONT_Y, df_R - df_L, 0.003, '#825234');
+      fr(df_L, DESK_FRONT_Y + lipH - 0.002, df_R - df_L, 0.002, '#140804'); // lower shadow
+
+      // C. Front Face (Desk body with left/right pedestals and leg space)
+      var faceY = DESK_FRONT_Y + lipH;
+
+      // Top drawer band (the horizontal frame beneath the surface lip)
+      var bandH = 0.035;
+      var bandG = ctx.createLinearGradient(0, py(faceY), 0, py(faceY + bandH));
+      bandG.addColorStop(0, '#1E0E06'); bandG.addColorStop(1, '#0C0502');
+      ctx.fillStyle = bandG;
+      ctx.fillRect(px(df_L), py(faceY), px(df_R - df_L), py(bandH));
+
+      // Left Pedestal (going to floor)
+      var pW = (df_R - df_L) * 0.28;
+      var pedR_X = df_R - pW;
+
+      var pedG = ctx.createLinearGradient(0, py(faceY + bandH), 0, H);
+      pedG.addColorStop(0, '#160B05'); pedG.addColorStop(1, '#050201');
+      ctx.fillStyle = pedG;
+      ctx.beginPath();
+      // left ped
+      ctx.moveTo(px(df_L), py(faceY + bandH)); ctx.lineTo(px(df_L + pW), py(faceY + bandH));
+      ctx.lineTo(px(df_L + pW), H); ctx.lineTo(px(df_L), H);
+      // right ped
+      ctx.moveTo(px(pedR_X), py(faceY + bandH)); ctx.lineTo(px(df_R), py(faceY + bandH));
+      ctx.lineTo(px(df_R), H); ctx.lineTo(px(pedR_X), H);
+      ctx.closePath(); ctx.fill();
+
+      // Knee-hole back wall shadow
+      var kneeW = pedR_X - (df_L + pW);
+      // Deep shadow under the desk
+      var kneeG = ctx.createLinearGradient(0, py(faceY + bandH), 0, H);
+      kneeG.addColorStop(0, '#0D0502'); kneeG.addColorStop(1, '#000000');
+      ctx.fillStyle = kneeG;
+      ctx.fillRect(px(df_L + pW), py(faceY + bandH), px(kneeW), py(1.0 - (faceY + bandH)));
+
+      // D. Drawers (placed on the pedestals)
+      var dwW = pW * 0.75;
+      var dwH = 0.12;
+      var dlX = df_L + (pW - dwW) * 0.5; // center on left pedestal
+      var drX = pedR_X + (pW - dwW) * 0.5; // center on right pedestal
+
+      // Left Drawer
+      fr(dlX, faceY + 0.05, dwW, dwH, '#200D06'); // base
+      fr(dlX, faceY + 0.05, dwW, 0.005, '#381C0C'); // top highlight
+      fr(dlX, faceY + 0.05 + dwH - 0.005, dwW, 0.005, '#080301'); // bottom shadow
+      fr(dlX + dwW - 0.004, faceY + 0.05, 0.004, dwH, '#0C0502'); // side shadow
+      fr(dlX + dwW * 0.35, faceY + 0.09, dwW * 0.3, 0.008, '#080301'); // handle
+
+      // Right Drawer
+      fr(drX, faceY + 0.05, dwW, dwH, '#200D06');
+      fr(drX, faceY + 0.05, dwW, 0.005, '#381C0C');
+      fr(drX, faceY + 0.05 + dwH - 0.005, dwW, 0.005, '#080301');
+      fr(drX + dwW - 0.004, faceY + 0.05, 0.004, dwH, '#0C0502');
+      fr(drX + dwW * 0.35, faceY + 0.09, dwW * 0.3, 0.008, '#080301');
+
+      // Second set of lower drawers (bottom stack)
+      fr(dlX, faceY + 0.20, dwW, dwH, '#1c0b05');
+      fr(dlX, faceY + 0.20, dwW, 0.004, '#2A1408');
+      fr(dlX + dwW * 0.35, faceY + 0.24, dwW * 0.3, 0.008, '#060201');
+
+      fr(drX, faceY + 0.20, dwW, dwH, '#1c0b05');
+      fr(drX, faceY + 0.20, dwW, 0.004, '#2A1408');
+      fr(drX + dwW * 0.35, faceY + 0.24, dwW * 0.3, 0.008, '#060201');
+
+      // ── 15. GLOBAL LIGHT TINT & ATMOSPHERE ─────────────────────────
+      // We draw the atmospheric "mist" and global tint BEFORE foreground items
+      // so the objects themselves look solid and opaque.
+      if (lampOn) {
+        // Base ambient warm wash (softened global fill)
+        ctx.fillStyle = 'rgba(' + pal.aR + ',' + pal.aG + ',' + pal.aB + ',.18)'; ctx.fillRect(0, 0, W, H);
+
+        // Extra large, nearly transparent room-fill glow
+        var roomGlow = ctx.createRadialGradient(px(LX), py(LY), px(0.05), px(LX), py(LY), px(1.2));
+        roomGlow.addColorStop(0, 'rgba(255, 180, 80, 0.12)');
+        roomGlow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = roomGlow; ctx.fillRect(0, 0, W, H);
+
+        // Warm directional core glow (softened but wider reach)
+        var wsg = ctx.createRadialGradient(px(LX), py(LY - 0.04), px(0.01), px(LX), py(LY - 0.04), px(0.75));
+        wsg.addColorStop(0, 'rgba(' + pal.aR + ',' + pal.aG + ',' + pal.aB + ',.22)');
+        wsg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = wsg; ctx.fillRect(0, 0, W, H);
+      } else {
+        ctx.fillStyle = 'rgba(0,0,8,.28)'; ctx.fillRect(0, 0, W, H);
+        var mlg = ctx.createRadialGradient(px(WX + WW * 0.5), py(WY + WH * 0.4), px(0.01), px(WX + WW * 0.5), py(WY + WH * 0.4), px(0.5));
+        mlg.addColorStop(0, 'rgba(90,120,195,.18)'); mlg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = mlg; ctx.fillRect(0, 0, W, H);
+      }
+
+      // ── 16. CENTERED PORTRAIT JOURNAL ─────────────────────────────
+      // Perspective helper: maps a normalized desk position (fx: 0-1, fy: 0-1) to canvas coords
+      function deskPos(fx, fy) {
+        var tY = DESK_TOP_Y + fy * (DESK_FRONT_Y - DESK_TOP_Y);
+        var curL = dt_L + fy * (df_L - dt_L);
+        var curR = dt_R + fy * (df_R - dt_R);
+        var tX = curL + fx * (curR - curL);
+        return { x: tX, y: tY, scale: 0.60 + fy * 0.40 };
+      }
+
+      (function () {
+        // Centered (fx: 0.50) and positioned for a focal point look (fy: 0.45)
+        var pos = deskPos(0.50, 0.45); var sc = pos.scale;
+        var jW = 0.10 * sc, jD = 0.20 * sc; // Balanced portrait size
+
+        ctx.save();
+        ctx.translate(px(pos.x), py(pos.y));
+        ctx.rotate(0); // Perfect straight alignment
+
+        var jX = -jW * 0.5, jY = -jD * 0.5;
+
+        // Shadow (subtle, rounded to match the book)
+        var x = px(jX);
+        var y = py(jY);
+        var w = px(jW);
+        var h = py(jD);
+        var radLeft = 2 * sc; 
+        var radRight = 8 * sc;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.22)';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 3;
+        ctx.shadowOffsetY = 6;
+        
+        // Draw shadow path
+        ctx.beginPath();
+        var sx = x + 3;
+        var sy = y + 4;
+        ctx.moveTo(sx + radLeft, sy);
+        ctx.lineTo(sx + w - radRight, sy);
+        ctx.quadraticCurveTo(sx + w, sy, sx + w, sy + radRight);
+        ctx.lineTo(sx + w, sy + h - radRight);
+        ctx.quadraticCurveTo(sx + w, sy + h, sx + w - radRight, sy + h);
+        ctx.lineTo(sx + radLeft, sy + h);
+        ctx.quadraticCurveTo(sx, sy + h, sx, sy + h - radLeft);
+        ctx.lineTo(sx, sy + radLeft);
+        ctx.quadraticCurveTo(sx, sy, sx + radLeft, sy);
+        ctx.closePath();
+        ctx.fill();
+
+        // Reset shadow
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        // 1. Leather cover base color
+        ctx.fillStyle = '#3D2B1F';
+        ctx.beginPath();
+        ctx.moveTo(x + radLeft, y);
+        ctx.lineTo(x + w - radRight, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + radRight);
+        ctx.lineTo(x + w, y + h - radRight);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - radRight, y + h);
+        ctx.lineTo(x + radLeft, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - radLeft);
+        ctx.lineTo(x, y + radLeft);
+        ctx.quadraticCurveTo(x, y, x + radLeft, y);
+        ctx.closePath();
+        ctx.fill();
+
+        // 2. Leather texture gradient overlay
+        var lgCover = ctx.createLinearGradient(x, y, x + w, y + h);
+        lgCover.addColorStop(0, 'rgba(255,255,255,0.03)');
+        lgCover.addColorStop(0.5, 'rgba(0,0,0,0)');
+        lgCover.addColorStop(1, 'rgba(0,0,0,0.22)');
+        ctx.fillStyle = lgCover;
+        ctx.fill();
+
+        // 3. Spine Edge Shadow
+        var spineShadW = px(0.009 * sc);
+        var spineShad = ctx.createLinearGradient(x, y, x + spineShadW, y);
+        spineShad.addColorStop(0, 'rgba(0,0,0,0.4)');
+        spineShad.addColorStop(0.8, 'rgba(0,0,0,0.1)');
+        spineShad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = spineShad;
+        ctx.fillRect(x, y, spineShadW, h);
+
+        // 4. Spine Crease Line
+        var creaseX = x + px(0.010 * sc);
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(creaseX, y);
+        ctx.lineTo(creaseX, y + h);
+        ctx.stroke();
+
+        // 5. Vertical Black Elastic Band
+        var bandW = px(0.005 * sc);
+        var bandX = x + w - px(0.015 * sc);
+        ctx.fillStyle = '#151515';
+        ctx.fillRect(bandX, y, bandW, h);
+        
+        // Elastic band shadows
+        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(bandX, y);
+        ctx.lineTo(bandX, y + h);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(bandX + bandW, y);
+        ctx.lineTo(bandX + bandW, y + h);
+        ctx.stroke();
+
+        // 6. Centered Date Typography
+        var coverDateStr = "";
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        if (typeof journalEntries !== 'undefined' && typeof window.currentSpread !== 'undefined' && journalEntries[window.currentSpread]) {
+            var ent = journalEntries[window.currentSpread];
+            if (ent.formatted_date) {
+                coverDateStr = ent.formatted_date;
+            }
+        }
+        if (!coverDateStr) {
+            var now = new Date();
+            coverDateStr = months[now.getMonth()] + ' ' + now.getDate();
+        }
+
+        var textX = x + (w - px(0.010 * sc)) * 0.44; // Center, offset slightly for spine and band
+        var titleSize = Math.max(6, Math.round(h * 0.052));
+        var dateSize = Math.max(7, Math.round(h * 0.075));
+
+        ctx.fillStyle = 'rgba(224, 204, 184, 0.55)';
+        ctx.font = 'italic ' + titleSize + 'px Lora, serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("a memory from", textX, y + h * 0.44);
+
+        ctx.fillStyle = 'rgba(245, 235, 225, 0.9)';
+        ctx.font = 'normal ' + dateSize + 'px Lora, serif';
+        ctx.fillText(coverDateStr, textX, y + h * 0.56);
+
+        ctx.restore();
+      })();
+
+      // ─ FIREFLY JAR ─
+      (function () {
+        var pos = deskPos(0.62, 0.22); var sc = pos.scale;
+        var jrX = pos.x - 0.020 * sc, jrY = pos.y - 0.068 * sc;
+        var jrW = 0.040 * sc, jrH = 0.065 * sc;
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,.20)';
+        ctx.beginPath(); ctx.ellipse(px(pos.x), py(pos.y + 0.010 * sc), px(jrW * 0.6), py(0.006 * sc), 0, 0, Math.PI * 2); ctx.fill();
+        // Jar body
+        ctx.fillStyle = linG(jrX, jrY, jrX + jrW, jrY, [[0, 'rgba(180,220,200,.55)'], [0.4, 'rgba(220,255,240,.30)'], [1, 'rgba(150,200,180,.40)']]);
+        ctx.fillRect(px(jrX), py(jrY), px(jrW), py(jrH));
+        ctx.strokeStyle = 'rgba(150,200,170,.60)'; ctx.lineWidth = 0.8;
+        ctx.strokeRect(px(jrX), py(jrY), px(jrW), py(jrH));
+        // Lid
+        fr(jrX - 0.003 * sc, jrY - 0.010 * sc, jrW + 0.006 * sc, 0.013 * sc, '#5A4020');
+        // Fireflies inside
+        for (var ffi = 0; ffi < fireflies.length; ffi++) {
+          var ff = fireflies[ffi];
+          var fx2 = jrX + jrW * 0.2 + (jrW * 0.6) * ((ffi % 4) / 3);
+          var fy2 = jrY + jrH * 0.25 + (jrH * 0.5) * (Math.floor(ffi / 4) / 2);
+          var fa = (Math.sin(time * ff.spd + ff.phase) + 1) * 0.5;
+          circ(fx2, fy2, px(0.003 * sc), 'rgba(' + ff.col + ',' + (0.4 + fa * 0.6) + ')');
+        }
+      })();
+
+      // ─ MUG (with steam) ─
+      (function () {
+        var pos = deskPos(0.78, 0.34); var sc = pos.scale;
+        var mX = pos.x - 0.022 * sc, mY = pos.y - 0.044 * sc;
+        var mW = 0.044 * sc, mH = 0.042 * sc;
+        ctx.fillStyle = 'rgba(0,0,0,.18)';
+        ctx.beginPath(); ctx.ellipse(px(pos.x), py(pos.y + 0.008 * sc), px(mW * 0.6), py(0.006 * sc), 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = linG(mX, mY, mX, mY + mH, [[0, '#D8B880'], [1, '#B89050']]); ctx.fillRect(px(mX), py(mY), px(mW), py(mH));
+        fr(mX, mY, mW, 0.007 * sc, '#C0A06A');
+        fr(mX, mY + mH - 0.006 * sc, mW, 0.008 * sc, '#8A6030');
+        // Handle
+        ctx.strokeStyle = '#B08040'; ctx.lineWidth = px(0.007 * sc);
+        ctx.beginPath(); ctx.arc(px(mX + mW + 0.006 * sc), py(mY + mH * 0.5), px(0.014 * sc), -Math.PI * 0.55, Math.PI * 0.55); ctx.stroke();
+        // Top surface (ellipse)
+        ctx.fillStyle = '#6A3010';
+        ctx.beginPath(); ctx.ellipse(px(mX + mW * 0.5), py(mY), px(mW * 0.5), py(0.008 * sc), 0, 0, Math.PI * 2); ctx.fill();
+        // Steam
+        if (lampOn) {
+          for (var sti = 0; sti < 3; sti++) {
+            var sph = ((time * 0.8 + sti * 20) % 60) / 60;
+            var sa = Math.sin(sph * Math.PI) * 0.38;
+            fr(pos.x - 0.006 * sc + sti * 0.006 * sc, mY - sph * 0.045 * sc, 0.005 * sc, 0.010 * sc, 'rgba(255,240,218,.7)', sa);
+          }
+        }
+      })();
+
+      // ─ ORNATE DESK LAMP (moved and scaled up) ─
+      (function () {
+        var pos = deskPos(0.15, 0.18); var sc = pos.scale;
+        var lbX = pos.x, lbY = pos.y;
+
+        // Desk light pool - drawn BEFORE the lamp so the wood doesn't look washed out/transparent
+        if (lampOn) {
+          var dlg = ctx.createRadialGradient(px(lbX), py(lbY - 0.03 * sc), px(0.01), px(lbX), py(lbY - 0.03 * sc), px(0.55 * sc));
+          dlg.addColorStop(0, 'rgba(255,180,50,0.35)'); dlg.addColorStop(0.4, 'rgba(255,160,40,0.12)'); dlg.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = dlg; ctx.fillRect(0, 0, W, H);
+        }
+
+        // 1. Base (Ornate Bronze/Wood Pedestal)
+        ctx.fillStyle = linG(lbX - 0.04 * sc, lbY, lbX + 0.04 * sc, lbY, [[0, '#120804'], [0.4, '#3A1C10'], [0.6, '#3A1C10'], [1, '#120804']]);
+        ctx.beginPath(); ctx.ellipse(px(lbX), py(lbY), px(0.045 * sc), py(0.015 * sc), 0, 0, Math.PI * 2); ctx.fill();
+        fr(lbX - 0.025 * sc, lbY - 0.025 * sc, 0.05 * sc, 0.022 * sc, '#2A1408'); // larger pedestal block
+
+        // 2. Ornate Turned Stem (Bulbous sections)
+        var stY = lbY - 0.025 * sc;
+        // Bottom bulb
+        ctx.fillStyle = linG(lbX - 0.018 * sc, 0, lbX + 0.018 * sc, 0, [[0, '#1A0B05'], [0.5, '#4A2810'], [1, '#1A0B05']]);
+        ctx.beginPath(); ctx.ellipse(px(lbX), py(stY - 0.02 * sc), px(0.018 * sc), py(0.025 * sc), 0, 0, Math.PI * 2); ctx.fill();
+        // Middle spindle
+        fr(lbX - 0.007 * sc, stY - 0.14 * sc, 0.014 * sc, 0.12 * sc, '#2E1208');
+        // Top bulb
+        ctx.beginPath(); ctx.ellipse(px(lbX), py(stY - 0.12 * sc), px(0.014 * sc), py(0.022 * sc), 0, 0, Math.PI * 2); ctx.fill();
+        // Collar under shade
+        fr(lbX - 0.01 * sc, lbY - 0.18 * sc, 0.02 * sc, 0.015 * sc, '#1A0B05');
+
+        // 3. Peach Scalloped Shade
+        var shTopY = lbY - 0.35 * sc, shBotY = lbY - 0.18 * sc;
+        var shW_T = 0.06 * sc, shW_B = 0.125 * sc;
+
+        ctx.fillStyle = lampOn ? '#FFB870' : '#8A4828';
+        ctx.beginPath();
+        ctx.moveTo(px(lbX - shW_T), py(shTopY));
+        ctx.lineTo(px(lbX + shW_T), py(shTopY));
+        ctx.lineTo(px(lbX + shW_B), py(shBotY));
+        // Scalloped bottom edge
+        var steps = 8;
+        for (var i = 0; i < steps; i++) {
+          var t = (i + 0.5) / steps;
+          var sx = (lbX + shW_B) - (t * shW_B * 2);
+          var sy = shBotY + 0.010 * sc * Math.sin(i * Math.PI); // wavy effect
+          ctx.lineTo(px(sx), py(shBotY + 0.012 * sc));
+        }
+        ctx.lineTo(px(lbX - shW_B), py(shBotY));
+        ctx.closePath(); ctx.fill();
+
+        // Highline on shade removed to eliminate the "obvious streak of light" feeling
+
+        if (lampOn) {
+          // Internal bulb glow (balanced)
+          var ig = ctx.createRadialGradient(px(lbX), py(shBotY - 0.02 * sc), 0, px(lbX), py(shBotY - 0.02 * sc), px(0.08 * sc));
+          ig.addColorStop(0, 'rgba(255,250,220,0.85)'); ig.addColorStop(0.5, 'rgba(255,210,120,0.4)'); ig.addColorStop(1, 'rgba(255,160,60,0)');
+          ctx.fillStyle = ig; ctx.beginPath(); ctx.ellipse(px(lbX), py(shBotY), px(shW_B * 1.1), py(0.020 * sc), 0, 0, Math.PI * 2); ctx.fill();
+        }
+      })();
+
+      // ── 17. DUST MOTES ─────────────────────────────────────────────
+      if (lampOn) {
+        for (var dmi = 0; dmi < dust.length; dmi++) {
+          var d = dust[dmi];
+          d.x += d.vx + Math.sin(time * 0.012 + d.life * 6) * 0.00028;
+          d.y += d.vy; d.life += 0.0014;
+          if (d.y < 0.06 || d.life > 1) resetDust(d);
+          var da = Math.sin(d.life * Math.PI) * 0.45;
+          ctx.globalAlpha = da;
+          ctx.fillStyle = 'rgba(255,230,140,1)';
+          ctx.beginPath(); ctx.arc(px(d.x), py(d.y), d.sz * 1.1, 0, Math.PI * 2); ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      // ── 18. VIGNETTE ──────────────────────────────────────────────
+      var vgA = lampOn ? 0.38 : 0.68;
+      var vg = ctx.createRadialGradient(W * 0.5, H * 0.5, H * 0.16, W * 0.5, H * 0.5, H * 0.85);
+      vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,' + vgA + ')');
+      ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+      // Hover halo
+      if (hov) drawUIHalo(hov);
+
+      // ── 19. UPDATE BADGES ─────────────────────────────────────────
+      var tLab = { dawn: 'pale morning light', day: 'afternoon at your desk', dusk: 'golden hour fading', night: 'deep evening quiet' };
+      document.getElementById('timebadge').textContent = tLab[getTOD()] || 'a quiet moment';
+      var wLab = { rain: 'soft rain outside', snow: 'snow falling quietly' };
+      document.getElementById('weatherbadge').textContent = wLab[weatherType] || (anyOpen ? 'a gentle breeze' : '');
+    }
+    // ── SIDE BOOKSHELF (left wall, foreshortened) ─────────────────
+    function drawFrontBookshelf() {
+      // Front-facing bookshelf on the left wall, full height
+      var cabX = SX, cabY = SY, cabW = SW, cabH = SH;
+
+      // Shelf frame / back panel (darker wood)
+      fr(cabX, cabY, cabW, cabH, '#1C0C06');
+      fr(cabX + 0.012, cabY + 0.010, cabW - 0.024, cabH - 0.020, '#0E0604'); // back panel dark
+
+      // Side panels
+      fr(cabX, cabY, 0.014, cabH, '#2E1608');
+      fr(cabX + cabW - 0.014, cabY, 0.014, cabH, '#2E1608');
+
+      // Top cap
+      fr(cabX - 0.005, cabY - 0.014, cabW + 0.010, 0.018, '#3A1C0A');
+      fr(cabX - 0.005, cabY - 0.003, cabW + 0.010, 0.006, '#4A2610');
+      // Base / feet
+      fr(cabX - 0.004, cabY + cabH, cabW + 0.008, 0.017, '#2A1206');
+      fr(cabX + 0.014, cabY + cabH + 0.017, 0.018, 0.012, '#231008');
+      fr(cabX + cabW - 0.032, cabY + cabH + 0.017, 0.018, 0.012, '#231008');
+
+      // Shelf boards (4 shelves)
+      var SHLS = [0.20, 0.40, 0.60, 0.80];
+      for (var shi = 0; shi < SHLS.length; shi++) {
+        var shY2 = cabY + SHLS[shi] * cabH;
+        fr(cabX + 0.012, shY2, cabW - 0.024, 0.014, '#3A1C0A');
+        fr(cabX + 0.014, shY2 + 0.014, cabW - 0.028, 0.005, 'rgba(0,0,0,.35)'); // shelf shadow
+        fr(cabX + 0.014, shY2, cabW - 0.028, 0.004, 'rgba(100,60,20,.22)'); // shelf top highlight
+      }
+
+      // Books on each shelf
+      for (var bi = 0; bi < books.length; bi++) {
+        var b = books[bi];
+        var shelfIdx = b.shelf;
+        var shTop2 = cabY + SHLS[shelfIdx] * cabH;
+        var bXf = cabX + 0.016 + b.bx * (cabW - 0.032) / (SW - 0.022);
+        var bWf = b.bw * (cabW - 0.032) / (SW - 0.022);
+        if (bXf + bWf > cabX + cabW - 0.016) continue;
+        // Book body
+        fr(bXf, shTop2 - b.bh * 0.88, bWf, b.bh * 0.88, b.col);
+        // Spine highlight (left edge)
+        fr(bXf, shTop2 - b.bh * 0.88, bWf * 0.12, b.bh * 0.88, 'rgba(255,255,255,.10)');
+        // Shadow divider
+        fr(bXf + bWf, shTop2 - b.bh * 0.88, 0.002, b.bh * 0.88, 'rgba(0,0,0,.25)');
+        // Top edge
+        fr(bXf, shTop2 - b.bh * 0.88, bWf, 0.004, 'rgba(255,255,255,.12)');
+      }
+
+      // Mood plant (top section of shelf, above first shelf)
+      // drawPlant(cabX + 0.040, cabY + 0.010, journalDays);
+
+
+
+      // Separator panel edge shadow (right side of shelf fades into wall)
+      var sEdge = ctx.createLinearGradient(px(cabX + cabW), 0, px(cabX + cabW + 0.04), 0);
+      sEdge.addColorStop(0, 'rgba(0,0,0,.15)'); sEdge.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = sEdge; ctx.fillRect(px(cabX + cabW), py(cabY), px(0.04), py(cabH + 0.04));
+
+      // ── NAVIGATION BOOKS (glowing featured books on specific shelves) ──
+      var SHLS_NAV = [0.20, 0.40, 0.60, 0.80];
+      navBookZones = []; // reset each frame
+      for (var ni = 0; ni < NAV_BOOKS.length; ni++) {
+        var nb = NAV_BOOKS[ni];
+        var nbShelfY = cabY + SHLS_NAV[nb.shelf] * cabH;
+        var nbX = cabX + 0.016 + nb.slotFrac * (cabW - 0.032);
+        var nbH = nb.bh;
+        var nbW = nb.bw;
+        var nbTop = nbShelfY - nbH * 0.92;
+
+        // Pulsing glow aura behind the book
+        var glowPulse = (Math.sin(time * 0.045 + ni * 1.3) + 1) * 0.5;
+        var glowR = 0.022 + glowPulse * 0.008;
+        var gAura = ctx.createRadialGradient(px(nbX + nbW * 0.5), py(nbTop + nbH * 0.5), 0,
+          px(nbX + nbW * 0.5), py(nbTop + nbH * 0.5), px(glowR));
+        gAura.addColorStop(0, nb.glowCol + (0.45 + glowPulse * 0.25) + ')');
+        gAura.addColorStop(1, nb.glowCol + '0)');
+        ctx.fillStyle = gAura;
+        ctx.fillRect(px(nbX - glowR), py(nbTop - glowR * 0.5), px(nbW + glowR * 2), py(nbH + glowR));
+
+        // Book body
+        var nbG = ctx.createLinearGradient(px(nbX), py(nbTop), px(nbX + nbW), py(nbTop));
+        nbG.addColorStop(0, 'rgba(0,0,0,0.3)');
+        nbG.addColorStop(0.15, nb.col);
+        nbG.addColorStop(0.85, nb.col);
+        nbG.addColorStop(1, 'rgba(0,0,0,0.35)');
+        ctx.fillStyle = nbG;
+        ctx.fillRect(px(nbX), py(nbTop), px(nbW), py(nbH * 0.92));
+
+        // Spine highlight
+        ctx.fillStyle = 'rgba(255,255,255,0.14)';
+        ctx.fillRect(px(nbX), py(nbTop), px(nbW * 0.12), py(nbH * 0.92));
+
+        // Top edge glow
+        ctx.fillStyle = nb.glowCol + (0.6 + glowPulse * 0.3) + ')';
+        ctx.fillRect(px(nbX), py(nbTop), px(nbW), py(0.003));
+
+        // Small label on spine (rotated text)
+        ctx.save();
+        ctx.translate(px(nbX + nbW * 0.5), py(nbTop + nbH * 0.46));
+        ctx.rotate(-Math.PI / 2);
+        ctx.font = 'bold ' + Math.max(6, Math.round(W * 0.009)) + 'px "Balsamiq Sans", cursive';
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.textAlign = 'center';
+        ctx.fillText(nb.label.toUpperCase(), 0, 0);
+        ctx.restore();
+
+        // Register as a clickable zone
+        navBookZones.push({
+          x: nbX, y: nbTop, w: nbW, h: nbH * 0.92,
+          title: nb.label, sub: nb.href ? ('go to ' + nb.label.toLowerCase()) : 'your emotional weather',
+          navHref: nb.href, navMood: !nb.href
+        });
+      }
+    }
+    function drawSideBookshelf() {
+      // The left wall recedes into the background.
+      // We draw the bookshelf as a foreshortened cabinet on the left strip.
+      var cabX = 0.00, cabW = SW, cabY = WY + 0.02, cabH = WH + 0.14;
+      // Wall shadow behind cabinet
+      var bss = ctx.createLinearGradient(px(cabX + cabW), 0, px(cabX + cabW + 0.06), 0);
+      bss.addColorStop(0, 'rgba(0,0,0,.60)'); bss.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = bss; ctx.fillRect(px(cabX + cabW), py(cabY), px(0.06), py(cabH));
+      // Cabinet body — slightly compressed in X to look foreshortened
+      fr(cabX, cabY, cabW, cabH, '#140802');
+      fr(cabX + 0.010, cabY + 0.010, cabW - 0.014, cabH - 0.020, '#0A0400');
+      fr(cabX, cabY, cabW, 0.013, '#2E1606'); fr(cabX, cabY + cabH - 0.013, cabW, 0.013, '#1E0E04');
+      fr(cabX + cabW - 0.012, cabY, 0.012, cabH, '#221008');
+      // Shelf boards
+      var SHLS = [0.22, 0.40, 0.58, 0.76];
+      for (var shi = 0; shi < SHLS.length; shi++) {
+        fr(cabX + 0.010, cabY + SHLS[shi] * cabH, cabW - 0.014, 0.013, '#2E1606');
+        fr(cabX + 0.012, cabY + SHLS[shi] * cabH + 0.013, cabW - 0.018, 0.004, 'rgba(70,35,15,.50)');
+      }
+      // Top molding
+      fr(cabX, cabY - 0.016, cabW + 0.006, 0.018, '#3A1C0A');
+      // Books (foreshortened — drawn narrow, stacked horizontally)
+      for (var bi = 0; bi < books.length; bi++) {
+        var b = books[bi];
+        var shTop = cabY + SHLS[b.shelf] * cabH;
+        // Foreshorten book width by ~38% to simulate side-wall angle
+        var bwF = b.bw * 0.62;
+        var bX = cabX + 0.011 + b.bx * 0.62;
+        if (bX + bwF > cabX + cabW - 0.014) continue;
+        fr(bX, shTop - b.bh * 0.90, bwF, b.bh * 0.90, b.col);
+        fr(bX, shTop - b.bh * 0.90, bwF * 0.12, b.bh * 0.90, 'rgba(0,0,0,.28)');
+        fr(bX, shTop - b.bh * 0.90, bwF, 0.004, 'rgba(255,255,255,.08)');
+      }
+    }
+
+    // ── OBJECT DRAWERS ────────────────────────────────────────────
+    function drawUIHalo(zone) {
+      if (!zone) return;
+      var cx = zone.x + zone.w / 2, cy = zone.y + zone.h / 2;
+      var r = Math.max(zone.w, zone.h) * 0.8;
+      var g = ctx.createRadialGradient(px(cx), py(cy), 0, px(cx), py(cy), px(r));
+      g.addColorStop(0, 'rgba(255,230,150,0.15)'); g.addColorStop(1, 'rgba(255,230,150,0)');
+      ctx.fillStyle = g; ctx.fillRect(px(cx - r), py(cy - r), px(r * 2), py(r * 2));
+    }
+
+    // ── ZONES ─────────────────────────────────────────────────────
+    var zones = [
+      // Window panels
+      { x: WX, y: WY, w: WW * 0.5, h: WH, title: 'Left Window', sub: leftOpen ? 'click to close' : 'click to open', winLeft: true },
+      { x: WX + WW * 0.5, y: WY, w: WW * 0.5, h: WH, title: 'Right Window', sub: rightOpen ? 'click to close' : 'click to open', winRight: true },
+      // Desk items (mapped to the 3D surface)
+      { x: 0.40, y: DESK_TOP_Y + 0.01, w: 0.20, h: 0.14, title: 'Writing Desk', sub: 'start a new entry', key: 'write' },
+      { x: 0.64, y: DESK_TOP_Y + 0.01, w: 0.08, h: 0.08, title: 'Firefly Jar', sub: 'glowing thoughts', key: 'jar' },
+      { x: 0.75, y: DESK_TOP_Y + 0.03, w: 0.08, h: 0.09, title: 'Morning Mug', sub: 'still warm', key: 'home' },
+      // Lamp (moved to left and scaled up)
+      { x: 0.20, y: DESK_TOP_Y - 0.22, w: 0.16, h: 0.32, title: 'Desk Lamp', sub: 'click to toggle light', lamp: true },
+    ];
+
+    // ── CLICK: WINDOW TOGGLES ─────────────────────────────────────
+    function toggleLeftWindow() { leftOpen = !leftOpen; zones[0].sub = leftOpen ? 'click to close' : 'click to open'; }
+    function toggleRightWindow() { rightOpen = !rightOpen; zones[1].sub = rightOpen ? 'click to close' : 'click to open'; }
+
+    var TIP = document.getElementById('tip'), TTe = document.getElementById('ttt'), TSe = document.getElementById('tts');
+
+    canv.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX / W; mouseY = e.clientY / H;
+      var mx = mouseX, my = mouseY, f = null;
+
+      // Check nav book zones first (drawn on top of bookshelf)
+      for (var ni = 0; ni < navBookZones.length; ni++) {
+        var nz = navBookZones[ni];
+        if (mx >= nz.x && mx <= nz.x + nz.w && my >= nz.y && my <= nz.y + nz.h) { f = nz; break; }
+      }
+      // Then check regular zones
+      if (!f) {
+        for (var i = 0; i < zones.length; i++) { var z = zones[i]; if (mx >= z.x && mx <= z.x + z.w && my >= z.y && my <= z.y + z.h) { f = z; break; } }
+      }
+
+      hov = f; canv.style.cursor = f ? 'pointer' : 'crosshair';
+      if (f) {
+        TTe.textContent = f.title; TSe.textContent = f.sub;
+        TIP.style.left = Math.min(e.clientX + 18, W - 220) + 'px';
+        TIP.style.top = Math.max(e.clientY - 44, 10) + 'px';
+        TIP.style.opacity = '1';
+      } else { TIP.style.opacity = '0'; }
+
+      // Bottom dock is always visible — no proximity logic needed
+    });
+
+    canv.addEventListener('click', function (e) {
+      var mx = e.clientX / W, my = e.clientY / H;
+
+      // Check nav book zones first
+      for (var ni = 0; ni < navBookZones.length; ni++) {
+        var nz = navBookZones[ni];
+        if (mx >= nz.x && mx <= nz.x + nz.w && my >= nz.y && my <= nz.y + nz.h) {
+          if (nz.navHref) { location.href = nz.navHref; return; }
+          if (nz.navMood) { openM('mood'); return; }
+        }
+      }
+
+      // Regular zones
+      for (var i = 0; i < zones.length; i++) {
+        var z = zones[i];
+        if (mx >= z.x && mx <= z.x + z.w && my >= z.y && my <= z.y + z.h) {
+          if (z.winLeft) { toggleLeftWindow(); return; }
+          if (z.winRight) { toggleRightWindow(); return; }
+          if (z.lamp) { toggleLamp(); return; }
+          if (z.key === 'write') { startOpenJournal(); return; }
+          if (z.key === 'archive') { location.href = '/archive'; return; }
+          if (z.key) { openM(z.key); return; }
+        }
+      }
+    });
+
+    canv.addEventListener('mouseleave', function () {
+      TIP.style.opacity = '0'; hov = null;
+    });
+
+    function loop() { time++; draw(); requestAnimationFrame(loop); }
+    resize();
+    loop();
+  

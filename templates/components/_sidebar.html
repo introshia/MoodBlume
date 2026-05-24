@@ -23,23 +23,23 @@
         <nav class="paper-main-nav">
             <ul>
                 <li>
-                    <a href="{{ url_for('home') }}" class="paper-link {% if request.endpoint == 'home' %}active{% endif %}">
-                        <span class="paper-arrow">{% if request.endpoint == 'home' %}→{% else %}&thinsp;{% endif %}</span>Home
+                    <a href="{{ url_for('main.home') }}" class="paper-link {% if request.endpoint == 'main.home' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'main.home' %}→{% else %}&thinsp;{% endif %}</span>Home
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('journal') }}" class="paper-link {% if request.endpoint == 'journal' %}active{% endif %}">
-                        <span class="paper-arrow">{% if request.endpoint == 'journal' %}→{% else %}&thinsp;{% endif %}</span>Journal
+                    <a href="{{ url_for('main.journal') }}" class="paper-link {% if request.endpoint == 'main.journal' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'main.journal' %}→{% else %}&thinsp;{% endif %}</span>Journal
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('archive') }}" class="paper-link {% if request.endpoint == 'archive' %}active{% endif %}">
-                        <span class="paper-arrow">{% if request.endpoint == 'archive' %}→{% else %}&thinsp;{% endif %}</span>Archive
+                    <a href="{{ url_for('main.archive') }}" class="paper-link {% if request.endpoint == 'main.archive' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'main.archive' %}→{% else %}&thinsp;{% endif %}</span>Archive
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url_for('sanctuary') }}" class="paper-link {% if request.endpoint == 'sanctuary' %}active{% endif %}">
-                        <span class="paper-arrow">{% if request.endpoint == 'sanctuary' %}→{% else %}&thinsp;{% endif %}</span>Sanctuary
+                    <a href="{{ url_for('main.sanctuary') }}" class="paper-link {% if request.endpoint == 'main.sanctuary' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'main.sanctuary' %}→{% else %}&thinsp;{% endif %}</span>Sanctuary
                     </a>
                 </li>
             </ul>
@@ -79,7 +79,7 @@
     <button class="mobile-toggle-btn" id="mobile-sidebar-toggle-btn" aria-label="Toggle menu">
         <i class="ti ti-menu-2"></i>
     </button>
-    <a href="{{ url_for('archive') }}" class="mobile-logo">MoodBlume</a>
+    <a href="{{ url_for('main.archive') }}" class="mobile-logo">MoodBlume</a>
     <div style="width: 40px;"></div>
 </div>
 

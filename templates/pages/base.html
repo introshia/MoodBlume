@@ -41,13 +41,13 @@
             {{ (session.get('username') or 'U')[0] | upper }}
         </button>
         <div class="profile-dropdown" id="profile-dropdown" role="menu">
-            <a href="{{ url_for('profile') }}" class="profile-dropdown-item">Account</a>
+            <a href="{{ url_for('profile.profile') }}" class="profile-dropdown-item">Account</a>
             <div class="profile-dropdown-divider"></div>
             <button class="profile-dropdown-item" id="profile-theme-btn">
                 <span id="profile-theme-label">Dark Mode</span>
             </button>
             <div class="profile-dropdown-divider"></div>
-            <a href="{{ url_for('logout') }}" class="profile-dropdown-item profile-signout">Sign out</a>
+            <a href="{{ url_for('auth.logout') }}" class="profile-dropdown-item profile-signout">Sign out</a>
         </div>
 
         <div class="main-content-wrapper">
@@ -126,7 +126,7 @@
                 deferredPrompt = null;
             } else {
                 // If not ready or not supported, redirect to instructions
-                window.location.href = "{{ url_for('install') }}";
+                window.location.href = "{{ url_for('main.install') }}";
             }
         };
 

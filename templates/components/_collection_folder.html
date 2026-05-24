@@ -1,0 +1,61 @@
+{# folder_variant: 'book' = one bound journal (monthly/volume); 'entries' = fanned pages (mood) #}
+<article class="collection-folder collection-folder--{{ folder_variant | default('entries') }}" role="button" tabindex="0"
+    onclick="window.location.href='{{ href }}'"
+    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='{{ href }}'}">
+    <div class="folder-stack">
+        <div class="folder-back" aria-hidden="true"></div>
+        <div class="folder-journals folder-journals--{{ folder_variant | default('entries') }}" aria-hidden="true">
+
+            {% if folder_variant == 'book' %}
+            <div class="folder-journal-card folder-journal-card--book">
+                <div class="mini-bound-journal" style="--cover-color: {{ journal_cover | default('#3D2B1F') }};">
+                    <div class="mini-bound-pages" aria-hidden="true"></div>
+                    <div class="mini-bound-cover">
+                        <div class="mini-bound-label">
+                            <span class="mini-bound-label-small">{{ book_label_small | default('memories from') }}</span>
+                            <span class="mini-bound-label-big">{{ journal_title | safe }}</span>
+                        </div>
+                        <span class="mini-bound-elastic" aria-hidden="true"></span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            {% set shown = previews[:4] if previews else [] %}
+            {% if shown|length == 0 %}
+                {% set pad_count = 3 %}
+            {% elif shown|length < 3 %}
+                {% set pad_count = 3 - shown|length %}
+            {% else %}
+                {% set pad_count = 0 %}
+            {% endif %}
+            {% for entry in shown %}
+            <div class="folder-journal-card">
+                <div class="mini-journal" style="--journal-accent: {{ accent_color }};">
+                    <span class="mini-journal-date">{{ entry.date_label }}</span>
+                    <p class="mini-journal-snippet">{{ entry.preview or '…' }}</p>
+                    <div class="mini-journal-lines" aria-hidden="true"></div>
+                </div>
+            </div>
+            {% endfor %}
+            {% for i in range(pad_count) %}
+            <div class="folder-journal-card">
+                <div class="mini-journal is-ghost" style="--journal-accent: {{ accent_color }};">
+                    <span class="mini-journal-date">&nbsp;</span>
+                    <p class="mini-journal-snippet">&nbsp;</p>
+                    <div class="mini-journal-lines"></div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+        </div>
+        <div class="folder-front" aria-hidden="true">
+            <span class="folder-sticker folder-sticker--primary">{{ sticker_primary }}</span>
+            <span class="folder-sticker folder-sticker--secondary">{{ sticker_secondary }}</span>
+        </div>
+    </div>
+    <div class="folder-meta">
+        <h3 class="folder-title">{{ title }}</h3>
+        <span class="folder-badge">{{ count }} {{ 'memory' if count == 1 else 'memories' }}</span>
+    </div>
+</article>

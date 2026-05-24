@@ -2,15 +2,11 @@
 {% block title %}Your Collections{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/collections-folders.css') }}">
 <style>
-    :root {
-        --bw: 170px;
-        --bh: 240px;
-        --sw: 18px;
-    }
-
     .yc-page {
-        padding: 40px 48px;
+        padding: 52px 48px 80px;
+        padding-right: 88px;
         max-width: 1200px;
     }
 
@@ -18,7 +14,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 24px;
+        margin-bottom: 28px;
+        gap: 16px;
     }
 
     .yc-topbar h1 {
@@ -58,12 +55,15 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
-    /* Tabs */
     .yc-tabs {
         display: flex;
         gap: 0;
         border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-        margin-bottom: 40px;
+        margin-bottom: 20px;
+    }
+
+    .yc-panel-body {
+        padding-top: 28px;
     }
 
     .yc-tab {
@@ -90,7 +90,6 @@
         padding-left: 0;
     }
 
-    /* Panels */
     .yc-panel {
         display: none;
     }
@@ -99,169 +98,18 @@
         display: block;
     }
 
-    /* Book grid */
-    .yc-books-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 48px 36px;
-    }
-
-    .yc-book-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 18px;
-        cursor: pointer;
-    }
-
-    /* Book components — same structure as archive */
-    .premium-book {
-        width: calc(var(--bw) * var(--scale, 1));
-        height: calc(var(--bh) * var(--scale, 1));
-        perspective: 1000px;
-        position: relative;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .yc-book-item:hover .premium-book {
-        transform: translateY(-8px);
-    }
-
-    .book-pages {
-        position: absolute;
-        top: 2px;
-        left: calc((var(--sw) + 2px) * var(--scale, 1));
-        width: calc((var(--bw) - var(--sw) - 4px) * var(--scale, 1));
-        height: calc((var(--bh) - 4px) * var(--scale, 1));
-        background: #F8F4EE;
-        border-radius: 0 3px 3px 0;
-        z-index: 1;
-        box-shadow: inset 20px 0 30px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-    }
-
-    .book-pages::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: repeating-linear-gradient(to bottom, transparent, transparent 15px, #E8E2D5 15px, #E8E2D5 16px);
-    }
-
-    .book-cover {
-        position: absolute;
-        inset: 0;
-        transform-style: preserve-3d;
-        transform-origin: calc(var(--sw) * var(--scale, 1)) 50%;
-        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 2;
-    }
-
-    .cover-front,
-    .cover-back {
-        position: absolute;
-        inset: 0;
-        backface-visibility: hidden;
-        border-radius: 2px 24px 24px 2px;
-    }
-
-    .cover-front {
-        z-index: 2;
-        box-shadow: 6px 12px 30px rgba(0, 0, 0, 0.35);
-        background: linear-gradient(to right,
-                rgba(0, 0, 0, 0.3) 0%,
-                rgba(255, 255, 255, 0.05) 2%,
-                transparent 5%,
-                rgba(0, 0, 0, 0.2) 6%,
-                rgba(0, 0, 0, 0.4) 7%,
-                transparent 9%), #3D2B1F;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .cover-back {
-        transform: rotateY(180deg);
-        background: #3D2B1F;
-    }
-
-    .elastic-band {
-        position: absolute;
-        top: 4px;
-        bottom: 4px;
-        right: 18%;
-        width: 6px;
-        z-index: 3;
-        box-shadow: -1px 0 4px rgba(0, 0, 0, 0.25);
-        opacity: 0.9;
-        background: linear-gradient(to right, #0a0a0a, #222222 50%, #0a0a0a);
-        border-radius: 2px;
-    }
-
-    .cover-label {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        text-align: center;
-        z-index: 4;
-        pointer-events: none;
-        padding: 0 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .lbl-small {
-        font-family: 'Lora', serif;
-        font-style: italic;
-        font-size: 8px;
-        color: rgba(255, 255, 255, 0.5);
-        margin-bottom: 4px;
-        text-transform: lowercase;
-        letter-spacing: 0.05em;
-        display: block;
-    }
-
-    .lbl-big {
-        font-family: 'Lora', serif;
-        font-size: 15px;
-        font-weight: 500;
-        color: #ffffff;
-        line-height: 1.25;
-        text-align: center;
-        display: block;
-    }
-
-    /* Book meta below */
-    .yc-book-meta {
-        text-align: center;
-    }
-
-    .yc-book-meta .meta-title {
-        font-family: 'Caveat', cursive;
-        font-size: 22px;
-        font-weight: 600;
-        color: var(--text);
-        display: block;
-        line-height: 1.1;
-    }
-
-    .yc-book-meta .meta-count {
-        font-size: 11px;
-        color: var(--muted);
-        margin-top: 4px;
-        display: block;
-    }
-
-    /* Empty state */
     .yc-empty {
         padding: 80px 20px;
         text-align: center;
         color: var(--muted);
         font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+        .yc-page {
+            padding: 44px 20px 64px;
+            padding-right: 56px;
+        }
     }
 </style>
 {% endblock %}
@@ -272,116 +120,141 @@
     <div class="yc-topbar">
         <h1>Your Collections</h1>
         <div class="yc-view-toggle">
-            <button class="yc-view-btn active" id="yc-grid-btn" title="Grid view">
+            <button class="yc-view-btn active" id="yc-grid-btn" title="Grid view" type="button">
                 <i class="ti ti-layout-grid"></i>
             </button>
-            <button class="yc-view-btn" id="yc-list-btn" title="List view">
+            <button class="yc-view-btn" id="yc-list-btn" title="List view" type="button">
                 <i class="ti ti-layout-list"></i>
             </button>
         </div>
     </div>
 
     <div class="yc-tabs">
-        <button class="yc-tab active" data-panel="monthly">Monthly</button>
-        <button class="yc-tab" data-panel="bymood">By Mood</button>
-        <button class="yc-tab" data-panel="volumes">Volumes</button>
-        <button class="yc-tab" data-panel="all">All Entries</button>
+        <button class="yc-tab active" type="button" data-panel="monthly">Monthly</button>
+        <button class="yc-tab" type="button" data-panel="bymood">By Mood</button>
+        <button class="yc-tab" type="button" data-panel="volumes">Volumes</button>
     </div>
 
     <!-- Monthly -->
     <div class="yc-panel active" id="yc-panel-monthly">
+        <div class="yc-panel-body">
         {% if monthly_groups %}
-        <div class="yc-books-grid">
+        <div class="yc-folders-grid" id="yc-folders-grid">
             {% for mg in monthly_groups %}
-            <div class="yc-book-item" onclick="window.location.href='{{ url_for('archive') }}?month={{ mg.month_key }}'">
-                <div class="premium-book">
-                    <div class="book-pages"></div>
-                    <div class="book-cover">
-                        <div class="cover-front">
-                            <div class="cover-label">
-                                <span class="lbl-small">memories from</span>
-                                <span class="lbl-big">{{ mg.month_name }}<br>
-                                    <span style="font-size: 9px; opacity: 0.6; font-weight: normal;">{{ mg.year }}</span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="cover-back"></div>
-                        <div class="elastic-band"></div>
-                    </div>
-                </div>
-                <div class="yc-book-meta">
-                    <span class="meta-title">{{ mg.month_name }} {{ mg.year }}</span>
-                    <span class="meta-count">{{ mg.entry_count }} {{ 'memory' if mg.entry_count == 1 else 'memories' }}</span>
-                </div>
-            </div>
+            {% with
+                folder_variant='book',
+                book_label_small='memories from',
+                title=mg.month_name ~ ' ' ~ mg.year,
+                journal_title=mg.month_name ~ '<br><span class="mini-bound-year">' ~ mg.year ~ '</span>',
+                journal_cover='#3D2B1F',
+                count=mg.entry_count,
+                href=url_for('main.archive') ~ '?month=' ~ mg.month_key,
+                accent_color='#8A9A70',
+                sticker_primary=mg.sticker_primary,
+                sticker_secondary=mg.sticker_secondary,
+                previews=mg.previews
+            %}
+                {% include 'components/_collection_folder.html' %}
+            {% endwith %}
             {% endfor %}
         </div>
         {% else %}
         <div class="yc-empty">No entries yet — start writing in the Sanctuary.</div>
         {% endif %}
+        </div>
     </div>
 
     <!-- By Mood -->
     <div class="yc-panel" id="yc-panel-bymood">
-        <div class="yc-empty">Mood-based collections coming soon.</div>
+        <div class="yc-panel-body">
+        {% if mood_groups %}
+        <div class="yc-folders-grid">
+            {% for mg in mood_groups %}
+            {% with
+                folder_variant='entries',
+                title=mg.mood_label,
+                count=mg.entry_count,
+                href=url_for('main.archive') ~ '?mood=' ~ mg.mood_score,
+                accent_color=mg.cover_color,
+                sticker_primary=mg.sticker_primary,
+                sticker_secondary=mg.sticker_secondary,
+                previews=mg.previews
+            %}
+                {% include 'components/_collection_folder.html' %}
+            {% endwith %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="yc-empty">No mood-tagged entries yet — save a journal entry to see collections here.</div>
+        {% endif %}
+        </div>
     </div>
 
     <!-- Volumes -->
     <div class="yc-panel" id="yc-panel-volumes">
+        <div class="yc-panel-body">
         {% if custom_collections %}
-        <div class="yc-books-grid">
+        <div class="yc-folders-grid">
             {% for c in custom_collections %}
-            <div class="yc-book-item">
-                <div class="premium-book">
-                    <div class="book-pages"></div>
-                    <div class="book-cover">
-                        <div class="cover-front" style="background: linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(255,255,255,0.05) 2%, transparent 5%, rgba(0,0,0,0.2) 6%, rgba(0,0,0,0.4) 7%, transparent 9%), {{ c.cover_color or '#3D2B1F' }};">
-                            <div class="cover-label">
-                                <span class="lbl-small">volume</span>
-                                <span class="lbl-big">{{ c.name }}</span>
-                            </div>
-                        </div>
-                        <div class="cover-back"></div>
-                        <div class="elastic-band"></div>
-                    </div>
-                </div>
-                <div class="yc-book-meta">
-                    <span class="meta-title">{{ c.name }}</span>
-                </div>
-            </div>
+            {% with
+                folder_variant='book',
+                book_label_small='volume',
+                journal_title=c.name,
+                journal_cover=c.cover_color or '#3D2B1F',
+                title=c.name,
+                count=c.entry_count,
+                href=url_for('main.archive') ~ '?volume=' ~ c.id,
+                accent_color=c.cover_color or '#3D2B1F',
+                sticker_primary=c.sticker_primary,
+                sticker_secondary=c.sticker_secondary,
+                previews=c.previews
+            %}
+                {% include 'components/_collection_folder.html' %}
+            {% endwith %}
             {% endfor %}
         </div>
         {% else %}
-        <div class="yc-empty">No volumes yet. Create collections from the Archive.</div>
+        <div class="yc-empty">No volumes yet. Create a custom collection when saving an entry, or from your Sanctuary shelf.</div>
         {% endif %}
-    </div>
-
-    <!-- All Entries -->
-    <div class="yc-panel" id="yc-panel-all">
-        <div class="yc-empty">All entries view coming soon.</div>
+        </div>
     </div>
 
 </div>
 
 <script>
+    function activateYcPanel(panelId) {
+        document.querySelectorAll('.yc-tab').forEach(t => {
+            t.classList.toggle('active', t.dataset.panel === panelId);
+        });
+        document.querySelectorAll('.yc-panel').forEach(p => p.classList.remove('active'));
+        const panel = document.getElementById('yc-panel-' + panelId);
+        if (panel) panel.classList.add('active');
+    }
+
     document.querySelectorAll('.yc-tab').forEach(tab => {
         tab.addEventListener('click', function () {
-            document.querySelectorAll('.yc-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.yc-panel').forEach(p => p.classList.remove('active'));
-            this.classList.add('active');
-            const panel = document.getElementById('yc-panel-' + this.dataset.panel);
-            if (panel) panel.classList.add('active');
+            activateYcPanel(this.dataset.panel);
         });
     });
 
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('mood')) activateYcPanel('bymood');
+        else if (params.get('volume')) activateYcPanel('volumes');
+        else if (params.get('month')) activateYcPanel('monthly');
+    })();
+
+    const foldersGrids = document.querySelectorAll('.yc-folders-grid');
     document.getElementById('yc-grid-btn').addEventListener('click', function () {
         this.classList.add('active');
         document.getElementById('yc-list-btn').classList.remove('active');
+        foldersGrids.forEach(g => g.classList.remove('is-list'));
     });
 
     document.getElementById('yc-list-btn').addEventListener('click', function () {
         this.classList.add('active');
         document.getElementById('yc-grid-btn').classList.remove('active');
+        foldersGrids.forEach(g => g.classList.add('is-list'));
     });
 </script>
 {% endblock %}

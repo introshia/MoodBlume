@@ -1,0 +1,669 @@
+/* ── Collection folder cards (glassmorphism + fanned journals) ── */
+
+.yc-folders-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 52px 40px;
+    align-items: flex-start;
+    overflow: visible;
+    padding-top: 36px;
+}
+
+.yc-folders-grid.is-list {
+    flex-direction: column;
+    gap: 28px;
+}
+
+.yc-folders-grid.is-list .collection-folder {
+    width: 100%;
+    max-width: 420px;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+}
+
+.yc-folders-grid.is-list .folder-stack {
+    flex-shrink: 0;
+    width: 180px;
+}
+
+.yc-folders-grid.is-list .folder-meta {
+    align-items: flex-start;
+    text-align: left;
+}
+
+.collection-folder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+    overflow: visible;
+}
+
+.collection-folder:hover,
+.collection-folder:focus-visible {
+    transform: translateY(-4px);
+}
+
+/* folder-front = cream flap; tilts open on hover. Journal/book sits above it (z-index). */
+
+/* Stack */
+.folder-stack {
+    position: relative;
+    width: 100%;
+    height: 172px;
+    overflow: visible;
+    perspective: 900px;
+    perspective-origin: 50% 80%;
+}
+
+.folder-back {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 148px;
+    background: linear-gradient(165deg, #d9d0c2 0%, #cfc4b4 100%);
+    border: 1px solid rgba(75, 46, 31, 0.12);
+    border-radius: 6px 18px 18px 18px;
+    box-shadow: 0 8px 28px rgba(75, 46, 31, 0.14);
+}
+
+.folder-back::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 0;
+    width: 76px;
+    height: 18px;
+    background: linear-gradient(165deg, #d9d0c2, #cfc4b4);
+    border: 1px solid rgba(75, 46, 31, 0.1);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+/* Fanned journal cards */
+.folder-journals {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 158px;
+    height: 118px;
+    z-index: 2;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.folder-journal-card {
+    --fan-rotate: 0deg;
+    --fan-x: 0px;
+    --pop-y: 0px;
+    --pop-scale: 1;
+    --float-dur: 4.2s;
+    --float-delay: 0s;
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    width: 68px;
+    height: 86px;
+    margin-left: -34px;
+    transform-origin: 50% 100%;
+    transform: translateX(var(--fan-x)) translateY(var(--pop-y)) rotate(var(--fan-rotate)) scale(var(--pop-scale));
+    animation: folder-journal-float var(--float-dur) ease-in-out infinite;
+    animation-delay: var(--float-delay);
+    transition:
+        transform 0.5s cubic-bezier(0.34, 1.35, 0.64, 1),
+        z-index 0s linear 0.1s;
+    will-change: transform;
+}
+
+.folder-journal-card:nth-child(1) {
+    --fan-rotate: -14deg;
+    --fan-x: -28px;
+    --float-dur: 4.5s;
+    --float-delay: 0s;
+    z-index: 1;
+}
+
+.folder-journal-card:nth-child(2) {
+    --fan-rotate: -4deg;
+    --fan-x: -10px;
+    --float-dur: 4.1s;
+    --float-delay: 0.4s;
+    z-index: 2;
+}
+
+.folder-journal-card:nth-child(3) {
+    --fan-rotate: 8deg;
+    --fan-x: 12px;
+    --float-dur: 4.8s;
+    --float-delay: 0.8s;
+    z-index: 3;
+}
+
+.folder-journal-card:nth-child(4) {
+    --fan-rotate: 18deg;
+    --fan-x: 30px;
+    --float-dur: 4.3s;
+    --float-delay: 1.1s;
+    z-index: 4;
+}
+
+@keyframes folder-journal-float {
+    0%, 100% {
+        transform: translateX(var(--fan-x)) translateY(var(--pop-y)) rotate(var(--fan-rotate)) scale(var(--pop-scale));
+    }
+    50% {
+        transform: translateX(var(--fan-x)) translateY(calc(var(--pop-y) - 7px)) rotate(calc(var(--fan-rotate) + 2deg)) scale(var(--pop-scale));
+    }
+}
+
+/* Hover: flap opens, entry pages fan out (mood / volumes) */
+@media (hover: hover) and (pointer: fine) {
+    .collection-folder--entries:hover .folder-journal-card {
+        animation: none;
+        z-index: 12;
+        --pop-scale: 1.06;
+    }
+
+    .collection-folder--entries:hover .folder-journal-card:nth-child(1) {
+        transform: translateX(-48px) translateY(-58px) rotate(-24deg) scale(1.06);
+        transition-delay: 0.04s;
+    }
+
+    .collection-folder--entries:hover .folder-journal-card:nth-child(2) {
+        transform: translateX(-14px) translateY(-68px) rotate(-8deg) scale(1.07);
+        transition-delay: 0.09s;
+    }
+
+    .collection-folder--entries:hover .folder-journal-card:nth-child(3) {
+        transform: translateX(18px) translateY(-68px) rotate(10deg) scale(1.07);
+        transition-delay: 0.14s;
+    }
+
+    .collection-folder--entries:hover .folder-journal-card:nth-child(4) {
+        transform: translateX(48px) translateY(-56px) rotate(24deg) scale(1.06);
+        transition-delay: 0.19s;
+    }
+
+    .collection-folder--entries:hover .mini-journal {
+        background: #ffffff;
+        border-color: #fff;
+        outline: 1.5px solid rgba(75, 46, 31, 0.14);
+        box-shadow:
+            0 4px 0 rgba(75, 46, 31, 0.06),
+            0 10px 24px rgba(75, 46, 31, 0.22);
+    }
+
+    .collection-folder--entries:hover .mini-journal.is-ghost {
+        opacity: 0.35;
+    }
+
+    .collection-folder:hover .folder-front,
+    .collection-folder--entries:hover .folder-front {
+        transform: rotateX(38deg) translateY(8px);
+        opacity: 0.88;
+        box-shadow:
+            0 8px 28px rgba(75, 46, 31, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+}
+
+/* Keyboard focus — entry pages */
+.collection-folder--entries:focus-visible .folder-journal-card {
+    animation: none;
+    z-index: 12;
+}
+
+.collection-folder--entries:focus-visible .folder-journal-card:nth-child(1) {
+    transform: translateX(-48px) translateY(-58px) rotate(-24deg) scale(1.06);
+}
+
+.collection-folder--entries:focus-visible .folder-journal-card:nth-child(2) {
+    transform: translateX(-14px) translateY(-68px) rotate(-8deg) scale(1.07);
+}
+
+.collection-folder--entries:focus-visible .folder-journal-card:nth-child(3) {
+    transform: translateX(18px) translateY(-68px) rotate(10deg) scale(1.07);
+}
+
+.collection-folder--entries:focus-visible .folder-journal-card:nth-child(4) {
+    transform: translateX(48px) translateY(-56px) rotate(24deg) scale(1.06);
+}
+
+.collection-folder:focus-visible .folder-front {
+    transform: rotateX(38deg) translateY(8px);
+    opacity: 0.88;
+}
+
+.collection-folder--entries:focus-visible .mini-journal {
+    background: #ffffff;
+    outline: 1.5px solid rgba(75, 46, 31, 0.14);
+    box-shadow:
+        0 4px 0 rgba(75, 46, 31, 0.06),
+        0 10px 24px rgba(75, 46, 31, 0.22);
+}
+
+/* ── Book folders (monthly + volume): one bound journal ── */
+.folder-journals--book {
+    width: 100px;
+    height: 108px;
+}
+
+.collection-folder--book .folder-journal-card--book {
+    width: 58px;
+    height: 78px;
+    margin-left: -29px;
+    --fan-rotate: -3deg;
+    --fan-x: 0px;
+    z-index: 3;
+    animation: folder-book-idle 4.2s ease-in-out infinite;
+}
+
+@keyframes folder-book-idle {
+    0%, 100% {
+        transform: translateX(0) translateY(0) rotate(-3deg);
+    }
+    50% {
+        transform: translateX(0) translateY(-5px) rotate(-1deg);
+    }
+}
+
+.mini-bound-journal {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    perspective: 400px;
+}
+
+.mini-bound-pages {
+    position: absolute;
+    top: 3px;
+    left: 9px;
+    right: 3px;
+    bottom: 3px;
+    background: #f8f4ee;
+    border-radius: 0 3px 3px 0;
+    box-shadow: inset 4px 0 8px rgba(0, 0, 0, 0.06);
+    z-index: 1;
+}
+
+.mini-bound-pages::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 5px,
+        rgba(150, 128, 96, 0.15) 5px,
+        rgba(150, 128, 96, 0.15) 6px
+    );
+    border-radius: inherit;
+}
+
+.mini-bound-cover {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: 2px 10px 10px 2px;
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.32) 0%,
+        rgba(255, 255, 255, 0.06) 4%,
+        transparent 8%,
+        rgba(0, 0, 0, 0.22) 10%,
+        transparent 12%
+    ), var(--cover-color, #3D2B1F);
+    box-shadow:
+        2px 4px 12px rgba(0, 0, 0, 0.28),
+        0 8px 20px rgba(75, 46, 31, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-bound-label {
+    text-align: center;
+    padding: 0 6px;
+    pointer-events: none;
+}
+
+.mini-bound-label-small {
+    display: block;
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 5px;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+    text-transform: lowercase;
+}
+
+.mini-bound-label-big {
+    display: block;
+    font-family: 'Lora', serif;
+    font-size: 9px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.mini-bound-year {
+    display: block;
+    font-size: 7px;
+    font-weight: 400;
+    opacity: 0.65;
+    margin-top: 1px;
+}
+
+.mini-bound-elastic {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    right: 14%;
+    width: 3px;
+    background: linear-gradient(to right, #0a0a0a, #222, #0a0a0a);
+    border-radius: 1px;
+    z-index: 3;
+    box-shadow: -1px 0 3px rgba(0, 0, 0, 0.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .collection-folder--book:hover .folder-journal-card--book {
+        animation: none;
+        z-index: 14;
+        transform: translateY(-76px) rotate(-8deg) scale(1.12);
+        transition-delay: 0.06s;
+    }
+
+    .collection-folder--book:hover .mini-bound-cover {
+        box-shadow:
+            3px 6px 16px rgba(0, 0, 0, 0.32),
+            0 16px 36px rgba(75, 46, 31, 0.28);
+    }
+}
+
+.collection-folder--book:focus-visible .folder-journal-card--book {
+    animation: none;
+    z-index: 14;
+    transform: translateY(-76px) rotate(-8deg) scale(1.12);
+}
+
+.collection-folder--book:focus-visible .mini-bound-cover {
+    box-shadow:
+        3px 6px 16px rgba(0, 0, 0, 0.32),
+        0 16px 36px rgba(75, 46, 31, 0.28);
+}
+
+.collection-folder--book .mini-bound-label-big {
+    font-size: 8px;
+    line-height: 1.15;
+    max-height: 28px;
+    overflow: hidden;
+}
+
+/* Mini journal page inside folder */
+.mini-journal {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border: 2.5px solid #f0ebe2;
+    border-radius: 6px;
+    box-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.9) inset,
+        0 3px 10px rgba(75, 46, 31, 0.18),
+        0 8px 18px rgba(75, 46, 31, 0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 6px 7px 8px;
+    border-left-width: 4px;
+    border-left-color: var(--journal-accent, #8A9A70);
+    opacity: 1;
+}
+
+.mini-journal.is-ghost {
+    background: #f7f3eb;
+    border-color: #e5ddd0;
+    border-left-color: rgba(150, 128, 96, 0.5);
+    opacity: 0.92;
+    box-shadow: 0 2px 8px rgba(75, 46, 31, 0.1);
+}
+
+.mini-journal-lines {
+    flex: 1;
+    margin-top: 4px;
+    background-color: #faf7f0;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        #faf7f0,
+        #faf7f0 7px,
+        rgba(120, 100, 75, 0.28) 7px,
+        rgba(120, 100, 75, 0.28) 8px
+    );
+    border-radius: 2px;
+}
+
+.mini-journal-date {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(75, 46, 31, 0.72);
+    line-height: 1;
+}
+
+.mini-journal-snippet {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 8.5px;
+    line-height: 1.35;
+    color: #3d2820;
+    margin: 2px 0 0;
+    flex-shrink: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.mini-journal.is-ghost .mini-journal-snippet {
+    visibility: hidden;
+    height: 0;
+    margin: 0;
+}
+
+/* Folder flap — mostly opaque for readability */
+.folder-front {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    background: linear-gradient(
+        155deg,
+        #ffffff 0%,
+        #faf6ee 48%,
+        #f3ece0 100%
+    );
+    border: 1.5px solid rgba(75, 46, 31, 0.1);
+    border-radius: 6px 18px 18px 18px;
+    box-shadow:
+        0 10px 32px rgba(75, 46, 31, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 1),
+        inset 0 -8px 24px rgba(75, 46, 31, 0.04);
+    pointer-events: none;
+    transform-origin: 50% 100%;
+    transition:
+        transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1),
+        opacity 0.45s ease,
+        box-shadow 0.35s ease;
+}
+
+.folder-front::before {
+    content: '';
+    position: absolute;
+    top: -13px;
+    left: 0;
+    width: 72px;
+    height: 16px;
+    background: linear-gradient(155deg, #ffffff, #f5efe4);
+    border: 1.5px solid rgba(75, 46, 31, 0.1);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+}
+
+/* Stickers on folder */
+.folder-sticker {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+    transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.folder-sticker--primary {
+    top: 38%;
+    right: 14%;
+    width: 42px;
+    height: 42px;
+    font-size: 22px;
+    background: #ffffff;
+    border: 2px solid #e8e0d4;
+    border-radius: 8px;
+    transform: rotate(6deg);
+    box-shadow: 0 3px 12px rgba(75, 46, 31, 0.14);
+}
+
+.collection-folder:hover .folder-sticker--primary,
+.collection-folder:focus-visible .folder-sticker--primary {
+    transform: rotate(6deg) scale(1.08);
+}
+
+.folder-sticker--secondary {
+    top: 52%;
+    left: 12%;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3d2820;
+    background: #ffffff;
+    border: 2px dashed rgba(75, 46, 31, 0.28);
+    border-radius: 6px;
+    transform: rotate(-8deg);
+    box-shadow: 0 2px 8px rgba(75, 46, 31, 0.1);
+}
+
+.collection-folder:hover .folder-sticker--secondary,
+.collection-folder:focus-visible .folder-sticker--secondary {
+    transform: rotate(-8deg) scale(1.06);
+}
+
+.folder-sticker--mood-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Meta below folder */
+.folder-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.folder-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text, #4B2E1F);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.folder-badge {
+    display: inline-block;
+    padding: 5px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(75, 46, 31, 0.55);
+    background: rgba(75, 46, 31, 0.06);
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+    .yc-folders-grid {
+        gap: 40px 28px;
+        justify-content: center;
+    }
+
+    .collection-folder {
+        width: 180px;
+    }
+
+    .folder-stack {
+        height: 158px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .folder-journal-card {
+        animation: none;
+    }
+
+    .collection-folder:hover .folder-front,
+    .collection-folder:focus-visible .folder-front {
+        transform: translateY(6px);
+        opacity: 0.9;
+    }
+
+    .collection-folder:hover .folder-journal-card:nth-child(n),
+    .collection-folder:focus-visible .folder-journal-card:nth-child(n) {
+        --pop-y: -36px;
+        transition-duration: 0.2s;
+    }
+
+    .collection-folder--entries:hover .folder-journal-card:nth-child(1),
+    .collection-folder--entries:focus-visible .folder-journal-card:nth-child(1) {
+        transform: translateX(-38px) translateY(-36px) rotate(-18deg);
+    }
+
+    .collection-folder--entries:hover .folder-journal-card:nth-child(2),
+    .collection-folder--entries:focus-visible .folder-journal-card:nth-child(2) {
+        transform: translateX(-10px) translateY(-40px) rotate(-5deg);
+    }
+
+    .collection-folder--entries:hover .folder-journal-card:nth-child(3),
+    .collection-folder--entries:focus-visible .folder-journal-card:nth-child(3) {
+        transform: translateX(14px) translateY(-40px) rotate(6deg);
+    }
+
+    .collection-folder--entries:hover .folder-journal-card:nth-child(4),
+    .collection-folder--entries:focus-visible .folder-journal-card:nth-child(4) {
+        transform: translateX(38px) translateY(-36px) rotate(16deg);
+    }
+
+    .collection-folder--book:hover .folder-journal-card--book,
+    .collection-folder--book:focus-visible .folder-journal-card--book {
+        transform: translateY(-52px) rotate(-8deg) scale(1.1);
+    }
+}

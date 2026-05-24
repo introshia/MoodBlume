@@ -211,14 +211,14 @@ body.user-logged-in {
 </style>
     <!-- NAVBAR -->
     <div class="navbar-container">
-        <a href="{% if session.get('user_id') %}{{ url_for('archive') }}{% else %}{{ url_for('index') }}{% endif %}" class="navbar-logo">
+        <a href="{% if session.get('user_id') %}{{ url_for('main.archive') }}{% else %}{{ url_for('main.index') }}{% endif %}" class="navbar-logo">
             <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}?v=1.3" alt="MoodBlume Logo" style="height: 50px; width: auto; display: block;">
         </a>
         <div class="navbar-center">
             {% if not session.get('user_id') %}
-            <a href="{{ url_for('index') }}#features" class="navbar-link">Features</a>
-            <a href="{{ url_for('index') }}#how-it-works" class="navbar-link">How it Works</a>
-            <a href="{{ url_for('index') }}#benefits" class="navbar-link">Benefits</a>
+            <a href="{{ url_for('main.index') }}#features" class="navbar-link">Features</a>
+            <a href="{{ url_for('main.index') }}#how-it-works" class="navbar-link">How it Works</a>
+            <a href="{{ url_for('main.index') }}#benefits" class="navbar-link">Benefits</a>
             {% endif %}
         </div>
 
@@ -230,7 +230,7 @@ body.user-logged-in {
                 </button>
                 
                 <div class="profile-dropdown" id="profile-menu">
-                    <a href="{{ url_for('profile') }}" class="dropdown-item">
+                    <a href="{{ url_for('profile.profile') }}" class="dropdown-item">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="8" r="4"/>
                             <path d="M 12 14 C 8 14 5 16 5 20 L 5 22 L 19 22 L 19 20 C 19 16 16 14 12 14 Z"/>
@@ -242,7 +242,7 @@ body.user-logged-in {
                         <span id="theme-text">Dark Mode</span>
                     </button>
                     <div class="dropdown-divider"></div>
-                    <a href="{{ url_for('logout') }}" class="dropdown-item logout">
+                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item logout">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M 9 3 L 5 3 C 3.9 3 3 3.9 3 5 L 3 19 C 3 20.1 3.9 21 5 21 L 9 21"/>
                             <path d="M 16 17 L 21 12 M 21 12 L 16 7 M 21 12 L 9 12"/>
@@ -252,8 +252,8 @@ body.user-logged-in {
                 </div>
             </div>
             {% else %}
-            <a href="{{ url_for('login') }}" class="navbar-contact">Log In</a>
-            <a href="{{ url_for('install') }}" class="btn-collaborate">Install App</a>
+            <a href="{{ url_for('auth.login') }}" class="navbar-contact">Log In</a>
+            <a href="{{ url_for('main.install') }}" class="btn-collaborate">Install App</a>
             {% endif %}
         </div>
     </div>
@@ -261,11 +261,11 @@ body.user-logged-in {
     {% if session.get('user_id') %}
     <div class="bottom-dock-container">
         <div class="bottom-dock">
-            <a href="{{ url_for('archive') }}" class="dock-item {% if request.endpoint == 'archive' %}active{% endif %}">
+            <a href="{{ url_for('main.archive') }}" class="dock-item {% if request.endpoint == 'main.archive' %}active{% endif %}">
                 <i class="fa-solid fa-book-bookmark"></i>
                 <span>Archive</span>
             </a>
-            <a href="{{ url_for('sanctuary') }}" class="dock-item {% if request.endpoint == 'sanctuary' %}active{% endif %}">
+            <a href="{{ url_for('main.sanctuary') }}" class="dock-item {% if request.endpoint == 'main.sanctuary' %}active{% endif %}">
                 <i class="fa-solid fa-leaf"></i>
                 <span>Sanctuary</span>
             </a>
