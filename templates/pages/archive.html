@@ -41,10 +41,10 @@
 
     /* ── DASHBOARD GRID & COLUMN SYSTEM ────────────────────── */
     .dashboard-grid {
-        padding: 20px 52px 40px;
+        padding: 10px 52px 20px;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 60px;
+        gap: 40px;
         align-items: flex-start;
         max-width: 1000px;
         margin: 0 auto;
@@ -53,7 +53,7 @@
     .dashboard-col {
         display: flex;
         flex-direction: column;
-        gap: 28px;
+        gap: 20px;
     }
 
     .flex-center-contents {
@@ -89,17 +89,28 @@
 
     .greeting-block {
         text-align: center;
-        margin-bottom: 28px;
+        margin-top: 35px;
+        margin-bottom: 16px;
         padding: 0 24px;
     }
 
     .greeting-block h1 {
         font-family: 'Lora', serif;
-        font-size: 30px;
+        font-size: 44px;
         font-weight: 400;
         color: var(--text);
-        margin-bottom: 6px;
-        letter-spacing: -0.2px;
+        margin-bottom: 4px;
+        letter-spacing: -0.8px;
+    }
+
+    @media (max-width: 768px) {
+        .greeting-block {
+            margin-top: 30px;
+            margin-bottom: 24px;
+        }
+        .greeting-block h1 {
+            font-size: 36px;
+        }
     }
 
     .stats-block {
@@ -110,7 +121,39 @@
         flex-direction: column;
         align-items: center;
         gap: 2px;
-        line-height: 1.5;
+        line-height: 1.4;
+    }
+
+    .dashboard-write-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 8px 20px;
+        background: var(--white);
+        border: 1.5px solid var(--text-black);
+        border-radius: 20px;
+        color: var(--text-black);
+        font-family: 'Lora', Georgia, serif;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 3px 3px 0px rgba(75, 46, 31, 0.15);
+        transition: all 0.15s ease;
+        cursor: pointer;
+    }
+
+    .dashboard-write-btn:hover {
+        transform: translate(1.5px, 1.5px);
+        box-shadow: 1.5px 1.5px 0px rgba(75, 46, 31, 0.15);
+        background: #fdfaf2;
+        color: var(--text-black);
+        text-decoration: none;
+    }
+
+    .dashboard-write-btn:active {
+        transform: translate(3px, 3px);
+        box-shadow: 0px 0px 0px rgba(75, 46, 31, 0.15);
     }
 
 
@@ -128,12 +171,13 @@
 
     /* Weekly Wrap-up Card */
     .weekly-wrap-card {
-        background: #F1F1F1;
-        border-radius: 24px;
+        background: var(--white);
+        border: 1.5px solid var(--text-black);
+        border-radius: 12px;
         padding: 24px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        box-shadow: 4px 4px 0px rgba(75, 46, 31, 0.15);
         max-width: 340px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-family: 'Lora', Georgia, serif;
         margin-top: 20px;
         margin-bottom: 20px;
     }
@@ -169,11 +213,12 @@
     }
 
     .ww-week-label {
-        font-family: 'Lora', serif;
-        font-size: 15px;
+        font-family: 'Sunshiney', cursive;
+        font-size: 20px;
         font-weight: 400;
         color: var(--text);
         margin-bottom: 20px;
+        letter-spacing: 0.02em;
     }
 
     .ww-date-range {
@@ -252,21 +297,21 @@
 
     /* Original Blob Card */
     .blob-card {
-        background: #fff;
-        border-radius: 22px;
+        background: var(--white);
+        border-radius: 12px;
         width: 100%;
         max-width: 340px;
         height: 300px;
         position: relative;
         overflow: hidden;
         flex-shrink: 0;
-        border: 1px solid rgba(0, 0, 0, 0.06);
+        border: 1.5px solid var(--text-black);
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         padding: 20px 22px;
         margin-top: 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        box-shadow: 4px 4px 0px rgba(75, 46, 31, 0.15);
     }
 
     .blob-stage {
@@ -289,6 +334,67 @@
 
     .blob-main:hover {
         transform: scale(1.07);
+    }
+
+    .custom-tooltip-trigger {
+        position: relative;
+    }
+
+    .cozy-tooltip {
+        position: absolute;
+        bottom: -24px;
+        left: 50%;
+        transform: translate(-50%, 10px);
+        background: var(--white);
+        border: 1.5px solid var(--text-black);
+        border-radius: 8px;
+        padding: 5px 12px;
+        font-size: 12px;
+        color: var(--text-black);
+        font-family: 'Lora', serif;
+        box-shadow: 2px 2px 0px rgba(75, 46, 31, 0.15);
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+        z-index: 1000;
+    }
+
+    .cozy-tooltip::after {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 10px;
+        height: 10px;
+        background: var(--white);
+        border-top: 1.5px solid var(--text-black);
+        border-left: 1.5px solid var(--text-black);
+    }
+
+    .custom-tooltip-trigger:hover .cozy-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+    }
+
+    .tooltip-score {
+        font-weight: 700;
+        color: var(--base);
+    }
+
+    /* Dark theme overrides for tooltip */
+    body.dark-theme .cozy-tooltip {
+        background: #2A1A0E !important;
+        border-color: rgba(246, 243, 238, 0.25) !important;
+        color: #F6F3EE !important;
+        box-shadow: 2px 2px 0px rgba(246, 243, 238, 0.08) !important;
+    }
+    body.dark-theme .cozy-tooltip::after {
+        background: #2A1A0E !important;
+        border-color: rgba(246, 243, 238, 0.25) !important;
     }
 
     .blob-body {
@@ -441,98 +547,68 @@
         }
     }
 
-    /* Predictive Intelligence Card */
-    .predictive-card {
-        background: rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 8px 32px rgba(45, 51, 42, 0.04);
-        margin-top: 20px;
+    /* On This Day Card */
+    .memory-card {
+        background: var(--white);
+        border: 1.5px solid var(--text-black);
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: 4px 4px 0px rgba(75, 46, 31, 0.15);
+        margin-top: 0;
         animation: fadeIn 1s ease-out;
+     }
+
+     .memory-header {
+         display: flex;
+         align-items: center;
+         gap: 10px;
+         margin-bottom: 10px;
     }
 
-    .pred-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-
-    .pred-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background: #F4E6A6;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #4B2E1F;
-        font-size: 16px;
-    }
-
-    .pred-title {
-        font-family: 'Lora', serif;
-        font-size: 16px;
-        margin: 0;
+    .memory-time-label {
+        font-family: 'Sunshiney', cursive;
+        font-size: 20px;
         color: var(--text);
+        letter-spacing: 0.02em;
+        line-height: 1;
     }
 
-    .pred-subtitle {
-        font-size: 9px;
+    .memory-date {
+        font-size: 10px;
         text-transform: uppercase;
         letter-spacing: 1px;
         color: var(--muted);
-        margin: 0;
+        margin-top: 3px;
     }
 
-    .pred-insight {
+    .memory-divider {
+        height: 1px;
+        background: rgba(75, 46, 31, 0.08);
         margin-bottom: 16px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
-    .pred-insight:last-of-type {
-        border-bottom: none;
-        margin-bottom: 0;
-    }
-
-    .pred-stat {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 4px;
-    }
-
-    .pred-val {
+    .memory-quote {
         font-family: 'Lora', serif;
-        font-size: 24px;
-        color: var(--text);
-    }
-
-    .pred-lbl {
-        font-size: 10px;
-        color: var(--muted);
-        text-transform: uppercase;
-    }
-
-    .pred-text {
-        font-size: 12px;
-        color: var(--text);
-        opacity: 0.8;
-        line-height: 1.4;
-        margin: 0;
-    }
-
-    .pred-footer {
-        margin-top: 10px;
-        font-size: 11px;
-        color: var(--muted);
         font-style: italic;
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--text);
+        margin: 0 0 18px;
+    }
+
+    .memory-mood {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    .memory-mood-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
     }
 
     /* Chart */
@@ -582,21 +658,21 @@
 
     /* Apple Emotion Calendar Card (Matches Claude's exactly) */
     .cal-wrap {
-        background: #F2F2F7 !important;
-        border-radius: 22px !important;
-        padding: 18px 16px 16px !important;
-        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif !important;
+        background: var(--white) !important;
+        border-radius: 12px !important;
+        padding: 14px 14px 12px !important;
+        font-family: 'Lora', Georgia, serif !important;
         max-width: 320px !important;
-        margin: 40px auto 0 !important;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.04) !important;
-        border: none !important;
+        margin: 0 auto !important;
+        box-shadow: 4px 4px 0px rgba(75, 46, 31, 0.15) !important;
+        border: 1.5px solid var(--text-black) !important;
     }
     
     .cal-header {
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        margin-bottom: 14px !important;
+        margin-bottom: 8px !important;
     }
     
     .cal-title {
@@ -606,19 +682,19 @@
     }
     
     .cal-month-label {
-        font-size: 22px !important;
-        font-weight: 700 !important;
-        color: #1C1C1E !important;
-        letter-spacing: -.3px !important;
+        font-size: 20px !important;
+        font-weight: 400 !important;
+        color: var(--text-black) !important;
+        letter-spacing: -0.2px !important;
         line-height: 1 !important;
-        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
+        font-family: 'Sunshiney', cursive !important;
     }
     
     .cal-year-label {
         font-size: 12px !important;
         font-weight: 500 !important;
-        color: #8E8E93 !important;
-        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
+        color: var(--muted) !important;
+        font-family: 'Lora', Georgia, serif !important;
     }
     
     .cal-nav {
@@ -628,8 +704,8 @@
     }
     
     .nav-btn {
-        background: #fff !important;
-        border: none !important;
+        background: var(--white) !important;
+        border: 1.5px solid var(--text-black) !important;
         border-radius: 50% !important;
         width: 30px !important;
         height: 30px !important;
@@ -638,7 +714,7 @@
         justify-content: center !important;
         cursor: pointer !important;
         font-size: 14px !important;
-        color: #1C1C1E !important;
+        color: var(--text-black) !important;
         font-weight: 600 !important;
         transition: opacity 0.15s !important;
     }
@@ -648,14 +724,14 @@
     }
     
     .today-pill {
-        background: #fff !important;
+        background: var(--white) !important;
         border-radius: 20px !important;
         padding: 4px 10px !important;
         font-size: 11px !important;
         font-weight: 600 !important;
-        color: #1C1C1E !important;
+        color: var(--text-black) !important;
         cursor: pointer !important;
-        border: none !important;
+        border: 1.5px solid var(--text-black) !important;
         transition: opacity 0.15s !important;
     }
     
@@ -706,17 +782,17 @@
     
     /* Legend Card */
     .legend {
-        margin-top: 14px !important;
-        background: #fff !important;
-        border-radius: 14px !important;
-        padding: 12px !important;
-        border: none !important;
+        margin-top: 8px !important;
+        background: var(--white) !important;
+        border-radius: 8px !important;
+        padding: 8px !important;
+        border: 1.5px solid var(--text-black) !important;
     }
     
     .legend-grid {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
-        gap: 7px 10px !important;
+        gap: 4px 10px !important;
     }
     
     .legend-row {
@@ -2266,6 +2342,37 @@
         border: 2px solid transparent;
         pointer-events: none;
     }
+    /* Dark Theme overrides for sketchbook cards */
+    body.dark-theme .weekly-wrap-card,
+    body.dark-theme .memory-card,
+    body.dark-theme .blob-card,
+    body.dark-theme .cal-wrap,
+    body.dark-theme .legend {
+        background: #2A1A0E !important;
+        border-color: rgba(246, 243, 238, 0.25) !important;
+        box-shadow: 4px 4px 0px rgba(246, 243, 238, 0.08) !important;
+    }
+    body.dark-theme .nav-btn,
+    body.dark-theme .today-pill {
+        background: #2A1A0E !important;
+        border-color: rgba(246, 243, 238, 0.25) !important;
+        color: #F6F3EE !important;
+    }
+    body.dark-theme .cal-month-label {
+        color: #F6F3EE !important;
+    }
+    body.dark-theme .dashboard-write-btn {
+        background: #2A1A0E !important;
+        border-color: rgba(246, 243, 238, 0.25) !important;
+        color: #F6F3EE !important;
+        box-shadow: 3px 3px 0px rgba(246, 243, 238, 0.08) !important;
+    }
+    body.dark-theme .dashboard-write-btn:hover {
+        background: #3D2B1F !important;
+    }
+    body.dark-theme .dashboard-write-btn:active {
+        box-shadow: 0px 0px 0px rgba(246, 243, 238, 0.08) !important;
+    }
 
 </style>
 {% endblock %}
@@ -2273,67 +2380,62 @@
 {% block content %}
 <main>
     <!-- SECTION 1: GREETING & DASHBOARD GRID -->
-    <div class="greeting-block" style="margin-top: 40px;">
+    <div class="greeting-block">
+        <!-- Floating Moodblob (No background/box) -->
+        <div class="dashboard-blob-container custom-tooltip-trigger" style="position: relative; width: 100%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; --base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s; --mspeed: 4s;">
+            <!-- Scaled wrapper for animated blob -->
+            <div style="transform: scale(0.70); transform-origin: center center; height: 100px; display: flex; align-items: center; justify-content: center; width: 130px; position: relative;">
+                <div class="blob-main" id="blobMain" style="margin-top: 0;">
+                    <div class="blob-body" id="blobBody"></div>
+                    <div class="blob-mini m1" id="mini1"></div>
+                    <div class="blob-mini m2" id="mini2"></div>
+                    <div class="blob-face">
+                        <div class="blob-eyes">
+                            <div class="blob-eye"></div>
+                            <div class="blob-eye"></div>
+                        </div>
+                        <div class="blob-mouth">
+                            <svg id="mouthSvg" width="22" height="10" viewBox="0 0 22 10" fill="none">
+                                <path id="mouthPath" d="{{ companion.mouth }}" stroke="rgba(0,0,0,0.55)" stroke-width="2" stroke-linecap="round" fill="none" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Custom Cozy Tooltip -->
+            <div class="cozy-tooltip">
+                <span class="tooltip-score">{{ companion.score }}</span> Energy Level &bull; {{ companion.label }}
+            </div>
+        </div>
         <h1>{{ greeting }}</h1>
         <div class="stats-block">
-            <span>{{ stats_msg }}</span>
-            <span>{{ trend.msg }}</span>
+            <span style="font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; font-size: 11px; color: var(--text-gray); margin-bottom: 2px;">This Week &bull; {{ weekly.date_range }}</span>
+            <span>{{ weekly.days }} days active &bull; {{ weekly.entries }} new {% if weekly.entries == 1 %}entry{% else %}entries{% endif %} &bull; {{ weekly.minutes }}m {{ weekly.seconds }}s writing time</span>
         </div>
+        <a href="/sanctuary?open_journal=true" class="dashboard-write-btn">
+            <i class="fa-solid fa-pen-nib"></i> Write Today's Entry
+        </a>
     </div>
 
     <!-- 2-COLUMN DASHBOARD GRID -->
     <div class="dashboard-grid">
         <!-- LEFT COLUMN: ANALYTICS & INSIGHTS -->
         <div class="dashboard-col">
-            {% if weekly %}
-            <div class="weekly-wrap-card" style="margin-top: 0; width: 100%; max-width: 100%;">
-                <div class="ww-week-label">This week <span class="ww-date-range">{{ weekly.date_range }}</span></div>
-                <div class="ww-stat-row">
-                    <div class="ww-stat-item">
-                        <span class="ww-stat-num">{{ weekly.days }}</span>
-                        <span class="ww-stat-lbl">days active</span>
-                    </div>
-                    <div class="ww-stat-divider"></div>
-                    <div class="ww-stat-item">
-                        <span class="ww-stat-num">{{ weekly.entries }}</span>
-                        <span class="ww-stat-lbl">new entries</span>
-                    </div>
-                    <div class="ww-stat-divider"></div>
-                    <div class="ww-stat-item">
-                        <span class="ww-stat-num">{{ weekly.minutes }}m {{ weekly.seconds }}s</span>
-                        <span class="ww-stat-lbl">writing time</span>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
 
-            {% if insights %}
-            <div class="predictive-card" style="margin-top: 0; width: 100%;">
-                <div class="pred-header">
-                    <div class="pred-icon"><i class="fa-solid fa-seedling"></i></div>
+
+            {% if memory_entry %}
+            <div class="memory-card" style="width: 100%;">
+                <div class="memory-header">
                     <div>
-                        <h4 class="pred-title">Mood Forecast</h4>
-                        <p class="pred-subtitle">Based on your patterns</p>
+                        <div class="memory-time-label">{{ memory_entry.label }}</div>
+                        <div class="memory-date">{{ memory_entry.date }}</div>
                     </div>
                 </div>
-                <div class="pred-body">
-                    <div class="pred-insight">
-                        <div class="pred-stat">
-                            <span class="pred-val">{{ insights.word_slope }}%</span>
-                            <span class="pred-lbl">Writing & Mood</span>
-                        </div>
-                        <p class="pred-text">{{ insights.word_msg }}</p>
-                    </div>
-                    <div class="pred-insight">
-                        <div class="pred-stat">
-                            <span class="pred-val">{{ insights.predicted_energy }}%</span>
-                            <span class="pred-lbl">Tomorrow's Energy</span>
-                        </div>
-                        <p class="pred-text">Predicted energy for tomorrow: <strong>{{ insights.predicted_label }}</strong>.</p>
-                    </div>
-                    <div class="pred-footer">
-                        <i class="fa-solid fa-clock-rotate-left"></i> {{ insights.time_msg }}
-                    </div>
+                <div class="memory-divider"></div>
+                <p class="memory-quote">"{{ memory_entry.preview }}"</p>
+                <div class="memory-mood">
+                    <span class="memory-mood-dot" style="background: {{ memory_entry.mood_color }};"></span>
+                    {{ memory_entry.mood_label }}
                 </div>
             </div>
             {% endif %}
@@ -2341,31 +2443,7 @@
 
         <!-- RIGHT COLUMN: MOODBLOB & CALENDAR -->
         <div class="dashboard-col flex-center-contents">
-            <div class="blob-card" id="blobCard" style="margin-top: 0; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto; --base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s; --mspeed: 4s;">
-                <div class="blob-stage">
-                    <div class="blob-main" id="blobMain">
-                        <div class="blob-body" id="blobBody"></div>
-                        <div class="blob-mini m1" id="mini1"></div>
-                        <div class="blob-mini m2" id="mini2"></div>
-                        <div class="blob-face">
-                            <div class="blob-eyes">
-                                <div class="blob-eye"></div>
-                                <div class="blob-eye"></div>
-                            </div>
-                            <div class="blob-mouth">
-                                <svg id="mouthSvg" width="22" height="10" viewBox="0 0 22 10" fill="none">
-                                    <path id="mouthPath" d="{{ companion.mouth }}" stroke="rgba(0,0,0,0.55)" stroke-width="2" stroke-linecap="round" fill="none" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="blob-score-num" id="scoreNum">{{ companion.score }}</div>
-                <div class="blob-score-label">Energy Level</div>
-                <div class="blob-entry-hint" id="entryHint">{{ companion.label }} · from today's entry</div>
-            </div>
-
-            <div class="cal-wrap" id="aw" style="margin-top: 24px !important; width: 100%; max-width: 320px !important; margin-left: auto; margin-right: auto;">
+            <div class="cal-wrap" id="aw" style="margin-top: 0 !important; width: 100%; max-width: 320px !important; margin-left: auto; margin-right: auto;">
                 <h2 class="sr-only">Navigable emotion calendar</h2>
                 <div class="cal-header">
                     <div class="cal-title">

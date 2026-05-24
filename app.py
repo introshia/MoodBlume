@@ -11,8 +11,14 @@ import mysql.connector
 import numpy as np
 from datetime import datetime, timedelta
 import io
+import json
 from sklearn.linear_model import LinearRegression
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+MOOD_COLORS = {
+    9: "#F2DD66", 8: "#FFB4D1", 7: "#85D0E8", 6: "#A8DADC",
+    5: "#DFDAC9", 4: "#C5C6D0", 3: "#B6AEE6", 2: "#A8C1ED", 1: "#FF9AA2",
+}
 
 app = Flask(__name__)
 # Initialize VADER sentiment analyzer globally
@@ -155,7 +161,6 @@ def calculate_mood_trend(entries):
                 # Re-calculate or use stored compound if we had it
                 text = e['content']
                 if isinstance(text, str) and (text.startswith('{') or text.startswith('[')):
-                    import json
                     text = json.loads(text).get('text', text)
                 val = analyzer.polarity_scores(text)['compound']
             except: pass
@@ -189,12 +194,10 @@ def calculate_advanced_insights(entries):
     
     for e in entries:
         content = e.get('content', '')
-        # Handle JSON content
         if content.startswith('{'):
-            import json
             try: content = json.loads(content).get('text', '')
             except: pass
-        
+
         word_count = len(content.split())
         hour = e['entry_date'].hour + (e['entry_date'].minute / 60)
         
@@ -232,6 +235,37 @@ def calculate_advanced_insights(entries):
         "predicted_energy": round(prediction * 100, 1),
         "predicted_label": "High" if prediction > 0.7 else "Moderate" if prediction > 0.4 else "Restorative"
     }
+
+def get_memory_entry(entries):
+    if not entries:
+        return None
+    today = datetime.now().date()
+    candidates = [
+        (365, 10, "A year ago"),
+        (182, 7,  "Six months ago"),
+        (30,  5,  "A month ago"),
+        (7,   2,  "Last week"),
+    ]
+    for days, window, label in candidates:
+        target = today - timedelta(days=days)
+        cutoff = target - timedelta(days=window)
+        for e in entries:
+            entry_date = e['entry_date'].date()
+            if entry_date < cutoff:
+                break
+            if abs((entry_date - target).days) <= window:
+                text = get_preview_text(e.get('content', ''))
+                preview = (text[:120].rsplit(' ', 1)[0] + '…') if len(text) > 120 else text
+                return {
+                    'label': label,
+                    'date': e['entry_date'].strftime("%B %d, %Y"),
+                    'preview': preview,
+                    'mood_label': e.get('mood_label', 'Steady'),
+                    'mood_color': MOOD_COLORS.get(e.get('mood_score', 5), "#DFDAC9"),
+                    'id': e['id'],
+                }
+    return None
+
 def calculate_energy_data(content):
     if not content:
         return {"score": 50, "mood": "neutral", "label": "Resting", "color": "#F5C842"}
@@ -306,7 +340,6 @@ def calculate_weekly_wrapup(entries):
     for e in recent_entries:
         content = e.get('content', '')
         if content.startswith('{'):
-            import json
             try: content = json.loads(content).get('text', '')
             except: pass
         total_words += len(content.split())
@@ -337,7 +370,6 @@ def get_preview_text(content):
     
     # Check if content is JSON (typical for Sanctuary canvas saves)
     if content.strip().startswith('{') and content.strip().endswith('}'):
-        import json
         try:
             data = json.loads(content)
             if 'text' in data:
@@ -499,7 +531,7 @@ def home():
                            shelves=ordered_shelves, user_collections=user_collections,
                            all_entries_json=all_entries_json, user_collections_json=user_collections_json,
                            featured_journals=featured_journals, greeting=greeting, stats_msg=stats_msg,
-                           trend=trend, insights=calculate_advanced_insights(all_entries),
+                           trend=trend, memory_entry=get_memory_entry(all_entries),
                            chart_labels=[p["label"] for p in chart_points],
                            chart_scores=[p["val"] for p in chart_points],
                            chart_colors=[p["color"] for p in chart_points],
@@ -567,7 +599,6 @@ def sanctuary():
         fav = False
         
         if content_str.strip().startswith('{') and content_str.strip().endswith('}'):
-            import json
             try:
                 data = json.loads(content_str)
                 text = data.get('text', '').strip()
@@ -821,7 +852,6 @@ def save_entry():
         entry_id = data.get('id', None)
         if not entry_id:
             try:
-                import json
                 content_data = json.loads(content)
                 if isinstance(content_data, dict):
                     entry_id = content_data.get('id', None)

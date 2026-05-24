@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=12">
     {% if session.get('user_id') %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}?v=6">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}?v=7">
     {% endif %}
 
     {% block head %}{% endblock %}
@@ -35,6 +35,21 @@
     {% if session.get('user_id') %}
     <div class="app-layout">
         {% include 'components/_sidebar.html' %}
+
+        <!-- Profile Avatar -->
+        <button class="profile-avatar-btn" id="profile-avatar-btn" aria-label="Open profile menu">
+            {{ (session.get('username') or 'U')[0] | upper }}
+        </button>
+        <div class="profile-dropdown" id="profile-dropdown" role="menu">
+            <a href="{{ url_for('profile') }}" class="profile-dropdown-item">Account</a>
+            <div class="profile-dropdown-divider"></div>
+            <button class="profile-dropdown-item" id="profile-theme-btn">
+                <span id="profile-theme-label">Dark Mode</span>
+            </button>
+            <div class="profile-dropdown-divider"></div>
+            <a href="{{ url_for('logout') }}" class="profile-dropdown-item profile-signout">Sign out</a>
+        </div>
+
         <div class="main-content-wrapper">
     {% else %}
     {% block navbar %}
@@ -153,6 +168,43 @@
         }
         initTheme();
     </script>
+
+    {% if session.get('user_id') %}
+    <script>
+    (function () {
+        const avatarBtn = document.getElementById('profile-avatar-btn');
+        const dropdown  = document.getElementById('profile-dropdown');
+        const themeBtn  = document.getElementById('profile-theme-btn');
+        const themeLabel = document.getElementById('profile-theme-label');
+
+        function syncLabel() {
+            const dark = document.body.classList.contains('dark-theme');
+            if (themeLabel) themeLabel.textContent = dark ? 'Light Mode' : 'Dark Mode';
+        }
+        syncLabel();
+
+        if (avatarBtn && dropdown) {
+            avatarBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+            });
+            document.addEventListener('click', function () {
+                dropdown.classList.remove('open');
+            });
+            dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+        }
+
+        if (themeBtn) {
+            themeBtn.addEventListener('click', function () {
+                document.body.classList.toggle('dark-theme');
+                const dark = document.body.classList.contains('dark-theme');
+                localStorage.setItem('theme', dark ? 'dark' : 'light');
+                syncLabel();
+            });
+        }
+    })();
+    </script>
+    {% endif %}
 
     {% block scripts %}{% endblock %}
 </body>
