@@ -136,18 +136,28 @@ def home():
                 "entry_id": None
             })
 
+    streak = calculate_streak(user_id)
+    if streak <= 1:
+        streak_stage = 'sprout'
+    elif streak <= 4:
+        streak_stage = 'stem'
+    elif streak <= 6:
+        streak_stage = 'bud'
+    else:
+        streak_stage = 'bloom'
+
     return render_template('pages/home.html',
         shelves=ordered_shelves, user_collections=user_collections,
         all_entries_json=all_entries_json, user_collections_json=user_collections_json,
         featured_journals=featured_journals, greeting=greeting, stats_msg=stats_msg,
-        trend=trend, week_days=week_days,
+        trend=trend, week_days=week_days, streak_stage=streak_stage,
         chart_labels=[p["label"] for p in chart_points],
         chart_scores=[p["val"]   for p in chart_points],
         chart_colors=[p["color"] for p in chart_points],
         chart_moods=[p["mood"]   for p in chart_points],
         companion=calculate_energy_data(latest_text),
         weekly=calculate_weekly_wrapup(all_entries),
-        current_streak=calculate_streak(user_id))
+        current_streak=streak)
 
 
 @main_bp.route('/journal')

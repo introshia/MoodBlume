@@ -266,15 +266,35 @@
             el.className = 'cal-day';
             if (future) {
                 el.classList.add('e-future');
+                el.innerHTML = `<span class="cal-day-num">${d}</span>`;
             } else {
                 const emoClass = emotionClassForEntry(entry, curYear, curMonth, d);
                 el.classList.add(emoClass);
+                if (emoClass !== 'e-none') {
+                    let mouthStyle = 'm-smile';
+                    if (emoClass === 'e-sadness' || emoClass === 'e-anger' || emoClass === 'e-fear') {
+                        mouthStyle = 'm-frown';
+                    } else if (emoClass === 'e-confuse') {
+                        mouthStyle = 'm-flat';
+                    }
+                    el.innerHTML = `
+                        <span class="cal-day-num">${d}</span>
+                        <div class="mini-blob-face">
+                            <div class="mini-blob-eyes">
+                                <span class="mini-blob-eye"></span>
+                                <span class="mini-blob-eye"></span>
+                            </div>
+                            <span class="mini-blob-mouth ${mouthStyle}"></span>
+                        </div>
+                    `;
+                } else {
+                    el.innerHTML = `<span class="cal-day-num">${d}</span>`;
+                }
             }
 
             if (d === TODAY_D && curMonth === TODAY_M && curYear === TODAY_Y) {
                 el.classList.add('today-ring');
             }
-            el.textContent = d;
 
             if (entry) {
                 el.setAttribute('title', `${entry.mood_label} · Click to read`);

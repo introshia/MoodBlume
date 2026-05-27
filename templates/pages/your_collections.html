@@ -112,6 +112,75 @@
             padding-right: 56px;
         }
     }
+
+    /* Mini MoodBlob Calendar Cells styling */
+    .cal-day.e-joy, .cal-day.e-sadness, .cal-day.e-anger, .cal-day.e-fear, .cal-day.e-disgust, .cal-day.e-confuse {
+        border-radius: 52% 48% 55% 45% / 45% 55% 42% 58% !important;
+        box-shadow: 0 2px 4px rgba(75, 46, 31, 0.05) !important;
+        position: relative !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .cal-day-num {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        color: rgba(75, 46, 31, 0.45) !important;
+        margin-top: 1px !important;
+        margin-bottom: 0px !important;
+        line-height: 1 !important;
+        z-index: 2 !important;
+    }
+    
+    .mini-blob-face {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 1px !important;
+        z-index: 2 !important;
+        pointer-events: none !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .mini-blob-eyes {
+        display: flex !important;
+        gap: 4px !important;
+    }
+    
+    .mini-blob-eye {
+        width: 2px !important;
+        height: 2px !important;
+        border-radius: 50% !important;
+        background: rgba(0, 0, 0, 0.55) !important;
+    }
+    
+    .mini-blob-mouth {
+        width: 8px !important;
+        height: 3px !important;
+        display: block !important;
+    }
+    
+    .mini-blob-mouth.m-smile {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.55) !important;
+        border-radius: 0 0 3px 3px !important;
+    }
+    
+    .mini-blob-mouth.m-flat {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.55) !important;
+        width: 7px !important;
+        height: 0 !important;
+        margin-top: 1px !important;
+    }
+    
+    .mini-blob-mouth.m-frown {
+        border-top: 1px solid rgba(0, 0, 0, 0.55) !important;
+        border-radius: 3px 3px 0 0 !important;
+        height: 2px !important;
+        margin-top: 1px !important;
+    }
 </style>
 {% endblock %}
 

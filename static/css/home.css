@@ -200,15 +200,18 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Day with entry */
-.home-week-day.has-entry {
-    cursor: pointer;
-}
-
 .home-week-day.has-entry .home-week-dot {
     background-color: var(--day-color);
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 52% 48% 55% 45% / 45% 55% 42% 58%; /* Morphing blob shape! */
+    animation: blobMorph var(--speed, 3s) ease-in-out infinite alternate;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .home-week-day.has-entry:hover .home-week-dot {
@@ -216,12 +219,61 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.home-week-dot-inner {
-    width: 8px;
-    height: 8px;
-    background: #fff;
+.home-week-day.has-entry .home-week-dot-num {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: rgba(75, 46, 31, 0.42);
+    margin-top: 2px;
+    margin-bottom: 0px;
+    line-height: 1;
+    z-index: 2;
+}
+
+.mini-blob-face {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    z-index: 2;
+    pointer-events: none;
+    margin-bottom: 2px;
+}
+
+.mini-blob-eyes {
+    display: flex;
+    gap: 5px;
+}
+
+.mini-blob-eye {
+    width: 2px;
+    height: 2px;
     border-radius: 50%;
-    opacity: 0.8;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.mini-blob-mouth {
+    width: 8px;
+    height: 3px;
+    display: block;
+}
+
+.mini-blob-mouth.m-smile {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.55);
+    border-radius: 0 0 3px 3px;
+}
+
+.mini-blob-mouth.m-flat {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.55);
+    width: 7px;
+    height: 0;
+    margin-top: 1px;
+}
+
+.mini-blob-mouth.m-frown {
+    border-top: 1px solid rgba(0, 0, 0, 0.55);
+    border-radius: 3px 3px 0 0;
+    height: 2px;
+    margin-top: 1px;
 }
 
 /* Day without entry */
@@ -482,4 +534,29 @@ body.dark-theme .cozy-tooltip::after {
     0% { transform: translateY(0) rotate(0deg); }
     50% { transform: translateY(-7px) rotate(8deg); }
     100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* Streak Growth Accessories */
+.blob-accessory {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.blob-accessory svg {
+    display: block;
+    animation: accessoryFloat var(--speed, 3s) ease-in-out infinite;
+    transform-origin: bottom center;
+}
+
+@keyframes accessoryFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-2px) scale(1.03);
+    }
 }
