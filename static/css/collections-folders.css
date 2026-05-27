@@ -84,7 +84,7 @@
 .folder-back::before {
     content: '';
     position: absolute;
-    top: -22px;
+    top: -26px;
     left: 0;
     width: 64%;
     height: 26px;
