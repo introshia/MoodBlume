@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -15,8 +16,8 @@ def create_app():
         template_folder='../templates',
         static_folder='../static',
     )
-    app.secret_key = 'super_secret_moodblume_key'
-    app.debug = True
+    app.secret_key = os.getenv('SECRET_KEY', 'super_secret_moodblume_key')
+    app.debug = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)

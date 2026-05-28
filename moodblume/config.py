@@ -6,8 +6,9 @@ MOOD_COLORS = {
 }
 
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': os.getenv('DB_PASSWORD'),
-    'database': 'moodblume_db',
+    'host': os.getenv('MYSQLHOST', 'localhost'),
+    'port': int(os.getenv('MYSQLPORT', 3306)),
+    'user': os.getenv('MYSQLUSER', 'root'),
+    'password': os.getenv('MYSQLPASSWORD', os.getenv('DB_PASSWORD')),
+    'database': os.getenv('MYSQLDATABASE', 'moodblume_db'),
 }
