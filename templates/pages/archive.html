@@ -9,11 +9,11 @@
 
 {% block content %}
 <main>
-    <!-- SECTION 1: GREETING & DASHBOARD GRID -->
+    
     <div class="greeting-block">
-        <!-- Floating Moodblob (No background/box) -->
+        
         <div class="dashboard-blob-container custom-tooltip-trigger" style="position: relative; width: 100%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; --base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3s; --mspeed: 4s;">
-            <!-- Scaled wrapper for animated blob -->
+            
             <div style="transform: scale(0.70); transform-origin: center center; height: 100px; display: flex; align-items: center; justify-content: center; width: 130px; position: relative;">
                 <div class="blob-main" id="blobMain" style="margin-top: 0;">
                     <div class="blob-body" id="blobBody"></div>
@@ -32,7 +32,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Custom Cozy Tooltip -->
+            
             <div class="cozy-tooltip">
                 <span class="tooltip-score">{{ companion.score }}</span> Energy Level &bull; {{ companion.label }}
             </div>
@@ -47,11 +47,9 @@
         </a>
     </div>
 
-    <!-- 2-COLUMN DASHBOARD GRID -->
     <div class="dashboard-grid">
-        <!-- LEFT COLUMN: ANALYTICS & INSIGHTS -->
+        
         <div class="dashboard-col">
-
 
             {% if memory_entry %}
             <div class="memory-card" style="width: 100%;">
@@ -71,7 +69,6 @@
             {% endif %}
         </div>
 
-        <!-- RIGHT COLUMN: MOODBLOB & CALENDAR -->
         <div class="dashboard-col flex-center-contents">
             <div class="cal-wrap" id="aw" style="margin-top: 0 !important; width: 100%; max-width: 320px !important; margin-left: auto; margin-right: auto;">
                 <h2 class="sr-only">Navigable emotion calendar</h2>
@@ -103,8 +100,6 @@
         </div>
     </div>
 
-
-    <!-- OPEN BOOK OVERLAY -->
     <div id="obo-modal" class="obo-wrap">
         <button class="obo-close" id="obo-close-btn">&times;</button>
         <div class="obo-content">

@@ -209,7 +209,7 @@ body.user-logged-in {
     padding-bottom: 100px !important;
 }
 </style>
-    <!-- NAVBAR -->
+    
     <div class="navbar-container">
         <a href="{% if session.get('user_id') %}{{ url_for('main.archive') }}{% else %}{{ url_for('main.index') }}{% endif %}" class="navbar-logo">
             <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}?v=1.3" alt="MoodBlume Logo" style="height: 50px; width: auto; display: block;">

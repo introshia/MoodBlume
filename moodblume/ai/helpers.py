@@ -1,7 +1,3 @@
-"""
-moodblume/ai/helpers.py
-All AI, analytics, and text-processing helper functions.
-"""
 import json
 import random
 from datetime import datetime, timedelta
@@ -12,21 +8,14 @@ from sklearn.linear_model import LinearRegression
 from ..config import MOOD_COLORS
 from ..extensions import analyzer, get_db_connection
 
-
-# ── Sentiment Analysis ────────────────────────────────────────────────────────
-
 def analyze_sentiment(content):
-    """
-    Uses the VADER (Valence Aware Dictionary and sEntiment Reasoner) library
-    to analyze the entire entry for context, intensity, and negations.
-    """
+
     if not content:
         return {"score": 3, "pillar": "peace", "reflection": "What is one truth you've been avoiding today?"}
 
     vs = analyzer.polarity_scores(content)
-    compound = vs['compound']  # Ranges from -1.0 to 1.0
+    compound = vs['compound']
 
-    # Map compound score to 1-9 scale (to support the 12 nuanced faces)
     if compound >= 0.8:   final_score = 9
     elif compound >= 0.5: final_score = 8
     elif compound >= 0.2: final_score = 7
@@ -36,7 +25,6 @@ def analyze_sentiment(content):
     elif compound > -0.8: final_score = 2
     else:                 final_score = 1
 
-    # Pillar Detection
     text = content.lower()
     pillar = "Peace"
     if any(w in text for w in ['work', 'time', 'manage', 'schedule', 'todo', 'busy', 'deadline']):
@@ -48,7 +36,6 @@ def analyze_sentiment(content):
     elif any(w in text for w in ['quiet', 'still', 'calm', 'nature', 'breathe', 'meditate', 'peace']):
         pillar = "Peace"
 
-    # Dynamic Reflection Logic
     questions = {
         "Balance":  "Is it the quantity of tasks—or the weight of expectations—that truly feels out of balance today?",
         "Growth":   "What part of this 'new' self are you most afraid to leave behind as you grow?",
@@ -68,19 +55,28 @@ def analyze_sentiment(content):
         "reflection": reflection,
     }
 
-
-# ── AI-Generated Letter ───────────────────────────────────────────────────────
-
-def generate_letter(compound_score, username='friend'):
+def generate_letter(mood_score, username='friend', content=''):
     name = (username or 'friend').replace('_', ' ').title()
 
-    if compound_score >= 0.3:
+    text = content or ""
+    if text.strip().startswith('{') and text.strip().endswith('}'):
+        try:
+            import json
+            data = json.loads(text)
+            text = data.get('text', text)
+        except Exception:
+            pass
+
+    char_sum = sum(ord(c) for c in text)
+    index = char_sum % 3
+
+    if mood_score >= 7:
         options = [
             f"Dear {name},\n\nSomething in the way you wrote today felt lighter — more alive. Like you were writing from a place of genuine warmth.\n\nWhatever is filling your days with that feeling, hold onto it gently. Not too tightly, just enough to remember it's there.\n\nI'm glad today was a good one.",
             f"Dear {name},\n\nToday's words carry a brightness to them. There's something lovely about a day that leaves you with something worth writing down.\n\nKeep going. You're doing beautifully.",
             f"Dear {name},\n\nYou wrote today with something that sounded a lot like joy — or maybe just ease. Either way, it looked good on you.\n\nSee you on the next page.",
         ]
-    elif compound_score <= -0.3:
+    elif mood_score <= 4:
         options = [
             f"Dear {name},\n\nHard days have a weight that's difficult to put into words — and yet here you are, doing just that.\n\nThat takes more courage than you might realize. Writing through the difficult moments is its own kind of bravery.\n\nTomorrow is a fresh page.",
             f"Dear {name},\n\nIt sounds like today asked a lot of you. I hope you're being as gentle with yourself as you deserve.\n\nSome days we write to feel better. Some days we write just to survive them. Both are enough.",
@@ -93,10 +89,8 @@ def generate_letter(compound_score, username='friend'):
             f"Dear {name},\n\nToday was a day. And you wrote about it. That's more than most people do.\n\nSee you tomorrow.",
         ]
 
-    return random.choice(options)
+    return options[index]
 
-
-# ── Quote Lookup ──────────────────────────────────────────────────────────────
 
 def get_quote_for_entry(content):
     content = content.lower()
@@ -113,9 +107,6 @@ def get_quote_for_entry(content):
     quote = cursor.fetchone()
     conn.close()
     return quote
-
-
-# ── Mood Trend (Linear Regression) ───────────────────────────────────────────
 
 def calculate_mood_trend(entries):
     if len(entries) < 2:
@@ -146,9 +137,6 @@ def calculate_mood_trend(entries):
         "msg":         f"Your emotional rhythm is {status}.",
         "consistency": "Consistent.",
     }
-
-
-# ── Advanced Insights ─────────────────────────────────────────────────────────
 
 def calculate_advanced_insights(entries):
     if len(entries) < 3:
@@ -194,9 +182,6 @@ def calculate_advanced_insights(entries):
         "predicted_label":  "High" if prediction > 0.7 else "Moderate" if prediction > 0.4 else "Restorative",
     }
 
-
-# ── Memory Entry ──────────────────────────────────────────────────────────────
-
 def get_memory_entry(entries):
     if not entries:
         return None
@@ -227,9 +212,6 @@ def get_memory_entry(entries):
                 }
     return None
 
-
-# ── Energy / Companion Data ───────────────────────────────────────────────────
-
 def calculate_energy_data(content):
     if not content:
         return {"score": 50, "mood": "neutral", "label": "Resting", "color": "#F5C842"}
@@ -254,9 +236,6 @@ def calculate_energy_data(content):
         return {"score": score, "mood": "low",      "label": "Sad",     "color": "#E87FA0", "light": "#FFAAC4", "dark": "#B54A6E", "mouth": "M3 3 Q11 9 19 3"}
     else:
         return {"score": score, "mood": "drained",  "label": "Stressed","color": "#A99BC4", "light": "#C4B5E8", "dark": "#7E6BA9", "mouth": "M5 3 Q11 3 17 3"}
-
-
-# ── Streak ────────────────────────────────────────────────────────────────────
 
 def calculate_streak(user_id):
     conn = get_db_connection()
@@ -287,9 +266,6 @@ def calculate_streak(user_id):
         else:
             break
     return streak
-
-
-# ── Weekly Wrap-up ────────────────────────────────────────────────────────────
 
 def calculate_weekly_wrapup(entries):
     now      = datetime.now()
@@ -322,9 +298,6 @@ def calculate_weekly_wrapup(entries):
         "entries_dir":  "up" if total_entries >= 3 else "down",
         "time_dir":     "down" if total_minutes < 5 else "up",
     }
-
-
-# ── Preview Text ──────────────────────────────────────────────────────────────
 
 def get_preview_text(content):
     if not content:

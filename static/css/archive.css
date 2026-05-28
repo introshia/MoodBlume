@@ -1,15 +1,15 @@
-    :root {
+:root {
         --bg: #f4f3f1;
-        /* Soft Neutral Gray */
+        
         --surface: #FFFFFF;
         --text: #4B2E1F;
-        /* Freshly Roasted */
+        
         --muted: rgba(75, 46, 31, 0.55);
         --rule: rgba(75, 46, 31, 0.09);
         --butter: #F4E6A6;
-        /* Butter       */
+        
         --oyster: #DCECEF;
-        /* Oyster Bay   */
+        
         --nav-height: 52px;
         --bw: 170px;
         --bh: 240px;
@@ -29,10 +29,9 @@
 
     main {
         padding-top: 30px;
-        /* Refined offset for fixed navbar */
+        
     }
 
-    /* ── DASHBOARD GRID & COLUMN SYSTEM ────────────────────── */
     .dashboard-grid {
         padding: 10px 52px 20px;
         display: grid;
@@ -56,7 +55,6 @@
         justify-content: center;
     }
 
-    /* 3D Journal Spotlight Centered Row */
     .journal-spotlight-section {
         width: 100%;
         max-width: 1000px;
@@ -149,7 +147,6 @@
         box-shadow: 0px 0px 0px rgba(75, 46, 31, 0.15);
     }
 
-
     .trend-MoodBlooming {
         background: rgba(140, 166, 140, 0.2);
         color: #4A5D4A;
@@ -160,9 +157,6 @@
         color: #5D4A4A;
     }
 
-    /* Legacy streak CSS removed */
-
-    /* Weekly Wrap-up Card */
     .weekly-wrap-card {
         background: var(--white);
         border: 1.5px solid var(--text-black);
@@ -288,7 +282,6 @@
         }
     }
 
-    /* Original Blob Card */
     .blob-card {
         background: var(--white);
         border-radius: 12px;
@@ -378,7 +371,6 @@
         color: var(--base);
     }
 
-    /* Dark theme overrides for tooltip */
     body.dark-theme .cozy-tooltip {
         background: #2A1A0E !important;
         border-color: rgba(246, 243, 238, 0.25) !important;
@@ -435,7 +427,6 @@
         overflow: visible;
     }
 
-    /* mini blobs */
     .blob-mini {
         position: absolute;
         border-radius: 50% 40% 55% 45% / 45% 55% 40% 55%;
@@ -540,7 +531,6 @@
         }
     }
 
-    /* On This Day Card */
     .memory-card {
         background: var(--white);
         border: 1.5px solid var(--text-black);
@@ -604,7 +594,6 @@
         flex-shrink: 0;
     }
 
-    /* Chart */
     .chart-container {
         background: var(--surface);
         border-radius: 24px;
@@ -649,7 +638,6 @@
         padding: 0;
     }
 
-    /* Apple Emotion Calendar Card (Matches Claude's exactly) */
     .cal-wrap {
         background: var(--white) !important;
         border-radius: 12px !important;
@@ -757,8 +745,7 @@
         font-weight: 700 !important;
         font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
-    
-    /* Emotion Colors */
+
     .e-joy { background: #F5E6B0 !important; color: #7A6020 !important; }
     .e-sadness { background: #BDDDF0 !important; color: #2C5A72 !important; }
     .e-anger { background: #F5C0BE !important; color: #7A3030 !important; }
@@ -772,8 +759,7 @@
         outline: 2px solid #1C1C1E !important;
         outline-offset: -2px !important;
     }
-    
-    /* Legend Card */
+
     .legend {
         margin-top: 8px !important;
         background: var(--white) !important;
@@ -806,8 +792,6 @@
         font-weight: 500 !important;
         color: #3A3A3C !important;
     }
-
-
 
     .mbw {
         font-family: inherit;
@@ -871,14 +855,13 @@
         line-height: 1.3
     }
 
-    /* ── PREMIUM 3D BOOK SYSTEM ─────────────────── */
     :root {
         --bw: 170px;
-        /* Base Width */
+        
         --bh: 240px;
-        /* Base Height */
+        
         --sw: 18px;
-        /* Base Spine */
+        
     }
 
     .premium-book {
@@ -932,7 +915,7 @@
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
-        border-radius: 2px 24px 24px 2px; /* Uniform Moleskine shape */
+        border-radius: 2px 24px 24px 2px; 
     }
 
     .cover-front {
@@ -944,7 +927,7 @@
                 transparent 5%,
                 rgba(0, 0, 0, 0.2) 6%,
                 rgba(0, 0, 0, 0.4) 7%,
-                transparent 9%), #3D2B1F; /* Unified brown cover background */
+                transparent 9%), #3D2B1F; 
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1017,7 +1000,6 @@
         opacity: 0;
     }
 
-    /* ── FEATURED SHELF (Top of Library) ────────── */
     .featured-shelf {
         padding: 60px 0 40px;
         text-align: center;
@@ -1052,7 +1034,6 @@
         transform-origin: center bottom;
     }
 
-    /* ── UI ELEMENTS ────────────────────────── */
     .archive-header {
         text-align: center;
         margin-bottom: 40px;
@@ -1131,7 +1112,6 @@
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
     }
 
-    /* ── TRUE 3D MULTI-PAGE SYSTEM ─────────────────── */
     .journal-spotlight {
         margin: 60px 0 80px;
         display: flex;
@@ -1159,20 +1139,20 @@
         bottom: 25px;
         width: 1px;
         background: rgba(0, 0, 0, 0.15);
-        /* Single dark crease line */
+        
         z-index: 20;
         transform: translateZ(5px);
         opacity: 0;
-        /* Hidden when closed */
+        
         transition: opacity 0.1s ease 1s;
-        /* Wait until book is almost fully closed before vanishing */
+        
     }
 
     .journal-spotlight .journal.spread-open::before {
         opacity: 1;
-        /* Visible when open */
+        
         transition: opacity 0.3s ease 0s;
-        /* Instantly fade in when opening */
+        
     }
 
     .journal-spotlight .journal.spread-open {
@@ -1184,13 +1164,12 @@
         position: absolute;
         top: 0;
         width: var(--page-w);
-        /* Original stable width */
+        
         height: 100%;
         transform-style: preserve-3d;
         transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     }
 
-    /* Covers & Wings */
     .journal-spotlight .left-half {
         position: absolute;
         top: 0;
@@ -1206,7 +1185,7 @@
 
     .journal-spotlight .left-half.wing-open {
         transform: rotateY(0deg) translateZ(-0.5px);
-        /* Stable Depth */
+        
         cursor: pointer;
     }
 
@@ -1218,22 +1197,21 @@
         z-index: 1;
         transform: translateZ(0.1px);
         transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-        /* Smooth deflate to prevent jumping glitches */
+        
     }
 
-    /* Stable 3D layer */
     .journal-spotlight .left-half .cover-inside {
         left: 8px;
-        /* Outer leather bleed */
+        
         right: 0;
-        /* Continuous to spine */
+        
         border-radius: 28px 0 0 28px;
     }
 
     .journal-spotlight .front-cover-design {
         position: absolute;
         inset: 0;
-        /* Slimmer Visual Spine: Rounded leather binding + Hinge crease */
+        
         background: #3D2B1F;
         background: linear-gradient(to right,
                 rgba(0, 0, 0, 0.3) 0%,
@@ -1248,16 +1226,16 @@
         backface-visibility: hidden;
         z-index: 2;
         overflow: hidden;
-        /* Clip the elastic band */
+        
     }
 
     .journal-spotlight .elastic {
         position: absolute;
         right: 22px;
         top: 4px;
-        /* Inset from top */
+        
         bottom: 4px;
-        /* Inset from bottom */
+        
         width: 9px;
         background: linear-gradient(to right, #0a0a0a, #1c1c1c 50%, #0a0a0a);
         border-radius: 3px;
@@ -1293,16 +1271,16 @@
 
     .journal-spotlight .right-wing.wing-open {
         transform: rotateY(0deg) translateZ(-0.5px);
-        /* Stable Depth */
+        
         cursor: pointer;
         z-index: 100;
-        /* Priority interaction layer */
+        
     }
 
     .journal-spotlight .wing.wing-open .cover-inside {
         transform: translateZ(0.1px);
         cursor: pointer;
-        /* Clearly interactive */
+        
     }
 
     .journal-spotlight .back-cover-design {
@@ -1319,15 +1297,14 @@
         top: 10px;
         bottom: 10px;
         left: 0;
-        /* Continuous to spine */
+        
         right: 8px;
-        /* Outer leather bleed */
+        
         border-radius: 0 28px 28px 0;
         backface-visibility: hidden;
         z-index: 2;
     }
 
-    /* Page Stack Base - Original Stable Setup */
     .journal-spotlight .page {
         position: absolute;
         left: var(--page-w);
@@ -1335,34 +1312,33 @@
         width: var(--page-w);
         height: 100%;
         transform-origin: left center;
-        /* Pivot exactly at the meeting line */
+        
         transform-style: preserve-3d;
         transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
         cursor: pointer;
         user-select: none;
         overflow: visible;
         pointer-events: none;
-        /* Allow clicks to pass through to covers */
+        
     }
 
     .journal-spotlight .page-front,
     .journal-spotlight .page-back {
         pointer-events: auto;
-        /* Re-enable for paper */
+        
     }
 
     .journal-spotlight .page.flipped {
         transform: rotateY(-180deg);
     }
 
-    /* Faces - Original top: 10px offset with Gutter Margin */
     .journal-spotlight .page-front,
     .journal-spotlight .page-back {
         position: absolute;
         top: 11px;
-        /* Visual level top */
+        
         bottom: 12px;
-        /* Visual level bottom (closer to camera) */
+        
         background-color: #fdfaf3;
         backface-visibility: hidden;
         box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.02);
@@ -1377,23 +1353,23 @@
 
     .journal-spotlight .right-wing .cover-inside {
         padding-left: 10px;
-        /* Matched to side border */
+        
     }
 
     .journal-spotlight .left-half .cover-inside {
         padding-right: 10px;
-        /* Matched to side border */
+        
     }
 
     .journal-spotlight .cover-inside {
         background-color: #f4eee0;
-        /* Rich Cream Lining */
+        
     }
 
     .journal-spotlight .page-front {
         left: 0;
         width: var(--page-inner-w);
-        /* Balanced side border */
+        
         border-radius: 0 28px 28px 0;
         z-index: 2;
     }
@@ -1401,13 +1377,12 @@
     .journal-spotlight .page-back {
         left: 0;
         width: var(--page-inner-w);
-        /* Balanced side border */
+        
         border-radius: 28px 0 0 28px;
         transform: rotateY(180deg);
         z-index: 1;
     }
 
-    /* Spine Polish - Depth from the sides of the pages */
     .journal-spotlight .spine-shadow {
         position: absolute;
         top: 0;
@@ -1431,13 +1406,11 @@
         background: linear-gradient(to left, rgba(0, 0, 0, 0.12) 0%, transparent 100%);
     }
 
-    /* Masking: Remove lines from underlying pages to stop "Threads" */
     .journal-spotlight .page:not(.active-page) .page-front::after,
     .journal-spotlight .page:not(.active-page) .page-back::after {
         display: none !important;
     }
 
-    /* Paper Styles - Specific to Pages */
     .journal-spotlight .page-front,
     .journal-spotlight .page-back {
         background-origin: content-box;
@@ -1489,8 +1462,6 @@
         display: block;
     }
 
-
-
     .btn-journal {
         background: #3D2B1F;
         color: #fdfaf3;
@@ -1569,7 +1540,6 @@
         pointer-events: all;
     }
 
-    /* ── LIBRARY GRID ────────────────────────── */
     .shelf-books {
         display: flex;
         flex-wrap: wrap;
@@ -1578,12 +1548,11 @@
         transition: all 0.3s ease;
     }
 
-    /* Carousel Mode Overrides */
     .library-section.mode-carousel .shelf-books {
         flex-wrap: nowrap;
         overflow-x: auto;
         padding: 60px 40px 80px;
-        /* More space for scaling */
+        
         scrollbar-width: none;
         -ms-overflow-style: none;
         scroll-snap-type: x mandatory;
@@ -1605,7 +1574,6 @@
         cursor: pointer;
     }
 
-    /* Remove the simple hover scale; we'll use dynamic JS scaling instead */
     .library-section.mode-carousel .shelf-books>*:hover {
         z-index: 50;
     }
@@ -1617,7 +1585,7 @@
 
     .lib-view-pane {
         display: block;
-        /* Ensure it's always ready to receive content */
+        
         min-height: 200px;
     }
 
@@ -1635,7 +1603,7 @@
 
     .lib-journal-item .premium-book {
         --scale: 0.65;
-        /* Scale down for grid */
+        
     }
 
     .lib-journal-item .flat-meta {
@@ -1670,7 +1638,6 @@
         }
     }
 
-    /* Journal Colors */
     .c-rose {
         background: #C17A6F;
     }
@@ -1691,12 +1658,11 @@
         background: #9A5B45;
     }
 
-    /* ── OPEN BOOK OVERLAY ───────────────────── */
     .obo-wrap {
         position: fixed;
         inset: 0;
         z-index: 2000;
-        /* Move to top but keep inactive */
+        
         background: rgba(234, 232, 225, 0.96);
         display: flex;
         align-items: center;
@@ -1870,12 +1836,10 @@
         border-radius: 0 4px 4px 0;
     }
 
-    /* ── LIBRARY SECTION (View Switcher) ───────────── */
     .library-section {
         padding: 0 52px 60px;
     }
 
-    /* Collections title (upper-left label) */
     .collections-title {
         font-size: 18px;
         font-weight: 700;
@@ -2000,7 +1964,6 @@
         text-decoration: underline;
     }
 
-    /* Month-book cards (one per month on the Monthly shelf) */
     .month-book {
         width: 128px;
         display: flex;
@@ -2105,7 +2068,6 @@
         color: var(--text);
     }
 
-    /* Modal */
     .col-modal-bg {
         position: fixed;
         inset: 0;
@@ -2238,7 +2200,6 @@
         opacity: 0.8;
     }
 
-    /* Journal Writing Areas */
     .journal-spotlight .style-grid .page-writing-area,
     .journal-spotlight .style-grid .page-writing-placeholder {
         line-height: 24px;
@@ -2335,7 +2296,7 @@
         border: 2px solid transparent;
         pointer-events: none;
     }
-    /* Dark Theme overrides for sketchbook cards */
+    
     body.dark-theme .weekly-wrap-card,
     body.dark-theme .memory-card,
     body.dark-theme .blob-card,

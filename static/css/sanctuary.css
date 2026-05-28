@@ -1,5 +1,4 @@
-
-    * {
+* {
       margin: 0;
       padding: 0;
       box-sizing: border-box
@@ -41,7 +40,7 @@
       font-family: 'Sunshiney', cursive;
       font-size: 17px;
       color: #2D332A;
-      /* Deep Forest */
+      
       pointer-events: all;
       cursor: pointer;
       letter-spacing: -.01em
@@ -53,7 +52,6 @@
       font-weight: 300
     }
 
-    /* Bottom navigation dock - Matches global _navbar.html exactly */
     #bottom-dock {
       position: fixed;
       bottom: 24px;
@@ -62,7 +60,7 @@
       z-index: 9999;
       display: flex;
       gap: 8px;
-      background: rgba(42, 26, 14, 0.85) !important; /* Premium dark espresso wood */
+      background: rgba(42, 26, 14, 0.85) !important; 
       border: 1px solid rgba(246, 243, 238, 0.08) !important;
       padding: 8px !important;
       border-radius: 24px !important;
@@ -86,7 +84,7 @@
       align-items: center !important;
       justify-content: center !important;
       gap: 4px !important;
-      color: #F6F3EE !important; /* Cozy Old Lace color */
+      color: #F6F3EE !important; 
       text-decoration: none !important;
       font-family: 'Balsamiq Sans', cursive !important;
       font-size: 11px !important;
@@ -149,9 +147,9 @@
       transition: opacity .18s;
       z-index: 30;
       background: rgba(241, 243, 238, .96);
-      /* Misty Sage */
+      
       border: 1px solid rgba(45, 51, 42, .12);
-      /* Minimalist border */
+      
       border-radius: 9px;
       padding: 7px 14px;
       white-space: nowrap;
@@ -162,14 +160,14 @@
       font-family: 'Lora', cursive;
       font-size: 12px;
       color: #2D332A;
-      /* Deep Forest */
+      
       margin-bottom: 2px
     }
 
     #tip .ts {
       font-size: 10px;
       color: #7A8274;
-      /* Muted Sage */
+      
       font-weight: 300;
       letter-spacing: .04em
     }
@@ -337,12 +335,10 @@
       pointer-events: none
     }
 
-
-    /* ── Greeting — ambient lower-left whisper ── */
     #window-greeting {
       position: fixed;
-      bottom: 80px;       /* just above the timebadge */
-      left: 44px;         /* aligns with timebadge & weatherbadge */
+      bottom: 80px;       
+      left: 44px;         
       z-index: 15;
       pointer-events: none;
       animation: greetingFadeIn 2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
@@ -354,7 +350,7 @@
       font-size: 15px;
       font-weight: 400;
       letter-spacing: 0.03em;
-      color: rgba(200, 140, 60, 0.55); /* same warm amber as timebadge */
+      color: rgba(200, 140, 60, 0.55); 
       display: block;
       line-height: 1;
     }
@@ -364,21 +360,16 @@
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── Desk MoodBlob Companion ── */
     #desk-companion {
       position: fixed;
-      /*
-       * Desk surface sits at roughly DESK_TOP_Y=65% from top.
-       * We nudge the blob to sit right on that surface edge.
-       * left: between the lamp (~26% of W) and the journal (~50% of W).
-       */
-      bottom: 31%;        /* desk surface level */
-      left: 30%;          /* between lamp and journal */
+      
+      bottom: 31%;        
+      left: 30%;          
       z-index: 16;
-      /* Perspective tilt so it looks like it's *on* the angled desk */
+      
       transform: perspective(400px) rotateX(12deg) scale(0.92);
       transform-origin: bottom center;
-      /* Warm room-light tint to blend into the amber scene */
+      
       filter: sepia(0.18) brightness(0.88) drop-shadow(0 6px 14px rgba(0,0,0,0.45));
       animation: deskBlobEntry 1.2s cubic-bezier(0.34, 1.3, 0.64, 1) 0.5s both;
     }
@@ -395,7 +386,6 @@
       align-items: center;
     }
 
-    /* ── Blob body (smaller, desk-scale) ── */
     #desk-companion .blob-main {
       width: 54px;
       height: 54px;
@@ -477,7 +467,6 @@
       animation-direction: alternate-reverse;
     }
 
-    /* Streak accessory */
     #desk-companion .blob-accessory {
       position: absolute;
       top: -8px;
@@ -493,7 +482,6 @@
       transform-origin: bottom center;
     }
 
-    /* Desk shadow — flattened ellipse to match perspective */
     .sanctuary-blob-shadow {
       width: 42px;
       height: 7px;
@@ -510,7 +498,6 @@
       60%       { transform: scaleX(0.82); opacity: 0.22; }
     }
 
-    /* Shared keyframes */
     @keyframes blobFloat {
       0%   { transform: translateY(0px)   translateX(0px);  }
       30%  { transform: translateY(-6px)  translateX(1.5px); }

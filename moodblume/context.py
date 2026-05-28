@@ -1,9 +1,7 @@
 from flask import session
 from .extensions import get_db_connection
 
-
 def register_context_processors(app):
-    """Attach all Jinja2 context processors to *app*."""
 
     @app.context_processor
     def inject_sidebar_data():

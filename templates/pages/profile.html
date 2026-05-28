@@ -431,49 +431,7 @@
     left: 23px;
   }
 
-  /* ── THEME PICKER ───────────────────────────── */
-  .theme-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 8px;
-  }
 
-  .theme-opt {
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border-color 0.2s, transform 0.15s;
-  }
-
-  .theme-opt:hover {
-    transform: translateY(-2px);
-  }
-
-  .theme-opt.selected {
-    border-color: var(--p-gold);
-  }
-
-  .theme-preview {
-    height: 52px;
-    display: flex;
-    gap: 4px;
-    padding: 8px;
-  }
-
-  .theme-bar {
-    flex: 1;
-    border-radius: 4px;
-  }
-
-  .theme-name {
-    text-align: center;
-    font-size: 11px;
-    color: var(--p-muted);
-    padding: 6px 4px 8px;
-    background: var(--p-bg);
-  }
 
   /* ── ACTION BUTTONS ─────────────────────────── */
   .btn-primary {
@@ -605,9 +563,7 @@
       grid-template-columns: 1fr;
     }
 
-    .theme-grid {
-      grid-template-columns: 1fr 1fr;
-    }
+
   }
 </style>
 {% endblock %}
@@ -615,7 +571,6 @@
 {% block content %}
 <div class="profile-shell">
 
-  <!-- LEFT: IDENTITY SIDEBAR -->
   <aside class="identity-card">
     <div class="avatar-ring">{{ user.username[0].upper() }}</div>
     <div class="id-name">{{ user.username }}</div>
@@ -641,9 +596,7 @@
       <a class="id-nav-link" href="#security">
         <span class="nav-icon">🔒</span> Security
       </a>
-      <a class="id-nav-link" href="#preferences">
-        <span class="nav-icon">🎨</span> Preferences
-      </a>
+
       <a class="id-nav-link" href="#notifications">
         <span class="nav-icon">🔔</span> Notifications
       </a>
@@ -653,10 +606,8 @@
     </nav>
   </aside>
 
-  <!-- RIGHT: SETTINGS PANEL -->
   <main class="settings-panel">
 
-    <!-- Flash messages -->
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% for message in messages %}
@@ -665,7 +616,6 @@
     {% endif %}
     {% endwith %}
 
-    <!-- STATS STRIP -->
     <div class="stats-strip">
       <div class="strip-stat">
         <span class="strip-val">{{ stats }}</span>
@@ -685,7 +635,6 @@
       </div>
     </div>
 
-    <!-- IDENTITY -->
     <form action="{{ url_for('profile.update_profile') }}" method="POST">
       <div class="s-card" id="identity">
         <div class="s-card-head">
@@ -711,7 +660,6 @@
       </div>
     </form>
 
-    <!-- SECURITY -->
     <form action="{{ url_for('profile.update_profile') }}" method="POST">
       <div class="s-card" id="security">
         <div class="s-card-head">
@@ -743,62 +691,8 @@
       </div>
     </form>
 
-    <!-- PREFERENCES -->
-    <div class="s-card" id="preferences">
-      <div class="s-card-head">
-        <div class="s-card-icon blue">🎨</div>
-        <div>
-          <div class="s-card-title">Preferences</div>
-          <div class="s-card-sub">Customize your sanctuary experience</div>
-        </div>
-      </div>
-      <div class="s-card-body">
-        <div class="f-label" style="margin-bottom:12px;">Sanctuary Theme</div>
-        <div class="theme-grid">
-          <div class="theme-opt selected" onclick="selectTheme(this, 'miki')">
-            <div class="theme-preview" style="background:#F6F3EE;">
-              <div class="theme-bar" style="background:#F4E6A6;"></div>
-              <div class="theme-bar" style="background:#DCECEF;"></div>
-              <div class="theme-bar" style="background:#4B2E1F;"></div>
-            </div>
-            <div class="theme-name">miki+ Lace</div>
-          </div>
-          <div class="theme-opt" onclick="selectTheme(this, 'midnight')">
-            <div class="theme-preview" style="background:#0D1117;">
-              <div class="theme-bar" style="background:#161B22;"></div>
-              <div class="theme-bar" style="background:#21262D;"></div>
-              <div class="theme-bar" style="background:#388BFD;"></div>
-            </div>
-            <div class="theme-name">Midnight</div>
-          </div>
-          <div class="theme-opt" onclick="selectTheme(this, 'sage')">
-            <div class="theme-preview" style="background:#E8EDE4;">
-              <div class="theme-bar" style="background:#C4CEC0;"></div>
-              <div class="theme-bar" style="background:#8FAD89;"></div>
-              <div class="theme-bar" style="background:#4A7A5A;"></div>
-            </div>
-            <div class="theme-name">Forest Sage</div>
-          </div>
-        </div>
 
-        <div style="margin-top: 20px; border-top: 1px solid var(--p-rule); padding-top: 20px;">
-          <div class="f-group">
-            <label class="f-label" for="font_pref">Journal Font</label>
-            <select class="f-input" id="font_pref" style="cursor:pointer;">
-              <option value="lora" selected>Lora (Serif)</option>
-              <option value="dmsans">Balsamiq Sans (Clean)</option>
-              <option value="mono">Mono (Minimal)</option>
-            </select>
-          </div>
-        </div>
 
-        <div class="btn-row">
-          <button type="button" class="btn-primary" onclick="savePreferences()">Save Preferences</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- NOTIFICATIONS -->
     <div class="s-card" id="notifications">
       <div class="s-card-head">
         <div class="s-card-icon">🔔</div>
@@ -855,7 +749,6 @@
       </div>
     </div>
 
-    <!-- DANGER ZONE -->
     <div class="s-card" id="danger">
       <div class="s-card-head">
         <div class="s-card-icon red">⚠️</div>
@@ -886,7 +779,6 @@
   </main>
 </div>
 
-<!-- Delete confirmation modal -->
 <div id="delete-modal"
   style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9999; align-items:center; justify-content:center;"
   onclick="this.style.display='none'">
@@ -938,17 +830,7 @@
     });
   });
 
-  function selectTheme(el, theme) {
-    document.querySelectorAll('.theme-opt').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    localStorage.setItem('mb_theme', theme);
-  }
 
-  function savePreferences() {
-    const font = document.getElementById('font_pref').value;
-    localStorage.setItem('mb_font', font);
-    showToast('Preferences saved ✓');
-  }
 
   function saveNotifications() {
     showToast('Notification preferences saved ✓');

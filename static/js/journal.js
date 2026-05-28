@@ -1,5 +1,4 @@
-
-    let isOpen3D = false;
+let isOpen3D = false;
     let isAnimating3D = false;
     let activeWritingArea = null;
     const journal3d = document.getElementById('journal3d');
@@ -83,7 +82,6 @@
             btn.setAttribute('aria-pressed', active ? 'true' : 'false');
         });
 
-        // Dynamic font-size visibility: only visible on 'blank' (freeform) style
         const sizeSection = document.getElementById('tb-font-size-section');
         const sizeDivider = document.getElementById('tb-font-size-divider');
         if (sizeSection && sizeDivider) {
@@ -126,15 +124,13 @@
             if (e.key === 'Escape' && isOpen3D && !isAnimating3D) toggleJournal3D();
         });
 
-        // Auto-open 3D journal if query param is set
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('open') === 'true' || urlParams.get('open_journal') === 'true') {
+        if (urlParams.get('open') !== 'false') {
             setTimeout(() => {
                 if (!isOpen3D && !isAnimating3D) toggleJournal3D();
             }, 600);
         }
 
-        // Auto-populate custom title from query parameters if present
         const customTitle = urlParams.get('title') || urlParams.get('collection') || urlParams.get('collection_name');
         if (customTitle) {
             const titleEl = document.querySelector('.topbar-title');
@@ -144,7 +140,6 @@
         }
     });
 
-    // --- Journal Writing Areas ---
     (function initWritingAreas() {
         function addWritingArea(el, id, placeholderText, isBack) {
             const ph = document.createElement('div');
@@ -247,7 +242,6 @@
         });
     })();
 
-    // --- Toolbar Editor Helper Functions ---
     function isWritingAreaVisible(area) {
         if (!isOpen3D) return false;
         const page = area.closest('.page');
@@ -280,7 +274,6 @@
         return null;
     }
 
-    // --- Toolbar Editor Script ---
     const FORMAT_CMDS = ['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight'];
 
     function updateToolbarFormatStates() {
@@ -294,11 +287,10 @@
             let active = false;
             try {
                 active = document.queryCommandState(cmd);
-            } catch (_) { /* ignore when no selection */ }
+            } catch (_) {  }
             btn.classList.toggle('is-active', active);
         });
 
-        // Update font size select state if active selection has a size
         const fontSizeSelect = document.getElementById('tb-font-size');
         if (fontSizeSelect) {
             try {
@@ -316,7 +308,7 @@
     if (toolbarEl) {
         toolbarEl.querySelectorAll('[data-cmd]').forEach(btn => {
             btn.addEventListener('mousedown', (e) => {
-                e.preventDefault(); // Keep focus and selection on contenteditable area
+                e.preventDefault(); 
                 const targetArea = getVisibleWritingArea();
                 if (!targetArea) return;
                 
@@ -382,8 +374,7 @@
             const img = wrapper.querySelector('img');
             const handle = wrapper.querySelector('.img-resize-handle');
             const deleteBtn = wrapper.querySelector('.img-delete-btn');
-            
-            // Check or create alignment bar if not present or incomplete in legacy markup
+
             let alignBar = wrapper.querySelector('.img-align-bar');
             if (!alignBar || !alignBar.querySelector('[data-align="free"]')) {
                 if (alignBar) alignBar.remove();
@@ -413,8 +404,7 @@
         const wrapper = document.createElement('div');
         wrapper.className = 'img-block';
         wrapper.contentEditable = 'false';
-        
-        // Default style is floated left with text wrapping
+
         wrapper.style.float = 'left';
         wrapper.style.display = 'inline-block';
         wrapper.style.margin = '8px 16px 8px 0';
@@ -453,8 +443,7 @@
             if (activeWritingArea.contains(range.commonAncestorContainer)) {
                 range.deleteContents();
                 range.insertNode(wrapper);
-                
-                // Collapse caret range after inserted image to continue writing
+
                 const afterRange = document.createRange();
                 afterRange.setStartAfter(wrapper);
                 afterRange.collapse(true);
@@ -471,13 +460,12 @@
     }
 
     function makeImageInteractive(wrapper, img, handle, deleteBtn) {
-        // Prevent selection loss when clicking wrapper
+        
         wrapper.addEventListener('click', (e) => {
             e.stopPropagation();
             e.preventDefault();
         });
 
-        // Set active state on alignment button initially matching styles
         const alignBar = wrapper.querySelector('.img-align-bar');
         if (alignBar) {
             const currentAlign = wrapper.style.position === 'absolute' ? 'free' : (wrapper.style.float === 'left' ? 'left' : (wrapper.style.float === 'right' ? 'right' : 'center'));
@@ -489,7 +477,6 @@
                 }
             });
 
-            // Bind click handlers for alignment options
             alignBar.querySelectorAll('.align-btn').forEach(btn => {
                 btn.addEventListener('mousedown', (e) => {
                     e.preventDefault();
@@ -500,7 +487,7 @@
                     btn.classList.add('active');
 
                     if (align === 'free') {
-                        // Convert to absolute positioning for free layout
+                        
                         const rect = wrapper.getBoundingClientRect();
                         const parent = wrapper.parentElement;
                         const parentRect = parent.getBoundingClientRect();
@@ -513,7 +500,7 @@
                         wrapper.style.margin = '0';
                         wrapper.style.clear = 'none';
                     } else {
-                        // Convert to relative positioning for normal document flow
+                        
                         wrapper.style.position = 'relative';
                         wrapper.style.left = '';
                         wrapper.style.top = '';
@@ -548,14 +535,13 @@
         let placeholder = null;
 
         wrapper.addEventListener('pointerdown', (e) => {
-            if (e.button !== 0) return; // Only left-click drag
+            if (e.button !== 0) return; 
             if (e.target.closest('.img-resize-handle') || e.target.closest('.img-delete-btn') || e.target.closest('.img-align-bar')) {
                 return;
             }
 
             e.stopPropagation();
 
-            // Toggle selection class
             document.querySelectorAll('.img-block.selected').forEach(el => el.classList.remove('selected'));
             wrapper.classList.add('selected');
 
@@ -570,7 +556,6 @@
             let currentParent = wrapper.closest('.page-writing-area');
             if (!currentParent) return;
 
-            // Cache rects of active visible writing areas
             const visibleAreas = [];
             document.querySelectorAll('.page-writing-area').forEach(area => {
                 if (isWritingAreaVisible(area)) {
@@ -591,7 +576,6 @@
             const wrapperWidth = wrapper.offsetWidth;
             const wrapperHeight = wrapper.offsetHeight;
 
-            // Determine if we are dragging absolutely or inline
             const isFreeMode = wrapper.style.position === 'absolute';
 
             let initialLeft = parseFloat(wrapper.style.left) || 0;
@@ -609,7 +593,7 @@
                     window.draggedImgBlock = wrapper;
 
                     if (!isFreeMode) {
-                        // WRAP MODE: Insert DOM layout placeholder
+                        
                         placeholder = document.createElement('div');
                         placeholder.className = 'img-block-placeholder';
                         placeholder.style.width = wrapper.offsetWidth + 'px';
@@ -627,18 +611,17 @@
                         wrapper.style.pointerEvents = 'none';
                         wrapper.style.opacity = '0.7';
                     } else {
-                        // FREE MODE: Set transform baseline
+                        
                         wrapper.style.transform = 'translate3d(0, 0, 0)';
                     }
                 }
 
                 if (isDragging) {
                     if (!isFreeMode) {
-                        // WRAP MODE positioning
+                        
                         wrapper.style.left = (moveEvent.clientX - pointerOffsetX) + 'px';
                         wrapper.style.top = (moveEvent.clientY - pointerOffsetY) + 'px';
 
-                        // Find target area under cursor
                         let targetArea = null;
                         for (const areaInfo of visibleAreas) {
                             const r = areaInfo.rect;
@@ -668,14 +651,14 @@
                                     range.insertNode(placeholder);
                                 }
                             } else {
-                                // Empty area drag: append placeholder to end
+                                
                                 if (placeholder.parentNode !== targetArea) {
                                     targetArea.appendChild(placeholder);
                                 }
                             }
                         }
                     } else {
-                        // FREE MODE positioning
+                        
                         let targetArea = null;
                         let targetRect = null;
                         let targetWidth = 0;
@@ -693,7 +676,6 @@
                             }
                         }
 
-                        // Handle page crossing in free mode
                         if (targetArea && wrapper.parentElement !== targetArea) {
                             const currentViewportLeft = moveEvent.clientX - pointerOffsetX;
                             const currentViewportTop = moveEvent.clientY - pointerOffsetY;
@@ -743,7 +725,7 @@
                     window.draggedImgBlock = null;
 
                     if (!isFreeMode) {
-                        // Restore wrap styles
+                        
                         wrapper.style.position = 'relative';
                         wrapper.style.left = '';
                         wrapper.style.top = '';
@@ -756,7 +738,7 @@
                         }
                         placeholder = null;
                     } else {
-                        // Commit absolute coordinates
+                        
                         const finalLeft = initialLeft + dx;
                         const finalTop = initialTop + dy;
                         wrapper.style.left = finalLeft + 'px';
@@ -811,7 +793,6 @@
         });
     }
 
-    // ── Save Entry + Envelope ──
     let envOpened = false;
     let shouldFlipAfterEnvelope = false;
 
@@ -864,7 +845,7 @@
     }
 
     function showEnvelope(letterText) {
-        // Build preview (first line) and full paragraphs
+        
         const paragraphs = letterText.split('\n\n').filter(p => p.trim());
         const preview = paragraphs[1] ? paragraphs[1].substring(0, 80) + '...' : letterText.substring(0, 80) + '...';
         const title = paragraphs[0] || 'Dear friend,';
@@ -880,7 +861,6 @@
             modalBody.appendChild(p);
         });
 
-        // Reset envelope state
         envOpened = false;
         document.getElementById('envFlap').classList.remove('open');
         document.getElementById('envFlapBack').classList.remove('open');
@@ -940,7 +920,7 @@
         shouldFlipAfterEnvelope = false;
 
         if (envOpened) {
-            // Reverse: lower letter → close flap → restore seal → fade overlay
+            
             letter.classList.remove('rise');
             setTimeout(() => letter.classList.remove('show'), 600);
 
@@ -986,14 +966,13 @@
         }
     }
 
-    // --- Topbar Custom Action Listeners ---
     window.handleTopbarBack = function(e) {
         e.preventDefault();
         if (window.self !== window.top) {
-            // Embedded inside an iframe (Sanctuary modal room)
+            
             window.parent.postMessage('close_journal_overlay', '*');
         } else {
-            // Standalone web page
+            
             window.location.href = "/archive";
         }
     };
@@ -1014,7 +993,6 @@
         }
     };
 
-    // --- Dynamic Zoom Control ---
     window.zoomJournal = function(factor) {
         function getBaseScale() {
             const h = window.innerHeight;

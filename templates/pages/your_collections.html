@@ -193,7 +193,6 @@
 {% block content %}
 <div class="yc-page">
 
-    <!-- Mood Garden Calendar Section -->
     <div class="yc-calendar-section" style="margin-bottom: 40px; display: flex; justify-content: center; width: 100%;">
         <div class="cal-wrap" id="aw" style="margin-top: 0 !important; width: 100%; max-width: 340px !important;">
             <h2 class="sr-only">Navigable emotion calendar</h2>
@@ -235,14 +234,6 @@
             <a href="/new-journal" class="yc-new-btn" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1.5px solid #85acc9; color: #85acc9; text-decoration: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s;">
                 <i class="fa-solid fa-plus"></i> New Journal
             </a>
-            <div class="yc-view-toggle">
-                <button class="yc-view-btn active" id="yc-grid-btn" title="Grid view" type="button">
-                    <i class="ti ti-layout-grid"></i>
-                </button>
-                <button class="yc-view-btn" id="yc-list-btn" title="List view" type="button">
-                    <i class="ti ti-layout-list"></i>
-                </button>
-            </div>
         </div>
     </div>
 
@@ -252,7 +243,6 @@
         <button class="yc-tab" type="button" data-panel="volumes">Volumes</button>
     </div>
 
-    <!-- Monthly -->
     <div class="yc-panel active" id="yc-panel-monthly">
         <div class="yc-panel-body">
         {% if monthly_groups %}
@@ -281,7 +271,6 @@
         </div>
     </div>
 
-    <!-- By Mood -->
     <div class="yc-panel" id="yc-panel-bymood">
         <div class="yc-panel-body">
         {% if mood_groups %}
@@ -307,7 +296,6 @@
         </div>
     </div>
 
-    <!-- Volumes -->
     <div class="yc-panel" id="yc-panel-volumes">
         <div class="yc-panel-body">
         {% if custom_collections %}
@@ -338,7 +326,6 @@
 
 </div>
 
-<!-- Open Book Overlay Modal -->
 <div id="obo-modal" class="obo-wrap">
     <button class="obo-close" id="obo-close-btn" type="button">&times;</button>
     <div class="obo-content">
@@ -395,18 +382,7 @@
         else if (params.get('month')) activateYcPanel('monthly');
     })();
 
-    const foldersGrids = document.querySelectorAll('.yc-folders-grid');
-    document.getElementById('yc-grid-btn').addEventListener('click', function () {
-        this.classList.add('active');
-        document.getElementById('yc-list-btn').classList.remove('active');
-        foldersGrids.forEach(g => g.classList.remove('is-list'));
-    });
-
-    document.getElementById('yc-list-btn').addEventListener('click', function () {
-        this.classList.add('active');
-        document.getElementById('yc-grid-btn').classList.remove('active');
-        foldersGrids.forEach(g => g.classList.add('is-list'));
-    });
+    // View Toggle functionality removed.
 </script>
 {% endblock %}
 

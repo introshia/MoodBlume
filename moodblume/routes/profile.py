@@ -5,7 +5,6 @@ from ..extensions import get_db_connection
 
 profile_bp = Blueprint('profile', __name__)
 
-
 @profile_bp.route('/profile')
 def profile():
     if 'user_id' not in session:
@@ -57,7 +56,6 @@ def profile():
         user=user, stats=total_entries, joined=joined,
         total_words=total_words, top_mood=top_mood, streak=streak)
 
-
 @profile_bp.route('/update_profile', methods=['POST'])
 def update_profile():
     if 'user_id' not in session:
@@ -84,14 +82,10 @@ def update_profile():
         conn.close()
     return redirect(url_for('profile.profile'))
 
-
-# ── PWA service worker ────────────────────────────────────────────────────────
 @profile_bp.route('/sw.js')
 def serve_sw():
     return current_app.send_static_file('sw.js')
 
-
-# ── Error handlers ────────────────────────────────────────────────────────────
 def register_error_handlers(app):
     @app.errorhandler(404)
     def page_not_found(e):

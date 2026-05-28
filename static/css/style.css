@@ -1,38 +1,32 @@
-/* 
-    MoodBlume Global Style System
-    Color Palette: miki+ (Old Lace · Freshly Roasted · Butter · Oyster Bay)
-*/
-
 :root {
     --bg-canvas: #f4f3f1;
-    /* Soft Neutral Gray */
+    
     --text-black: #4B2E1F;
-    /* Freshly Roasted   */
+    
     --text-gray: rgba(75, 46, 31, 0.55);
-    /* Muted Roasted */
+    
     --color-gold: #F4E6A6;
-    /* Butter            */
+    
     --color-amber: #DCECEF;
-    /* Oyster Bay        */
+    
     --color-roast: #4B2E1F;
-    /* Freshly Roasted (alias) */
+    
     --color-glow: rgba(244, 230, 166, 0.25);
     --white: #FFFFFF;
-    /* Card surface      */
+    
     --border: 1px solid rgba(75, 46, 31, 0.09);
     --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* DARK THEME: 'Espresso Night' */
 body.dark-theme {
     --bg-canvas: #1C1008;
-    /* Deep Espresso     */
+    
     --bg: #1C1008;
     --text-black: #F6F3EE;
-    /* Old Lace on dark  */
+    
     --text-gray: rgba(246, 243, 238, 0.60);
     --white: #2A1A0E;
-    /* Dark Wood Card    */
+    
     --border: 1px solid rgba(246, 243, 238, 0.10);
 }
 
@@ -70,7 +64,6 @@ main {
     min-height: 100vh;
 }
 
-/* NAVBAR */
 #landing-page .navbar-container {
     opacity: 0;
     transform: translateY(-20px);
@@ -100,7 +93,7 @@ main {
 .brand-sparkle {
     display: inline-block;
     color: var(--color-gold);
-    /* Butter */
+    
     margin-right: -2px;
     animation: sparkleShimmer 3s ease-in-out infinite;
     text-shadow: 0 0 8px rgba(244, 230, 166, 0.4);
@@ -146,7 +139,7 @@ main {
 .navbar-center {
     display: flex;
     gap: 8px;
-    /* Tighter gap because we use pills now */
+    
     padding: 0;
 }
 
@@ -162,7 +155,7 @@ main {
     border-radius: 50px;
     position: relative;
     opacity: 0.7;
-    /* Much higher base visibility */
+    
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -171,21 +164,20 @@ main {
 .navbar-link:hover {
     color: var(--text-black);
     background: rgba(244, 230, 166, 0.4);
-    /* Softer translucent Butter for hovering */
+    
     opacity: 1;
     transform: translateY(-1px);
-    /* Little lift to make it feel "live" */
+    
 }
 
 .navbar-link.active {
     color: var(--text-black);
     background: var(--color-gold);
-    /* Solid Butter color to lock in active state */
+    
     box-shadow: 0 2px 10px rgba(75, 46, 31, 0.05);
     opacity: 1;
 }
 
-/* Remove the old underline */
 .navbar-link.active::after {
     display: none;
 }
@@ -243,7 +235,6 @@ main {
     transform: scale(1.1);
 }
 
-/* HERO SECTION */
 #landing-page .hero-section {
     padding-top: 0;
 }
@@ -345,7 +336,6 @@ main {
     text-align: center;
 }
 
-/* FLOATING CARDS */
 .cards-container {
     position: absolute;
     inset: 0;
@@ -435,7 +425,6 @@ main {
     left: 4%;
 }
 
-/* JOURNAL SCROLL CONTAINER */
 #journal-scroll-container {
     position: relative;
     perspective: 1000px;
@@ -514,8 +503,6 @@ main {
     border-radius: 2px;
 }
 
-
-/* CONTENT SECTIONS */
 .content-section {
     padding: 80px 40px;
     max-width: 1200px;
@@ -597,7 +584,6 @@ main {
     line-height: 1.6;
 }
 
-/* AI DEMO UI */
 .ai-demo {
     margin-top: 24px;
     background: rgba(0, 0, 0, 0.03);
@@ -677,7 +663,6 @@ main {
     text-transform: uppercase;
 }
 
-/* CTA BUTTONS */
 .cta-button {
     display: inline-block;
     background: var(--color-cyan);
@@ -722,7 +707,6 @@ main {
     background: var(--color-yellow);
 }
 
-/* HOW IT WORKS */
 .how-it-works {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -756,8 +740,6 @@ main {
     line-height: 1.6;
 }
 
-
-
 .cta-section {
     text-align: center;
     padding: 80px 40px;
@@ -783,7 +765,6 @@ main {
     margin-right: auto;
 }
 
-/* FOOTER */
 .site-footer {
     background: var(--bg-canvas);
     color: var(--text-black) !important;
@@ -881,7 +862,6 @@ main {
     justify-content: space-between;
 }
 
-/* 404 PAGE STYLES */
 .error-content {
     text-align: center;
     max-width: 800px;
@@ -909,11 +889,10 @@ main {
     line-height: 1.7;
 }
 
-/* AUTH & INSTALL PAGES */
 .page-centered-wrapper {
     min-height: 100vh;
     padding-top: 100px;
-    /* Offset for fixed navbar */
+    
     padding-bottom: 60px;
     display: flex;
     flex-direction: column;
@@ -926,7 +905,7 @@ main {
     align-items: center;
     justify-content: center;
     min-height: calc(100vh - 180px);
-    /* Adjust for navbar/footer */
+    
     padding: 60px 20px;
 }
 
@@ -974,7 +953,7 @@ main {
 .btn-brutal,
 .btn-primary {
     background-color: #4B2E1F;
-    /* Freshly Roasted */
+    
     color: #F6F3EE;
     border: none;
     border-radius: 50px;
@@ -995,7 +974,7 @@ main {
 .btn-primary:hover {
     background-color: #2E1B0E;
     color: #F4E6A6;
-    /* Butter highlight on hover */
+    
 }
 
 .auth-links {
@@ -1009,7 +988,6 @@ main {
     text-decoration: none;
 }
 
-/* INSTALL SPECIFIC */
 .instruction-box {
     background: var(--surface);
     border: var(--border);
@@ -1062,7 +1040,6 @@ main {
     border-color: rgba(255, 168, 64, 0.1);
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
     .hero-headline {
         font-size: 2.8rem;
@@ -1099,7 +1076,6 @@ main {
     }
 }
 
-/* PWA FLOATING BUTTON */
 #pwa-global-btn {
     position: fixed;
     bottom: 30px;
@@ -1107,7 +1083,7 @@ main {
     z-index: 9999;
     display: none;
     background: #4B2E1F;
-    /* Freshly Roasted */
+    
     color: #F6F3EE;
     border: none;
     border-radius: 50px;
@@ -1125,7 +1101,7 @@ main {
     transform: translateY(-4px);
     box-shadow: 0 15px 35px rgba(75, 46, 31, 0.35);
     background: #F4E6A6;
-    /* Butter */
+    
     color: #4B2E1F;
 }
 

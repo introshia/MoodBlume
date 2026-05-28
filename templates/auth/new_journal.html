@@ -419,69 +419,64 @@
   </div>
 
   <div class="workspace">
-    <!-- Left Column: Live 3D Journal Preview (exact duplicate of pages/journal.html layout) -->
+    
     <div class="preview-col">
-      <div class="view-toggle-wrap">
-        <button class="view-toggle-btn active" id="btnShowCover" type="button">Cover</button>
-        <button class="view-toggle-btn" id="btnShowInside" type="button">Inside Page</button>
-      </div>
-
-      <div class="scene">
-        <div class="journal" id="journal3d">
-          <!-- COVERS -->
-          <div class="wing left-half" id="leftHalf">
-            <div class="cover-inside">
-              <div class="spine-shadow"></div>
-            </div>
-            <div class="front-cover-design" id="frontCoverDesign">
-              <div class="elastic"></div>
-              <div class="cover-label">
-                <div class="lbl-small">a memory from</div>
-                <div class="lbl-big" id="cover-date">today</div>
+      <div class="journal-spotlight" style="display: flex; align-items: center; justify-content: center; width: 100%;">
+        <div class="scene">
+          <div class="journal" id="journal3d">
+            
+            <div class="wing left-half" id="leftHalf">
+              <div class="cover-inside">
+                <div class="spine-shadow"></div>
+              </div>
+              <div class="front-cover-design" id="frontCoverDesign" style="position: relative; overflow: hidden;">
+                <div class="cover-pattern-container" id="coverPatternContainer" style="position: absolute; inset: 0; z-index: 1;"></div>
+                <div class="elastic" style="z-index: 3;"></div>
+                <div class="cover-label" style="z-index: 2;">
+                  <div class="lbl-small">a memory from</div>
+                  <div class="lbl-big" id="cover-date">today</div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="wing right-wing" id="rightWing">
-            <div class="back-cover-design" id="backCoverDesign"></div>
-            <div class="cover-inside">
-              <div class="spine-shadow"></div>
+            <div class="wing right-wing" id="rightWing">
+              <div class="back-cover-design" id="backCoverDesign"></div>
+              <div class="cover-inside">
+                <div class="spine-shadow"></div>
+              </div>
             </div>
-          </div>
 
-          <!-- STACKED PAGES (5) -->
-          <div class="page" style="z-index: 10;" data-page="1">
-            <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-            <div class="page-back style-lined"><div class="spine-shadow"></div></div>
-          </div>
-          <div class="page" style="z-index: 9;" data-page="2">
-            <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-            <div class="page-back style-lined"><div class="spine-shadow"></div></div>
-          </div>
-          <div class="page" style="z-index: 8;" data-page="3">
-            <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-            <div class="page-back style-lined"><div class="spine-shadow"></div></div>
-          </div>
-          <div class="page" style="z-index: 7;" data-page="4">
-            <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-            <div class="page-back style-lined"><div class="spine-shadow"></div></div>
-          </div>
-          <div class="page" style="z-index: 6;" data-page="5">
-            <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-            <div class="page-back style-lined"><div class="spine-shadow"></div></div>
+            <div class="page" style="z-index: 10;" data-page="1">
+              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
+              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
+            </div>
+            <div class="page" style="z-index: 9;" data-page="2">
+              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
+              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
+            </div>
+            <div class="page" style="z-index: 8;" data-page="3">
+              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
+              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
+            </div>
+            <div class="page" style="z-index: 7;" data-page="4">
+              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
+              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
+            </div>
+            <div class="page" style="z-index: 6;" data-page="5">
+              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
+              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Right Column: Options & Controls -->
     <div class="form-col">
       {% if error %}
         <p class="welcome-error">{{ error }}</p>
       {% endif %}
 
       <form method="POST" action="{{ url_for('collections.new_journal') }}" id="newJournalForm" style="display:flex;flex-direction:column;gap:12px;">
-        
-        <!-- Journal Name -->
+
         <div class="form-group">
           <label class="welcome-label" for="journal_name">Journal name</label>
           <input
@@ -497,7 +492,6 @@
           >
         </div>
 
-        <!-- Select Cover Color -->
         <div class="form-group">
           <label class="welcome-label">Cover Color</label>
           <div class="color-grid" id="colorGrid">
@@ -522,7 +516,6 @@
           </div>
         </div>
 
-        <!-- Cover Art Pattern -->
         <div class="form-group">
           <label class="welcome-label">Cover Pattern</label>
           <div class="selection-grid" id="artGrid">
@@ -549,7 +542,6 @@
           </div>
         </div>
 
-        <!-- Select Paper Type -->
         <div class="form-group">
           <label class="welcome-label">Select Paper</label>
           <div class="selection-grid" id="paperGrid">
@@ -568,7 +560,6 @@
           </div>
         </div>
 
-        <!-- Page Schedule Type -->
         <div class="form-group">
           <label class="welcome-label">Select Volume Schedule</label>
           <div class="selection-grid" id="pageGrid" style="grid-template-columns: repeat(3, 1fr);">
@@ -617,6 +608,60 @@
     });
   }
 
+  function generateSVG(art, bg) {
+      const BW = 170, BH = 240;
+      const linenLines = Array.from({ length: 26 }, (_, i) => `<line x1="0" y1="${i * 8 + 6}" x2="${BW}" y2="${i * 8 + 6}" stroke="#FAF6EE" stroke-width="0.8" opacity="0.8" />`).join('');
+      const woodPaths = Array.from({ length: 14 }, (_, i) => {
+          const y = i * 16 + 8;
+          const w = Math.sin(i * 0.78) * 5;
+          return `<path d="M0,${y} C52,${y + w} 102,${y - w} ${BW},${y + w / 2}" stroke="#2C1C0A" stroke-width="2.5" fill="none" opacity="0.75" />`;
+      }).join('');
+
+      const switchCase = {
+          'botanical': `
+              <svg width="100%" height="100%" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="${BW}" height="${BH}" fill="${bg}" />
+                  <ellipse cx="44" cy="107" rx="26" ry="46" fill="#6A9040" transform="rotate(-18 44 107)" />
+                  <ellipse cx="77" cy="82" rx="20" ry="38" fill="#8AAA58" transform="rotate(12 77 82)" />
+                  <ellipse cx="112" cy="118" rx="23" ry="42" fill="#6A9040" transform="rotate(-8 112 118)" />
+                  <line x1="44" y1="140" x2="44" y2="190" stroke="#4A7028" stroke-width="1.8" />
+                  <line x1="77" y1="115" x2="77" y2="190" stroke="#4A7028" stroke-width="1.8" />
+                  <line x1="112" y1="152" x2="112" y2="190" stroke="#4A7028" stroke-width="1.8" />
+              </svg>`,
+          'linen': `
+              <svg width="100%" height="100%" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="${BW}" height="${BH}" fill="${bg}" />
+                  ${linenLines}
+              </svg>`,
+          'face': `
+              <svg width="100%" height="100%" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="${BW}" height="${BH}" fill="${bg}" />
+                  <ellipse cx="77" cy="80" rx="34" ry="40" fill="#1E0E06" />
+                  <ellipse cx="77" cy="148" rx="28" ry="34" fill="#E07828" />
+                  <circle cx="64" cy="68" r="6" fill="#B84818" />
+                  <circle cx="90" cy="71" r="6" fill="#B84818" />
+                  <path d="M63 92 Q77 104 91 92" stroke="#3C1808" stroke-width="2.5" fill="none" stroke-linecap="round" />
+              </svg>`,
+          'wood': `
+              <svg width="100%" height="100%" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="${BW}" height="${BH}" fill="${bg}" />
+                  ${woodPaths}
+              </svg>`,
+          'clouds': `
+              <svg width="100%" height="100%" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="${BW}" height="${BH}" fill="${bg}" />
+                  <ellipse cx="52" cy="78" rx="36" ry="20" fill="white" opacity="0.72" />
+                  <ellipse cx="70" cy="68" rx="26" ry="18" fill="white" opacity="0.82" />
+                  <ellipse cx="112" cy="136" rx="32" ry="18" fill="white" opacity="0.65" />
+              </svg>`,
+          'none': `
+              <svg width="100%" height="100%" viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="${BW}" height="${BH}" fill="${bg}" />
+              </svg>`
+      };
+      return switchCase[art] || switchCase['linen'];
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     // Elements references
     const leftHalf = document.getElementById('leftHalf');
@@ -625,16 +670,31 @@
     const backCoverDesign = document.getElementById('backCoverDesign');
     const allPagesFrontBack = document.querySelectorAll('.page-front, .page-back');
 
+    let currentColor = '#C8D898';
+    let currentPattern = 'botanical';
+
+    function updateCoverPattern() {
+      const container = document.getElementById('coverPatternContainer');
+      if (container) {
+        container.innerHTML = generateSVG(currentPattern, currentColor);
+      }
+    }
+
     // 1. Live color updating (updates exact cover elements background color)
     setupSelectionGroup('colorGrid', (colorVal) => {
+      currentColor = colorVal;
       leftHalf.style.backgroundColor = colorVal;
       frontCoverDesign.style.backgroundColor = colorVal;
       rightWing.style.backgroundColor = colorVal;
       backCoverDesign.style.backgroundColor = colorVal;
+      updateCoverPattern();
     });
 
-    // 2. Cover pattern updating (not applicable to exact 3D journal design directly, but keeps values)
-    setupSelectionGroup('artGrid', () => {});
+    // 2. Cover pattern updating
+    setupSelectionGroup('artGrid', (artVal) => {
+      currentPattern = artVal;
+      updateCoverPattern();
+    });
 
     // 3. Live paper style updating (lined / grid / blank class name swap)
     setupSelectionGroup('paperGrid', (paperVal) => {
@@ -658,56 +718,8 @@
       createBtn.disabled = !val;
     });
 
-    // 6. 3D Spread open/close toggle actions
-    let isOpen3D = false;
-    let isAnimating3D = false;
-    const journal3d = document.getElementById('journal3d');
-    const allPages = document.querySelectorAll('.journal .page');
-
-    window.toggleJournal3D = function (open) {
-        if (isAnimating3D || isOpen3D === open) return;
-        isAnimating3D = true;
-        isOpen3D = open;
-
-        if (isOpen3D) {
-            journal3d.classList.add('spread-open');
-            leftHalf.classList.add('wing-open');
-            rightWing.classList.add('wing-open');
-            setTimeout(() => { isAnimating3D = false; }, 1200);
-        } else {
-            let delay = 0;
-            const flippedPages = Array.from(allPages).filter(p => p.classList.contains('flipped')).reverse();
-
-            flippedPages.forEach((p, i) => {
-                setTimeout(() => p.classList.remove('flipped'), i * 150);
-                delay = Math.max(delay, (i * 150) + 600);
-            });
-
-            setTimeout(() => {
-                leftHalf.classList.remove('wing-open');
-                rightWing.classList.remove('wing-open');
-                setTimeout(() => {
-                    journal3d.classList.remove('spread-open');
-                    isAnimating3D = false;
-                }, 800);
-            }, delay);
-        }
-    };
-
-    const btnShowCover = document.getElementById('btnShowCover');
-    const btnShowInside = document.getElementById('btnShowInside');
-
-    btnShowCover.addEventListener('click', () => {
-      btnShowCover.classList.add('active');
-      btnShowInside.classList.remove('active');
-      toggleJournal3D(false);
-    });
-
-    btnShowInside.addEventListener('click', () => {
-      btnShowInside.classList.add('active');
-      btnShowCover.classList.remove('active');
-      toggleJournal3D(true);
-    });
+    // Initialize cover pattern
+    updateCoverPattern();
   });
 </script>
 {% endblock %}

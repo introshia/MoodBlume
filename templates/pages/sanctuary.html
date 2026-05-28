@@ -15,72 +15,11 @@
 <body>
   <canvas id="c"></canvas>
 
-  <!-- ── Window greeting inscription (on the glass) ── -->
   <div id="window-greeting">
     <span class="greeting-text">{{ greeting }}</span>
   </div>
 
-  <!-- ── Desk MoodBlob companion (sits on the desk to the left of the journal) ── -->
-  <div id="desk-companion"
-    style="--base: {{ companion.color }}; --light: {{ companion.light }}; --dark: {{ companion.dark }}; --speed: 3.2s; --mspeed: 4.5s;">
-    <div class="sanctuary-blob-wrap">
-      <!-- Streak growth accessory -->
-      <div class="blob-accessory streak-stage-{{ streak_stage }}">
-        {% if streak_stage == 'sprout' %}
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-            <path d="M12 22 V14 C12 11, 14 9, 17 9" stroke="#6A9040" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M17 9 C18 7, 16 5, 14 5 C11 5, 12 8, 12 9 Z" fill="#8AAA58"/>
-          </svg>
-        {% elif streak_stage == 'stem' %}
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
-            <path d="M12 22 V10 C12 7, 15 5, 18 5" stroke="#6A9040" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M12 16 C9 16, 7 14, 7 12 C7 10, 10 11, 12 13 Z" fill="#8AAA58"/>
-            <path d="M18 5 C19 3, 17 2, 15 2 C13 2, 14 5, 14 5 Z" fill="#6A9040"/>
-          </svg>
-        {% elif streak_stage == 'bud' %}
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
-            <path d="M12 22 V12" stroke="#6A9040" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M12 12 C10 10, 10 6, 12 4 C14 6, 14 10, 12 12 Z" fill="#FF9AA2" stroke="#E07828" stroke-width="1"/>
-            <path d="M10 12 C8 12, 9 10, 10 9 C11 8, 11 11, 12 12" stroke="#6A9040" stroke-width="1.5" fill="none"/>
-          </svg>
-        {% elif streak_stage == 'bloom' %}
-          <svg viewBox="0 0 32 16" width="34" height="17" fill="none">
-            <g transform="translate(4, 2)">
-              <circle cx="6" cy="6" r="4" fill="#FFB4D1"/>
-              <circle cx="6" cy="6" r="1.5" fill="#FFE380"/>
-            </g>
-            <g transform="translate(12, 0)">
-              <circle cx="6" cy="6" r="5" fill="#FF9AA2"/>
-              <circle cx="6" cy="6" r="2" fill="#FFE380"/>
-            </g>
-            <g transform="translate(20, 2)">
-              <circle cx="6" cy="6" r="4" fill="#DBC8F0"/>
-              <circle cx="6" cy="6" r="1.5" fill="#FFE380"/>
-            </g>
-          </svg>
-        {% endif %}
-      </div>
-      <!-- Blob body -->
-      <div class="blob-main">
-        <div class="blob-body"></div>
-        <div class="blob-mini m1"></div>
-        <div class="blob-mini m2"></div>
-        <div class="blob-face">
-          <div class="blob-eyes">
-            <div class="blob-eye"></div>
-            <div class="blob-eye"></div>
-          </div>
-          <div class="blob-mouth">
-            <svg width="18" height="8" viewBox="0 0 22 10" fill="none" aria-hidden="true">
-              <path d="{{ companion.mouth }}" stroke="rgba(0,0,0,0.5)" stroke-width="2" stroke-linecap="round" fill="none" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <!-- Floor shadow -->
-      <div class="blob-shadow sanctuary-blob-shadow"></div>
-    </div>
-  </div>
+
 
   <nav id="nav">
     <div class="logo" id="logo-btn">MoodBlume</div>
@@ -127,8 +66,19 @@
   <script id="recent-entries-data" type="application/json">
     {{ recent_entries | default([]) | tojson }}
   </script>
+  <script id="has-journals-data" type="application/json">
+    {{ has_journals | default(false) | tojson }}
+  </script>
+  <script id="active-bg-data" type="application/json">
+    {{ active_bg | default('#3D2B1F') | tojson }}
+  </script>
+  <script id="active-art-data" type="application/json">
+    {{ active_art | default('botanical') | tojson }}
+  </script>
   <script>
-    window.hasJournals = {{ has_journals | default(false) | tojson }};
+    window.hasJournals = JSON.parse(document.getElementById('has-journals-data').textContent);
+    window.activeBg = JSON.parse(document.getElementById('active-bg-data').textContent);
+    window.activeArt = JSON.parse(document.getElementById('active-art-data').textContent);
   </script>
   <script src="/static/js/sanctuary.js"></script>
 

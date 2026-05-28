@@ -1,5 +1,4 @@
-    // ── 3D SHELF LOGIC ───────────────────────────────────────
-    const FEATURED = JSON.parse(document.getElementById('featured-data').textContent);
+const FEATURED = JSON.parse(document.getElementById('featured-data').textContent);
     const ENTRIES_DATA = JSON.parse(document.getElementById('entries-data').textContent);
     let COLLECTIONS = JSON.parse(document.getElementById('collections-data').textContent);
     const BW = 170, BH = 240, SW = 18;
@@ -74,7 +73,6 @@
         if (band) band.style.backgroundColor = j.elastic;
     });
 
-    // Opening Interaction - Overlay Modal
     const oboModal = document.getElementById('obo-modal');
     const oboCloseBtn = document.getElementById('obo-close-btn');
 
@@ -95,6 +93,47 @@
         return scenes[s];
     }
 
+    function getDeterministicLetter(entry) {
+        let text = entry.content || "";
+        if (text.trim().startsWith('{') && text.trim().endsWith('}')) {
+            try {
+                const data = JSON.parse(text);
+                text = data.text || text;
+            } catch (e) {}
+        }
+        let charSum = 0;
+        for (let i = 0; i < text.length; i++) {
+            charSum += text.charCodeAt(i);
+        }
+        const index = charSum % 3;
+        const score = entry.mood_score || 5;
+        const username = window.currentUsername || 'friend';
+        const name = username.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+        if (score >= 7) {
+            const options = [
+                `Dear ${name},\n\nSomething in the way you wrote today felt lighter — more alive. Like you were writing from a place of genuine warmth.\n\nWhatever is filling your days with that feeling, hold onto it gently. Not too tightly, just enough to remember it's there.\n\nI'm glad today was a good one.`,
+                `Dear ${name},\n\nToday's words carry a brightness to them. There's something lovely about a day that leaves you with something worth writing down.\n\nKeep going. You're doing beautifully.`,
+                `Dear ${name},\n\nYou wrote today with something that sounded a lot like joy — or maybe just ease. Either way, it looked good on you.\n\nSee you on the next page.`
+            ];
+            return options[index];
+        } else if (score === 1 || score === 2 || score === 3 || score === 4) {
+            const options = [
+                `Dear ${name},\n\nHard days have a weight that's difficult to put into words — and yet here you are, doing just that.\n\nThat takes more courage than you might realize. Writing through the difficult moments is its own kind of bravery.\n\nTomorrow is a fresh page.`,
+                `Dear ${name},\n\nIt sounds like today asked a lot of you. I hope you're being as gentle with yourself as you deserve.\n\nSome days we write to feel better. Some days we write just to survive them. Both are enough.`,
+                `Dear ${name},\n\nNot every day is easy, and this one doesn't seem to have been. But you're still here, still writing.\n\nThat matters more than you know. Rest well tonight.`
+            ];
+            return options[index];
+        } else {
+            const options = [
+                `Dear ${name},\n\nNot every day needs to be extraordinary. Some days are simply lived — and those quiet, steady days are worth remembering too.\n\nThank you for showing up and writing anyway. That says something good about you.`,
+                `Dear ${name},\n\nThere's something peaceful about a day in the middle. Not too high, not too low — just present.\n\nYou took a moment to reflect, and that's never wasted. See you on the next page.`,
+                `Dear ${name},\n\nToday was a day. And you wrote about it. That's more than most people do.\n\nSee you tomorrow.`
+            ];
+            return options[index];
+        }
+    }
+
     function openOverlay(title, pages, entry = null) {
         document.getElementById('obo-dyn-title').textContent = title;
         document.getElementById('obo-dyn-pages').textContent = pages;
@@ -103,7 +142,6 @@
         const rightBox = document.querySelector('.obo-right');
 
         if (entry) {
-            // Populate actual content
             let contentText = "No thoughts recorded for this day.";
             try {
                 const parsed = JSON.parse(entry.content);
@@ -112,19 +150,52 @@
                 contentText = entry.content || contentText;
             }
 
-            // Left page: Artwork and Header
             leftBox.innerHTML = `
-                <div style="padding: 40px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;">
-                    <div id="obo-art-container" style="width: 100%; aspect-ratio: 1; opacity: 0.85; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08);"></div>
-                    <div style="text-align: center;">
-                        <span class="obo-left-text" style="font-size: 15px; letter-spacing: 0.1em;">${title}</span>
-                        <div class="obo-left-hr" style="margin: 10px auto;"></div>
-                        <p style="font-size: 11px; color: #8C8476; font-family: 'DM Sans', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">${entry.mood_label || 'Neutral'}</p>
+                <div style="padding: 10px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; background: #EDE4D2; width: 100%;">
+                    <div style="position: relative; width: 280px; height: 380px; display: flex; justify-content: center; align-items: flex-end;">
+                        <!-- 1. Envelope Back & Open Flap -->
+                        <svg width="270" height="230" viewBox="0 0 270 230" style="position: absolute; bottom: 0; left: 5px; z-index: 1;">
+                            <!-- Envelope Back Rect -->
+                            <rect x="0" y="120" width="270" height="110" fill="#C2B29F" rx="4" />
+                            <!-- Inner shadow of the pocket (top area) -->
+                            <rect x="10" y="120" width="250" height="15" fill="#A59582" opacity="0.4" />
+                            <!-- Opened back flap pointing upwards -->
+                            <path d="M 0,120 L 135,20 L 270,120 Z" fill="#D0C0AF" />
+                            <path d="M 0,120 L 135,20 L 270,120" stroke="#B3A392" stroke-width="1.5" fill="none" />
+                        </svg>
+
+                        <!-- 2. The Letter (Sticking out) -->
+                        <div class="letter-sheet" style="position: absolute; bottom: 54px; left: 17px; width: 246px; height: 290px; background: #FAF7F0; border-radius: 4px; box-shadow: 0 6px 18px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05); z-index: 2; display: flex; flex-direction: column; padding: 22px 20px 42px 20px; box-sizing: border-box; transform: rotate(-1deg); border: 1px solid #ECE7DC;">
+                            <!-- Letter content -->
+                            <div style="flex-grow: 1; overflow-y: auto; font-family: 'Lora', serif; font-size: 12.5px; line-height: 1.65; color: #4A4438; padding-right: 4px; scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.06) transparent;">
+                                <p style="white-space: pre-wrap; margin: 0; font-style: italic; text-align: left; letter-spacing: 0.01em;">
+                                    ${getDeterministicLetter(entry)}
+                                </p>
+                            </div>
+                            <!-- Letter signature/footer -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; border-top: 1px dashed rgba(75, 46, 31, 0.15); padding-top: 8px;">
+                                <span style="font-family: 'Lora', serif; font-size: 11px; color: #8C8476; font-style: italic; letter-spacing: 0.05em;">— MoodBlume ✿</span>
+                                <div style="width: 14px; height: 14px; border-radius: 50%; background: #a84239; box-shadow: 0 1px 3px rgba(0,0,0,0.15); opacity: 0.8;"></div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Envelope Front Pocket -->
+                        <svg width="270" height="150" viewBox="0 0 270 150" style="position: absolute; bottom: 0; left: 5px; z-index: 3; filter: drop-shadow(0 -3px 5px rgba(0,0,0,0.08)) drop-shadow(0 4px 10px rgba(0,0,0,0.12));">
+                            <!-- Left side flap -->
+                            <path d="M 0,40 L 135,95 L 0,150 Z" fill="#CBBBA9" />
+                            <!-- Right side flap -->
+                            <path d="M 270,40 L 135,95 L 270,150 Z" fill="#CBBBA9" />
+                            <!-- Bottom flap -->
+                            <path d="M 0,150 L 135,90 L 270,150 Z" fill="#BDAD9A" />
+                            <!-- Realistic shadows/lines -->
+                            <path d="M 0,40 L 135,95" stroke="#E5D8C8" stroke-width="1.5" opacity="0.6" />
+                            <path d="M 270,40 L 135,95" stroke="#E5D8C8" stroke-width="1.5" opacity="0.6" />
+                            <path d="M 0,150 L 135,90 L 270,150" stroke="#A29280" stroke-width="1" fill="none" />
+                        </svg>
                     </div>
                 </div>
             `;
 
-            // Right page: The text with lines
             rightBox.innerHTML = `
                 <div style="padding: 45px; height: 100%; font-family: 'Lora', serif; font-size: 16px; line-height: 1.9; color: #4A4438; position: relative; overflow: hidden;">
                     <div class="obo-lines" style="opacity: 0.35; pointer-events: none;"></div>
@@ -133,14 +204,8 @@
                     </div>
                 </div>
             `;
-
-            // Inject art based on entry id for deterministic variety
-            const artContainer = document.getElementById('obo-art-container');
-            if (artContainer) {
-                artContainer.innerHTML = getSceneSVG(entry.id);
-            }
         } else {
-            // Default placeholder
+            
             leftBox.innerHTML = `
                 <span class="obo-left-text">EX LIBRIS</span>
                 <div class="obo-left-hr"></div>
@@ -172,9 +237,7 @@
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeOverlay();
     });
-    // Overlay logic is handled via openEntryFromCalendar
 
-    // ── NAVIGABLE APPLE EMOTION CALENDAR ─────────────────────────
     const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const NOW = new Date();
     const TODAY_Y = NOW.getFullYear();
@@ -236,7 +299,6 @@
         if (!grid) return;
         grid.innerHTML = '';
 
-        // Render Weekday headers (Monday-start: M, T, W, T, F, S, S)
         ['M','T','W','T','F','S','S'].forEach(d => {
             const el = document.createElement('div');
             el.className = 'cal-dow';
@@ -244,14 +306,13 @@
             grid.appendChild(el);
         });
 
-        // Determine the offset for the first day of the month (Monday-start)
         const firstDay = new Date(curYear, curMonth, 1).getDay();
         const offset = firstDay === 0 ? 6 : firstDay - 1;
         const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
 
         for (let i = 0; i < offset; i++) {
             const el = document.createElement('div');
-            el.className = 'cal-day'; // empty element
+            el.className = 'cal-day'; 
             grid.appendChild(el);
         }
 
@@ -309,7 +370,6 @@
         }
     }
 
-    // Set up navigation listeners
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const todayBtn = document.getElementById('todayBtn');
@@ -338,11 +398,8 @@
 
     renderCalendar();
 
-    // ── VIEW SWITCHER ───────────────────────────────────────────────────
     let libGrid, btnNewVol;
 
-    // Use the 3D book markup instead of the flat cards
-    // Use the 3D book markup instead of the flat cards
     function cardHTML(e, idx) {
         return `
         <div class="lib-journal-item" data-id="${e.id}" style="cursor: pointer;">
@@ -405,7 +462,7 @@
                 : `<div class="lib-empty">No entries yet — start writing in the Sanctuary.</div>`;
 
         } else if (mode === 'monthly') {
-            // ONE book per month, not one card per entry
+            
             const groups = {};
             ENTRIES_DATA.forEach(e => { (groups[e.month_label] = groups[e.month_label] || []).push(e); });
             const monthCards = Object.keys(groups).map((month, idx) => {
@@ -479,7 +536,7 @@
             renderView(activeView);
         });
     });
-    // Robust Initialization
+    
     window.addEventListener('load', () => {
         libGrid = document.getElementById('library-grid');
         btnNewVol = document.getElementById('btn-new-vol');
@@ -500,11 +557,10 @@
                 modeGridBtn.classList.remove('active');
                 libSection.classList.add('mode-carousel');
                 renderView(activeView);
-                setTimeout(updateCarouselAnims, 50); // Ensure initial scaling is correct
+                setTimeout(updateCarouselAnims, 50); 
             });
         }
 
-        // Set initial active button state
         if (libSection.classList.contains('mode-carousel')) {
             modeCarouselBtn?.classList.add('active');
             modeGridBtn?.classList.remove('active');
@@ -514,11 +570,9 @@
             modeCarouselBtn?.classList.remove('active');
         }
 
-        // Initial render
         renderView('monthly');
     });
 
-    // ── DYNAMIC CAROUSEL ANIMATION ──
     function updateCarouselAnims() {
         const shelves = document.querySelectorAll('.library-section.mode-carousel .shelf-books');
         shelves.forEach(shelf => {
@@ -544,14 +598,12 @@
         });
     }
 
-    // Connect the animation to scrolling
     document.addEventListener('scroll', (e) => {
         if (e.target.classList?.contains('shelf-books')) {
             updateCarouselAnims();
         }
     }, true);
 
-    // ── SMART INTERACTION: TAP TO CENTER OR OPEN ──
     document.addEventListener('click', (e) => {
         const libItem = e.target.closest('.lib-journal-item');
         if (!libItem) return;
@@ -565,13 +617,11 @@
             else if (entryId) openEntryFromCalendar(entryId);
         };
 
-        // If in Grid mode, just open immediately
         if (!libSection?.classList.contains('mode-carousel')) {
             performAction();
             return;
         }
 
-        // In Carousel mode, only open if centered
         const shelf = libItem.parentElement;
         if (!shelf) return;
 
@@ -589,12 +639,10 @@
         }
     });
 
-    // ── COLLECTION MODAL ──
     const colModalBg = document.getElementById('col-modal-bg');
     const colNameInput = document.getElementById('col-name-input');
     let selectedColor = '#C8D898';
 
-    // ── 3D JOURNAL MULTI-PAGE LOGIC ──
     let isOpen3D = false;
     let isAnimating3D = false;
     const journal3d = document.getElementById('journal3d');
@@ -658,7 +706,6 @@
         });
     }
 
-    // Robust Initialization
     window.addEventListener('load', () => {
         libGrid = document.getElementById('library-grid');
         const btnNewVol = document.getElementById('btn-new-vol');
@@ -666,10 +713,8 @@
         const modeCarouselBtn = document.getElementById('mode-carousel');
         const libSection = document.querySelector('.library-section');
 
-        // Initial render
         renderView('monthly');
 
-        // Collection Modal Listeners
         if (btnNewVol) {
             btnNewVol.addEventListener('click', () => {
                 colNameInput.value = '';
@@ -704,7 +749,6 @@
             }
         });
 
-        // View Mode Listeners
         if (modeGridBtn && modeCarouselBtn) {
             modeGridBtn.addEventListener('click', () => {
                 modeGridBtn.classList.add('active');
@@ -720,10 +764,9 @@
             });
         }
 
-        // 3D Journal Listeners
         updateZIndices();
         allPages.forEach((page) => {
-            // Stop propagation so document click doesn't close the journal when writing
+            
             page.addEventListener('click', (e) => { e.stopPropagation(); });
         });
 
@@ -760,7 +803,6 @@
         faces.forEach(el => el.classList.add('style-' + style));
     };
 
-    // --- Journal Writing Areas ---
     (function initWritingAreas() {
         function addWritingArea(el, id, placeholderText, isBack) {
             const ph = document.createElement('div');
@@ -777,7 +819,6 @@
             const saved = localStorage.getItem('journal-page-' + id);
             if (saved) area.innerHTML = saved;
 
-            // textContent works regardless of display:none (unlike innerText which needs layout)
             const isEmpty = () => area.textContent.trim() === '';
             const syncPh = () => { ph.style.display = isEmpty() ? '' : 'none'; };
             area.addEventListener('input', () => {
@@ -802,12 +843,10 @@
             const { area: backArea, ph: backPh, isEmpty: backEmpty } = addWritingArea(
                 back, 'p' + pageNum + '-back', 'write freely...', true);
 
-            // Initialize pointer-events based on current state
             const initFlipped = page.classList.contains('flipped');
             front.style.pointerEvents = initFlipped ? 'none' : 'auto';
             back.style.pointerEvents  = initFlipped ? 'auto' : 'none';
 
-            // Back starts hidden so Grammarly doesn't track the inactive face
             backArea.style.display = 'none';
             backPh.style.display   = 'none';
 
@@ -819,13 +858,10 @@
                 frontArea.style.display = flipped ? 'none' : '';
                 frontPh.style.display   = flipped ? 'none' : (frontEmpty() ? '' : 'none');
                 backArea.style.display  = flipped ? ''     : 'none';
-                // textContent-based check works now that backArea is visible (display:'')
+                
                 backPh.style.display    = flipped ? (backEmpty() ? '' : 'none') : 'none';
             }).observe(page, { attributes: true, attributeFilter: ['class'] });
 
-            // Flip strips — invisible 30px edge zones that trigger page turns
-            // page-front: outer edge is at right:0  (normal coordinate system)
-            // page-back:  outer edge is also right:0 (mirrored system — right = visual left outer edge)
             const frontStrip = document.createElement('div');
             frontStrip.className = 'page-flip-strip';
             frontStrip.style.right = '0';
@@ -833,7 +869,7 @@
 
             const backStrip = document.createElement('div');
             backStrip.className = 'page-flip-strip';
-            backStrip.style.left = '0';  // unmirrored: left=0 is the visual outer-left edge
+            backStrip.style.left = '0';  
             back.appendChild(backStrip);
 
             frontStrip.addEventListener('click', (e) => {

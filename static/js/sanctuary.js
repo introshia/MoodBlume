@@ -1,21 +1,16 @@
-
-    // ── STATE ─────────────────────────────────────────────────────
-    var lampOn = true, time = 0, hov = null;
+var lampOn = true, time = 0, hov = null;
     var mouseX = 0.5, mouseY = 0.5;
-    var journalDays = 0; // replace with: Number("{{ streak_days|default(0) }}")
+    var journalDays = 0; 
     var weatherType = 'clear';
     var raindrops = [], snowflakes = [];
     var musicOn = false, rainSoundOn = false;
 
-    // Nav books on the bookshelf (glowing featured books)
-    // Each maps to a shelf row and a position on that shelf
     var NAV_BOOKS = [
       { label: 'Archive', icon: '\u2395', href: '/archive', shelf: 1, slotFrac: 0.25, col: '#7A3030', glowCol: 'rgba(220,90,60,', bw: 0.018, bh: 0.095 },
       { label: 'Journal', icon: '\u2393', href: '/writing', shelf: 2, slotFrac: 0.50, col: '#1E4A28', glowCol: 'rgba(60,200,100,', bw: 0.018, bh: 0.095 },
     ];
     var navBookZones = [];
 
-    // Fireflies
     var fireflies = [];
     for (var _fi = 0; _fi < 10; _fi++) {
       fireflies.push({
@@ -25,7 +20,6 @@
       });
     }
 
-    // Dust motes
     var dust = [];
     for (var _di = 0; _di < 24; _di++) dust.push(resetDust({}));
     function resetDust(d) {
@@ -34,7 +28,6 @@
       d.life = Math.random(); d.sz = 0.35 + Math.random() * 1.05; return d;
     }
 
-    // Weather
     var WEATHERS = ['clear', 'rain', 'snow', 'clear', 'clear'], weatherIdx = 0;
     setInterval(function () { weatherIdx = (weatherIdx + 1) % WEATHERS.length; weatherType = WEATHERS[weatherIdx]; initWeather(); }, 40000);
     function initWeather() {
@@ -51,7 +44,6 @@
     function toggleRain() { rainSoundOn = !rainSoundOn; document.getElementById('btn-rain').classList.toggle('on', rainSoundOn); }
     window.toggleLamp = toggleLamp; window.toggleMusic = toggleMusic; window.toggleRain = toggleRain;
 
-    // Modals
     var MODALS = {
       home: ['Your Room', 'Welcome home. Everything you have written lives here, waiting.'],
       write: ['Writing Desk', 'Open your journal and begin. A blank page is a kind of freedom.'],
@@ -66,9 +58,6 @@
     }
     function closeM() { document.getElementById('modal').classList.remove('show'); }
 
-    // ═══════════════════════════════════════════════════════════
-    // DAILY PROMPTS & SCENES
-    // ═══════════════════════════════════════════════════════════
     var DAILY_PROMPTS = [
       { title: 'Give It My All', icon: '◎', time: '11:00 PM', quote: 'I just do it, without worrying about the result. If it\'s not successful, I accept the outcome.', caption: 'A silence that held all the answers.', scene: 0 },
       { title: 'Small Steps', icon: '◈', time: '8:30 AM', quote: 'Every tiny movement forward is still progress. I honor the courage it takes to begin.', caption: 'A morning that asked nothing of me.', scene: 1 },
@@ -107,15 +96,8 @@
       return '&#9790;';
     }
 
-
-
-    // ═══════════════════════════════════════════════════════════
-    // DESK VIEW (Triggers the overlay)
-    // ═══════════════════════════════════════════════════════════
-
     document.getElementById('logo-btn').addEventListener('click', function () { location.href = '/archive'; });
 
-    // ── CANVAS ────────────────────────────────────────────────────
     var canv = document.getElementById('c');
     var ctx = canv.getContext('2d');
     var DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -130,7 +112,6 @@
     }
     window.addEventListener('resize', resize);
 
-    // ── DRAW HELPERS ──────────────────────────────────────────────
     function px(x) { return x * W; } function py(y) { return y * H; }
 
     function fr(x, y, w, h, col, a) {
@@ -161,12 +142,10 @@
     function lerp(a, b, t) { return a + (b - a) * t; }
     function plx(f) { return 0; } function ply(f) { return 0; }
 
-    // ── LAYOUT (Pixel Room — bookshelf left, window right) ────────────
-    // Window: right side of wall (substantially larger)
     var WX = 0.32, WY = 0.05, WW = 0.64, WH = 0.58;
-    // Window panel open/close state
+    
     var leftOpen = false, rightOpen = false;
-    // Breeze particles
+    
     var breezeParticles = [];
     for (var _bp = 0; _bp < 30; _bp++) {
       breezeParticles.push({ x: WX + Math.random() * WW, y: WY + Math.random() * WH, vx: -0.0010 - Math.random() * 0.0010, vy: (Math.random() - 0.5) * 0.0004, a: Math.random(), life: Math.random() });
@@ -178,23 +157,21 @@
       p.vy = (Math.random() - 0.5) * 0.0004;
       p.a = 0.2 + Math.random() * 0.5; p.life = 0;
     }
-    // Bookshelf: front-facing on the left
+    
     var SX = 0.00, SY = 0.04, SW = 0.20, SH = 0.78;
-    // Floor
+    
     var FY = 0.80;
-    // Desk layout (3D structure: top surface and vertical front face with drawers)
-    var DESK_TOP_Y = 0.65;   // Back edge of desk against the wall
-    var DESK_FRONT_Y = 0.82; // Front edge of the desk top surface
-    // Items on desk
-    var DX = 0.35, DY = 0.72, DW = 0.30, DH = 0.10; // for zone calculations
-    var LX = 0.26, LY = 0.55; // desk lamp position (moved to left side)
+    
+    var DESK_TOP_Y = 0.65;   
+    var DESK_FRONT_Y = 0.82; 
+    
+    var DX = 0.35, DY = 0.72, DW = 0.30, DH = 0.10; 
+    var LX = 0.26, LY = 0.55; 
 
-    // Book generation (for left side wall shelf)
     var BCOLS = ['#8B1A1A', '#1848A8', '#1E7830', '#C87A18', '#5C1A90', '#A83818', '#0A2E68', '#388014', '#8C2438', '#CA6820', '#1A5090', '#609830'];
     function genBooks() {
       books = [];
-      // In first-person the shelf is on the left side wall — books appear foreshortened
-      // We generate them as a flat list; draw loop handles the perspective skew
+
       var SHL = [0.20, 0.38, 0.56, 0.73];
       for (var si = 0; si < SHL.length; si++) {
         var bx = 0.016;
@@ -208,7 +185,6 @@
       }
     }
 
-    // ── TIME OF DAY PALETTE ───────────────────────────────────────
     function getTOD() { var h = new Date().getHours(); if (h >= 5 && h < 8) return 'dawn'; if (h >= 8 && h < 17) return 'day'; if (h >= 17 && h < 20) return 'dusk'; return 'night'; }
     function getPal() {
       var t = getTOD();
@@ -220,18 +196,15 @@
       })[t] || { w0: '#7A4828', w1: '#60341A', ceil: '#30180A', wTint: 'rgba(255,248,200,.86)', wGlow: '255,235,155', aR: 255, aG: 215, aB: 120 };
     }
 
-    // ── MAIN DRAW (First-Person POV) ──────────────────────────────
     function draw() {
       ctx.clearRect(0, 0, W, H);
       var pal = getPal();
       var tod = getTOD();
       var anyOpen = leftOpen || rightOpen;
 
-      // ── 1. WALL & BACKGROUND ───────────────────────────────────────
       ctx.fillStyle = linG(0.5, 0, 0.5, FY, [[0, pal.ceil], [0.08, pal.w0], [0.5, pal.w1], [1, pal.w1]]);
       ctx.fillRect(0, 0, W, py(FY));
 
-      // Wallpaper texture (subtle)
       ctx.globalAlpha = 0.045;
       var STEP = Math.max(18, Math.round(W / 42));
       for (var wx2 = 0; wx2 < W; wx2 += STEP) {
@@ -246,13 +219,11 @@
       }
       ctx.globalAlpha = 1;
 
-      // Crown molding
       fr(0, 0.040, 1, 0.016, 'rgba(0,0,0,.12)');
       fr(0, 0.028, 1, 0.014, 'rgba(0,0,0,.08)');
-      // Baseboard
+      
       fr(SW, FY - 0.018, 1 - SW, 0.020, 'rgba(0,0,0,.18)');
 
-      // ── 2. SKY BACKGROUND ─────────────────────────────────────────
       (function () {
         var sT, sB;
         if (tod === 'dawn') { sT = '#3A2050'; sB = '#D07848'; }
@@ -265,7 +236,6 @@
         ctx.beginPath(); ctx.rect(px(WX), py(WY), px(WW), py(WH)); ctx.clip();
         ctx.fillStyle = skyG; ctx.fillRect(px(WX), py(WY), px(WW), py(WH));
 
-        // ── WEATHER (Inside window clip) ──────────────────────────
         if (weatherType === 'rain' && anyOpen) {
           ctx.strokeStyle = 'rgba(180,215,255,.55)'; ctx.lineWidth = 1;
           for (var ri = 0; ri < raindrops.length; ri++) {
@@ -282,11 +252,9 @@
         ctx.restore();
       })();
 
-      // ── 3. FLOOR ──────────────────────────────────────────────────
       ctx.fillStyle = linG(0.5, FY, 0.5, 1, [[0, '#5A3A18'], [0.3, '#4A2E10'], [1, '#2A1808']]);
       ctx.fillRect(0, py(FY), W, py(1 - FY));
 
-      // ── 5. WINDOW GLOW ────────────────────────────────────────────
       (function () {
         var wa = lampOn ? 0.35 : 0.15; if (anyOpen) wa = Math.min(wa + 0.10, 0.65);
         var wgg = ctx.createRadialGradient(px(WX + WW * 0.5), py(WY + WH * 0.5), px(0.01), px(WX + WW * 0.5), py(WY + WH * 0.5), px(WW * 0.6));
@@ -295,13 +263,10 @@
         ctx.fillStyle = wgg; ctx.fillRect(px(WX - 0.1), py(WY - 0.1), px(WW + 0.2), py(WH + 0.2));
       })();
 
-      // ── 7. WINDOW FRAME ───────────────────────────────────────────
       var fT = 0.018;
       fr(WX, WY, WW, fT, '#2E1408'); fr(WX, WY + WH - fT, WW, fT, '#2E1408');
       fr(WX, WY, fT, WH, '#1A0804'); fr(WX + WW - fT, WY, fT, WH, '#1A0804');
 
-      // ── 8. WINDOW PANELS (Traditional detailed inward swing) ───────
-      // ── 8. WINDOW PANELS (Traditional detailed inward swing) ───────
       function drawOutwardPanel(bx, by, pw, ph, isOpen, isLeft) {
         ctx.save();
         var barW = 0.012, grillCol = '#2A0E08';
@@ -310,7 +275,6 @@
           var swingW = pw * 0.40, hScale = 0.85, xOff = isLeft ? 0 : (pw - swingW);
           var x1 = bx + xOff, x2 = x1 + swingW, y_s = by + (ph * (1 - hScale) * 0.5), h_s = ph * hScale;
 
-          // Glass Pane
           ctx.fillStyle = pC; ctx.beginPath();
           if (isLeft) {
             ctx.moveTo(px(x1), py(by)); ctx.lineTo(px(x2), py(y_s));
@@ -321,7 +285,6 @@
           }
           ctx.closePath(); ctx.fill();
 
-          // Perspective Bar Helper
           function pBar(h1, h2, t1, t2, col) {
             ctx.fillStyle = col; ctx.beginPath();
             var y1_l = by + ph * h1, y1_r = y_s + h_s * h1;
@@ -336,7 +299,6 @@
             ctx.closePath(); ctx.fill();
           }
 
-          // Vertical Perspective Bar Helper
           function pBarV(x_norm, w_norm, col) {
             ctx.fillStyle = col; ctx.beginPath();
             var xl = x1 + (x2 - x1) * x_norm, xr = xl + (x2 - x1) * w_norm;
@@ -351,29 +313,25 @@
             ctx.closePath(); ctx.fill();
           }
 
-          // Top/Bottom Wood Edges (Horizontal)
           var twe = 0.012 / ph;
           pBar(0, twe, 0, 1, '#1A0804');
           pBar(1 - twe, 1, 0, 1, '#1A0804');
 
-          // Horizontal Grill
           var gh = 0.012 / ph;
           pBar(0.5 - gh * 0.5, 0.5 + gh * 0.5, 0, 1, grillCol);
 
-          // Vertical Frame Bars & Grill
           var vw = 0.008 / (x2 - x1);
-          pBarV(0, vw, '#1A0804'); // hinge side
-          pBarV(1 - vw, vw, '#1A0804'); // opening side
+          pBarV(0, vw, '#1A0804'); 
+          pBarV(1 - vw, vw, '#1A0804'); 
 
           var vgw = 0.006 / (x2 - x1);
-          pBarV(0.5 - vgw * 0.5, vgw, grillCol); // middle vertical grill
+          pBarV(0.5 - vgw * 0.5, vgw, grillCol); 
 
-          // Brass Handle (Subtle)
           ctx.fillStyle = '#FFD700'; var hW = 0.004, hH = 0.022;
           var hX = isLeft ? (x2 - 0.008 + 0.002) : (x1 + 0.002);
           var hY = y_s + h_s * 0.5 - hH * 0.5;
           fr(hX, hY, hW, hH);
-          fr(hX + 0.001, hY + 0.003, 0.001, 0.016, 'rgba(255,255,255,0.4)'); // glint
+          fr(hX + 0.001, hY + 0.003, 0.001, 0.016, 'rgba(255,255,255,0.4)'); 
         } else {
           var ex = 0.003, fw = pw + ex, fx = isLeft ? bx : (bx - ex);
           fr(fx, by, fw, ph, pC);
@@ -381,25 +339,22 @@
           fr(isLeft ? fx + fw - 0.012 : fx, by, 0.012, ph, '#1A0804');
           fr(fx, by + ph * 0.5 - 0.006, fw, 0.012, grillCol);
           fr(fx + fw * 0.5 - 0.003, by, 0.006, ph, grillCol);
-          // Standard handles (Gold)
-          // Standard handles (Gold)
+
           var hX = isLeft ? (fx + fw - 0.010) : (fx + 0.006);
           var hY = by + ph * 0.5 - 0.011;
           ctx.fillStyle = '#FFD700';
           fr(hX, hY, 0.004, 0.022);
-          fr(hX + 0.001, hY + 0.003, 0.001, 0.016, 'rgba(255,255,255,0.4)'); // handle glint
+          fr(hX + 0.001, hY + 0.003, 0.001, 0.016, 'rgba(255,255,255,0.4)'); 
         }
         ctx.restore();
       }
       drawOutwardPanel(WX, WY + 0.002, WW / 2, WH - 0.004, leftOpen, true);
       drawOutwardPanel(WX + WW * 0.5, WY + 0.002, WW / 2, WH - 0.004, rightOpen, false);
 
-      // ── 13. SILL & WALL BELOW (Drawn BEFORE Curtains) ────────────────
       var wallBelowY = WY + WH;
       fr(WX - 0.02, wallBelowY, WW + 0.04, 0.024, '#482410');
       fr(SW, wallBelowY + 0.01, 1 - SW, FY - (wallBelowY + 0.01), pal.w1);
 
-      // ── 9. CURTAINS (Original premium wavy version) ──────────
       var cFlutterL = anyOpen ? Math.sin(time * 0.07) * 0.012 : 0;
       var cFlutterR = anyOpen ? Math.sin(time * 0.07 + 0.8) * 0.012 : 0;
 
@@ -433,16 +388,13 @@
       }
       drawWavyCurtain(WX - 0.06, WY - 0.02, 0.12, FY, cFlutterL, false);
       drawWavyCurtain(WX + WW - 0.06, WY - 0.02, 0.12, FY, cFlutterR, true);
-      fr(WX - 0.08, WY - 0.030, WW + 0.16, 0.020, '#4A2210'); // rod
+      fr(WX - 0.08, WY - 0.030, WW + 0.16, 0.020, '#4A2210'); 
 
-      // ── 14. BOOKSHELF (Drawn here so it's in front of wall shadows/lines) ──
       drawFrontBookshelf();
 
-      // ── 14. DESK SURFACE (3D desk matching photo reference) ──────────
-      var dt_L = 0.18, dt_R = 0.98; // Width at the wall (aligned with window roughly)
-      var df_L = -0.05, df_R = 1.05; // Width at front edge (perspective spread)
+      var dt_L = 0.18, dt_R = 0.98; 
+      var df_L = -0.05, df_R = 1.05; 
 
-      // A. Top Surface (Trapezoid from wall to front edge)
       var topG = ctx.createLinearGradient(0, py(DESK_TOP_Y), 0, py(DESK_FRONT_Y));
       topG.addColorStop(0, '#754B2F');
       topG.addColorStop(0.5, '#56341E');
@@ -455,9 +407,8 @@
       ctx.lineTo(px(df_L), py(DESK_FRONT_Y));
       ctx.closePath(); ctx.fill();
 
-      // Wood grain lines (receding into distance on the top surface)
       ctx.strokeStyle = 'rgba(20,10,0,.15)'; ctx.lineWidth = 1.2;
-      var vpX = px((dt_L + dt_R) / 2), vpY = py(0.2); // Vanishing point
+      var vpX = px((dt_L + dt_R) / 2), vpY = py(0.2); 
       for (var gi = 0; gi <= 24; gi++) {
         var startX = px(df_L + (df_R - df_L) * (gi / 24));
         ctx.beginPath();
@@ -466,8 +417,7 @@
         ctx.stroke();
       }
 
-      // B. Desk Front Lip (Thickness of the top wood panel)
-      var lipH = 0.018; // Thickness
+      var lipH = 0.018; 
       ctx.fillStyle = '#261208';
       ctx.beginPath();
       ctx.moveTo(px(df_L), py(DESK_FRONT_Y));
@@ -475,21 +425,18 @@
       ctx.lineTo(px(df_R), py(DESK_FRONT_Y + lipH));
       ctx.lineTo(px(df_L), py(DESK_FRONT_Y + lipH));
       ctx.closePath(); ctx.fill();
-      // Highlight on the top front edge
+      
       fr(df_L, DESK_FRONT_Y, df_R - df_L, 0.003, '#825234');
-      fr(df_L, DESK_FRONT_Y + lipH - 0.002, df_R - df_L, 0.002, '#140804'); // lower shadow
+      fr(df_L, DESK_FRONT_Y + lipH - 0.002, df_R - df_L, 0.002, '#140804'); 
 
-      // C. Front Face (Desk body with left/right pedestals and leg space)
       var faceY = DESK_FRONT_Y + lipH;
 
-      // Top drawer band (the horizontal frame beneath the surface lip)
       var bandH = 0.035;
       var bandG = ctx.createLinearGradient(0, py(faceY), 0, py(faceY + bandH));
       bandG.addColorStop(0, '#1E0E06'); bandG.addColorStop(1, '#0C0502');
       ctx.fillStyle = bandG;
       ctx.fillRect(px(df_L), py(faceY), px(df_R - df_L), py(bandH));
 
-      // Left Pedestal (going to floor)
       var pW = (df_R - df_L) * 0.28;
       var pedR_X = df_R - pW;
 
@@ -497,43 +444,38 @@
       pedG.addColorStop(0, '#160B05'); pedG.addColorStop(1, '#050201');
       ctx.fillStyle = pedG;
       ctx.beginPath();
-      // left ped
+      
       ctx.moveTo(px(df_L), py(faceY + bandH)); ctx.lineTo(px(df_L + pW), py(faceY + bandH));
       ctx.lineTo(px(df_L + pW), H); ctx.lineTo(px(df_L), H);
-      // right ped
+      
       ctx.moveTo(px(pedR_X), py(faceY + bandH)); ctx.lineTo(px(df_R), py(faceY + bandH));
       ctx.lineTo(px(df_R), H); ctx.lineTo(px(pedR_X), H);
       ctx.closePath(); ctx.fill();
 
-      // Knee-hole back wall shadow
       var kneeW = pedR_X - (df_L + pW);
-      // Deep shadow under the desk
+      
       var kneeG = ctx.createLinearGradient(0, py(faceY + bandH), 0, H);
       kneeG.addColorStop(0, '#0D0502'); kneeG.addColorStop(1, '#000000');
       ctx.fillStyle = kneeG;
       ctx.fillRect(px(df_L + pW), py(faceY + bandH), px(kneeW), py(1.0 - (faceY + bandH)));
 
-      // D. Drawers (placed on the pedestals)
       var dwW = pW * 0.75;
       var dwH = 0.12;
-      var dlX = df_L + (pW - dwW) * 0.5; // center on left pedestal
-      var drX = pedR_X + (pW - dwW) * 0.5; // center on right pedestal
+      var dlX = df_L + (pW - dwW) * 0.5; 
+      var drX = pedR_X + (pW - dwW) * 0.5; 
 
-      // Left Drawer
-      fr(dlX, faceY + 0.05, dwW, dwH, '#200D06'); // base
-      fr(dlX, faceY + 0.05, dwW, 0.005, '#381C0C'); // top highlight
-      fr(dlX, faceY + 0.05 + dwH - 0.005, dwW, 0.005, '#080301'); // bottom shadow
-      fr(dlX + dwW - 0.004, faceY + 0.05, 0.004, dwH, '#0C0502'); // side shadow
-      fr(dlX + dwW * 0.35, faceY + 0.09, dwW * 0.3, 0.008, '#080301'); // handle
+      fr(dlX, faceY + 0.05, dwW, dwH, '#200D06'); 
+      fr(dlX, faceY + 0.05, dwW, 0.005, '#381C0C'); 
+      fr(dlX, faceY + 0.05 + dwH - 0.005, dwW, 0.005, '#080301'); 
+      fr(dlX + dwW - 0.004, faceY + 0.05, 0.004, dwH, '#0C0502'); 
+      fr(dlX + dwW * 0.35, faceY + 0.09, dwW * 0.3, 0.008, '#080301'); 
 
-      // Right Drawer
       fr(drX, faceY + 0.05, dwW, dwH, '#200D06');
       fr(drX, faceY + 0.05, dwW, 0.005, '#381C0C');
       fr(drX, faceY + 0.05 + dwH - 0.005, dwW, 0.005, '#080301');
       fr(drX + dwW - 0.004, faceY + 0.05, 0.004, dwH, '#0C0502');
       fr(drX + dwW * 0.35, faceY + 0.09, dwW * 0.3, 0.008, '#080301');
 
-      // Second set of lower drawers (bottom stack)
       fr(dlX, faceY + 0.20, dwW, dwH, '#1c0b05');
       fr(dlX, faceY + 0.20, dwW, 0.004, '#2A1408');
       fr(dlX + dwW * 0.35, faceY + 0.24, dwW * 0.3, 0.008, '#060201');
@@ -542,20 +484,15 @@
       fr(drX, faceY + 0.20, dwW, 0.004, '#2A1408');
       fr(drX + dwW * 0.35, faceY + 0.24, dwW * 0.3, 0.008, '#060201');
 
-      // ── 15. GLOBAL LIGHT TINT & ATMOSPHERE ─────────────────────────
-      // We draw the atmospheric "mist" and global tint BEFORE foreground items
-      // so the objects themselves look solid and opaque.
       if (lampOn) {
-        // Base ambient warm wash (softened global fill)
+        
         ctx.fillStyle = 'rgba(' + pal.aR + ',' + pal.aG + ',' + pal.aB + ',.18)'; ctx.fillRect(0, 0, W, H);
 
-        // Extra large, nearly transparent room-fill glow
         var roomGlow = ctx.createRadialGradient(px(LX), py(LY), px(0.05), px(LX), py(LY), px(1.2));
         roomGlow.addColorStop(0, 'rgba(255, 180, 80, 0.12)');
         roomGlow.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = roomGlow; ctx.fillRect(0, 0, W, H);
 
-        // Warm directional core glow (softened but wider reach)
         var wsg = ctx.createRadialGradient(px(LX), py(LY - 0.04), px(0.01), px(LX), py(LY - 0.04), px(0.75));
         wsg.addColorStop(0, 'rgba(' + pal.aR + ',' + pal.aG + ',' + pal.aB + ',.22)');
         wsg.addColorStop(1, 'rgba(0,0,0,0)');
@@ -567,8 +504,6 @@
         ctx.fillStyle = mlg; ctx.fillRect(0, 0, W, H);
       }
 
-      // ── 16. CENTERED PORTRAIT JOURNAL ─────────────────────────────
-      // Perspective helper: maps a normalized desk position (fx: 0-1, fy: 0-1) to canvas coords
       function deskPos(fx, fy) {
         var tY = DESK_TOP_Y + fy * (DESK_FRONT_Y - DESK_TOP_Y);
         var curL = dt_L + fy * (df_L - dt_L);
@@ -579,17 +514,16 @@
 
       (function () {
         if (!window.hasJournals) return;
-        // Centered (fx: 0.50) and positioned for a focal point look (fy: 0.45)
+        
         var pos = deskPos(0.50, 0.45); var sc = pos.scale;
-        var jW = 0.10 * sc, jD = 0.20 * sc; // Balanced portrait size
+        var jW = 0.10 * sc, jD = 0.20 * sc; 
 
         ctx.save();
         ctx.translate(px(pos.x), py(pos.y));
-        ctx.rotate(0); // Perfect straight alignment
+        ctx.rotate(0); 
 
         var jX = -jW * 0.5, jY = -jD * 0.5;
 
-        // Shadow (subtle, rounded to match the book)
         var x = px(jX);
         var y = py(jY);
         var w = px(jW);
@@ -602,8 +536,7 @@
         ctx.shadowBlur = 10;
         ctx.shadowOffsetX = 3;
         ctx.shadowOffsetY = 6;
-        
-        // Draw shadow path
+
         ctx.beginPath();
         var sx = x + 3;
         var sy = y + 4;
@@ -619,14 +552,12 @@
         ctx.closePath();
         ctx.fill();
 
-        // Reset shadow
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
 
-        // 1. Leather cover base color
-        ctx.fillStyle = '#3D2B1F';
+        ctx.save();
         ctx.beginPath();
         ctx.moveTo(x + radLeft, y);
         ctx.lineTo(x + w - radRight, y);
@@ -638,9 +569,109 @@
         ctx.lineTo(x, y + radLeft);
         ctx.quadraticCurveTo(x, y, x + radLeft, y);
         ctx.closePath();
+        
+        ctx.fillStyle = window.activeBg || '#3D2B1F';
         ctx.fill();
+        ctx.clip();
 
-        // 2. Leather texture gradient overlay
+        var artStyle = window.activeArt || 'botanical';
+        if (artStyle === 'botanical') {
+            ctx.fillStyle = '#6A9040';
+            ctx.save();
+            ctx.translate(x + w * 0.4, y + h * 0.55);
+            ctx.rotate(-18 * Math.PI / 180);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, w * 0.15, h * 0.18, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = '#8AAA58';
+            ctx.save();
+            ctx.translate(x + w * 0.6, y + h * 0.45);
+            ctx.rotate(12 * Math.PI / 180);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, w * 0.12, h * 0.15, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = '#6A9040';
+            ctx.save();
+            ctx.translate(x + w * 0.8, y + h * 0.6);
+            ctx.rotate(-8 * Math.PI / 180);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, w * 0.13, h * 0.16, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.strokeStyle = '#4A7028';
+            ctx.lineWidth = Math.max(1, 1.2 * sc);
+            ctx.beginPath();
+            ctx.moveTo(x + w * 0.4, y + h * 0.7);
+            ctx.lineTo(x + w * 0.4, y + h * 0.95);
+            ctx.moveTo(x + w * 0.6, y + h * 0.6);
+            ctx.lineTo(x + w * 0.6, y + h * 0.95);
+            ctx.moveTo(x + w * 0.8, y + h * 0.75);
+            ctx.lineTo(x + w * 0.8, y + h * 0.95);
+            ctx.stroke();
+        } else if (artStyle === 'linen') {
+            ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+            ctx.lineWidth = Math.max(0.5, 0.6 * sc);
+            for (var li = y + 6 * sc; li < y + h; li += 8 * sc) {
+                ctx.beginPath();
+                ctx.moveTo(x, li);
+                ctx.lineTo(x + w, li);
+                ctx.stroke();
+            }
+        } else if (artStyle === 'face') {
+            ctx.fillStyle = '#1E0E06';
+            ctx.beginPath();
+            ctx.ellipse(x + w * 0.5, y + h * 0.42, w * 0.18, h * 0.16, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#E07828';
+            ctx.beginPath();
+            ctx.ellipse(x + w * 0.5, y + h * 0.65, w * 0.15, h * 0.14, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#B84818';
+            ctx.beginPath();
+            ctx.arc(x + w * 0.43, y + h * 0.38, w * 0.03, 0, Math.PI * 2);
+            ctx.arc(x + w * 0.57, y + h * 0.39, w * 0.03, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#3C1808';
+            ctx.lineWidth = Math.max(1, 1.8 * sc);
+            ctx.beginPath();
+            ctx.arc(x + w * 0.5, y + h * 0.45, w * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+        } else if (artStyle === 'wood') {
+            ctx.strokeStyle = 'rgba(44, 28, 10, 0.45)';
+            ctx.lineWidth = Math.max(1, 1.5 * sc);
+            for (var wi = 0; wi < 14; wi++) {
+                var wy = y + wi * 12 * sc + 6 * sc;
+                var wv = Math.sin(wi * 0.78) * 4 * sc;
+                ctx.beginPath();
+                ctx.moveTo(x, wy);
+                ctx.quadraticCurveTo(x + w * 0.5, wy + wv, x + w, wy + wv * 0.5);
+                ctx.stroke();
+            }
+        } else if (artStyle === 'clouds') {
+            var skyGrad = ctx.createLinearGradient(x, y, x, y + h);
+            skyGrad.addColorStop(0, '#C8E4F8');
+            skyGrad.addColorStop(1, '#88B8E0');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(x, y, w, h);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.ellipse(x + w * 0.35, y + h * 0.4, w * 0.2, h * 0.08, 0, 0, Math.PI * 2);
+            ctx.ellipse(x + w * 0.45, y + h * 0.35, w * 0.15, h * 0.07, 0, 0, Math.PI * 2);
+            ctx.ellipse(x + w * 0.65, y + h * 0.7, w * 0.18, h * 0.07, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.restore();
+
         var lgCover = ctx.createLinearGradient(x, y, x + w, y + h);
         lgCover.addColorStop(0, 'rgba(255,255,255,0.03)');
         lgCover.addColorStop(0.5, 'rgba(0,0,0,0)');
@@ -648,7 +679,6 @@
         ctx.fillStyle = lgCover;
         ctx.fill();
 
-        // 3. Spine Edge Shadow
         var spineShadW = px(0.009 * sc);
         var spineShad = ctx.createLinearGradient(x, y, x + spineShadW, y);
         spineShad.addColorStop(0, 'rgba(0,0,0,0.4)');
@@ -657,7 +687,6 @@
         ctx.fillStyle = spineShad;
         ctx.fillRect(x, y, spineShadW, h);
 
-        // 4. Spine Crease Line
         var creaseX = x + px(0.010 * sc);
         ctx.strokeStyle = 'rgba(255,255,255,0.06)';
         ctx.lineWidth = 1;
@@ -666,13 +695,11 @@
         ctx.lineTo(creaseX, y + h);
         ctx.stroke();
 
-        // 5. Vertical Black Elastic Band
         var bandW = px(0.005 * sc);
         var bandX = x + w - px(0.015 * sc);
         ctx.fillStyle = '#151515';
         ctx.fillRect(bandX, y, bandW, h);
-        
-        // Elastic band shadows
+
         ctx.strokeStyle = 'rgba(0,0,0,0.5)';
         ctx.lineWidth = 1;
         ctx.beginPath();
@@ -684,7 +711,6 @@
         ctx.lineTo(bandX + bandW, y + h);
         ctx.stroke();
 
-        // 6. Centered Date Typography
         var coverDateStr = "";
         var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         if (typeof journalEntries !== 'undefined' && typeof window.currentSpread !== 'undefined' && journalEntries[window.currentSpread]) {
@@ -698,7 +724,7 @@
             coverDateStr = months[now.getMonth()] + ' ' + now.getDate();
         }
 
-        var textX = x + (w - px(0.010 * sc)) * 0.44; // Center, offset slightly for spine and band
+        var textX = x + (w - px(0.010 * sc)) * 0.44; 
         var titleSize = Math.max(6, Math.round(h * 0.052));
         var dateSize = Math.max(7, Math.round(h * 0.075));
 
@@ -714,22 +740,21 @@
         ctx.restore();
       })();
 
-      // ─ FIREFLY JAR ─
       (function () {
         var pos = deskPos(0.62, 0.22); var sc = pos.scale;
         var jrX = pos.x - 0.020 * sc, jrY = pos.y - 0.068 * sc;
         var jrW = 0.040 * sc, jrH = 0.065 * sc;
-        // Shadow
+        
         ctx.fillStyle = 'rgba(0,0,0,.20)';
         ctx.beginPath(); ctx.ellipse(px(pos.x), py(pos.y + 0.010 * sc), px(jrW * 0.6), py(0.006 * sc), 0, 0, Math.PI * 2); ctx.fill();
-        // Jar body
+        
         ctx.fillStyle = linG(jrX, jrY, jrX + jrW, jrY, [[0, 'rgba(180,220,200,.55)'], [0.4, 'rgba(220,255,240,.30)'], [1, 'rgba(150,200,180,.40)']]);
         ctx.fillRect(px(jrX), py(jrY), px(jrW), py(jrH));
         ctx.strokeStyle = 'rgba(150,200,170,.60)'; ctx.lineWidth = 0.8;
         ctx.strokeRect(px(jrX), py(jrY), px(jrW), py(jrH));
-        // Lid
+        
         fr(jrX - 0.003 * sc, jrY - 0.010 * sc, jrW + 0.006 * sc, 0.013 * sc, '#5A4020');
-        // Fireflies inside
+        
         for (var ffi = 0; ffi < fireflies.length; ffi++) {
           var ff = fireflies[ffi];
           var fx2 = jrX + jrW * 0.2 + (jrW * 0.6) * ((ffi % 4) / 3);
@@ -739,7 +764,6 @@
         }
       })();
 
-      // ─ MUG (with steam) ─
       (function () {
         var pos = deskPos(0.78, 0.34); var sc = pos.scale;
         var mX = pos.x - 0.022 * sc, mY = pos.y - 0.044 * sc;
@@ -749,13 +773,13 @@
         ctx.fillStyle = linG(mX, mY, mX, mY + mH, [[0, '#D8B880'], [1, '#B89050']]); ctx.fillRect(px(mX), py(mY), px(mW), py(mH));
         fr(mX, mY, mW, 0.007 * sc, '#C0A06A');
         fr(mX, mY + mH - 0.006 * sc, mW, 0.008 * sc, '#8A6030');
-        // Handle
+        
         ctx.strokeStyle = '#B08040'; ctx.lineWidth = px(0.007 * sc);
         ctx.beginPath(); ctx.arc(px(mX + mW + 0.006 * sc), py(mY + mH * 0.5), px(0.014 * sc), -Math.PI * 0.55, Math.PI * 0.55); ctx.stroke();
-        // Top surface (ellipse)
+        
         ctx.fillStyle = '#6A3010';
         ctx.beginPath(); ctx.ellipse(px(mX + mW * 0.5), py(mY), px(mW * 0.5), py(0.008 * sc), 0, 0, Math.PI * 2); ctx.fill();
-        // Steam
+        
         if (lampOn) {
           for (var sti = 0; sti < 3; sti++) {
             var sph = ((time * 0.8 + sti * 20) % 60) / 60;
@@ -765,36 +789,31 @@
         }
       })();
 
-      // ─ ORNATE DESK LAMP (moved and scaled up) ─
       (function () {
         var pos = deskPos(0.15, 0.18); var sc = pos.scale;
         var lbX = pos.x, lbY = pos.y;
 
-        // Desk light pool - drawn BEFORE the lamp so the wood doesn't look washed out/transparent
         if (lampOn) {
           var dlg = ctx.createRadialGradient(px(lbX), py(lbY - 0.03 * sc), px(0.01), px(lbX), py(lbY - 0.03 * sc), px(0.55 * sc));
           dlg.addColorStop(0, 'rgba(255,180,50,0.35)'); dlg.addColorStop(0.4, 'rgba(255,160,40,0.12)'); dlg.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = dlg; ctx.fillRect(0, 0, W, H);
         }
 
-        // 1. Base (Ornate Bronze/Wood Pedestal)
         ctx.fillStyle = linG(lbX - 0.04 * sc, lbY, lbX + 0.04 * sc, lbY, [[0, '#120804'], [0.4, '#3A1C10'], [0.6, '#3A1C10'], [1, '#120804']]);
         ctx.beginPath(); ctx.ellipse(px(lbX), py(lbY), px(0.045 * sc), py(0.015 * sc), 0, 0, Math.PI * 2); ctx.fill();
-        fr(lbX - 0.025 * sc, lbY - 0.025 * sc, 0.05 * sc, 0.022 * sc, '#2A1408'); // larger pedestal block
+        fr(lbX - 0.025 * sc, lbY - 0.025 * sc, 0.05 * sc, 0.022 * sc, '#2A1408'); 
 
-        // 2. Ornate Turned Stem (Bulbous sections)
         var stY = lbY - 0.025 * sc;
-        // Bottom bulb
+        
         ctx.fillStyle = linG(lbX - 0.018 * sc, 0, lbX + 0.018 * sc, 0, [[0, '#1A0B05'], [0.5, '#4A2810'], [1, '#1A0B05']]);
         ctx.beginPath(); ctx.ellipse(px(lbX), py(stY - 0.02 * sc), px(0.018 * sc), py(0.025 * sc), 0, 0, Math.PI * 2); ctx.fill();
-        // Middle spindle
+        
         fr(lbX - 0.007 * sc, stY - 0.14 * sc, 0.014 * sc, 0.12 * sc, '#2E1208');
-        // Top bulb
+        
         ctx.beginPath(); ctx.ellipse(px(lbX), py(stY - 0.12 * sc), px(0.014 * sc), py(0.022 * sc), 0, 0, Math.PI * 2); ctx.fill();
-        // Collar under shade
+        
         fr(lbX - 0.01 * sc, lbY - 0.18 * sc, 0.02 * sc, 0.015 * sc, '#1A0B05');
 
-        // 3. Peach Scalloped Shade
         var shTopY = lbY - 0.35 * sc, shBotY = lbY - 0.18 * sc;
         var shW_T = 0.06 * sc, shW_B = 0.125 * sc;
 
@@ -803,28 +822,25 @@
         ctx.moveTo(px(lbX - shW_T), py(shTopY));
         ctx.lineTo(px(lbX + shW_T), py(shTopY));
         ctx.lineTo(px(lbX + shW_B), py(shBotY));
-        // Scalloped bottom edge
+        
         var steps = 8;
         for (var i = 0; i < steps; i++) {
           var t = (i + 0.5) / steps;
           var sx = (lbX + shW_B) - (t * shW_B * 2);
-          var sy = shBotY + 0.010 * sc * Math.sin(i * Math.PI); // wavy effect
+          var sy = shBotY + 0.010 * sc * Math.sin(i * Math.PI); 
           ctx.lineTo(px(sx), py(shBotY + 0.012 * sc));
         }
         ctx.lineTo(px(lbX - shW_B), py(shBotY));
         ctx.closePath(); ctx.fill();
 
-        // Highline on shade removed to eliminate the "obvious streak of light" feeling
-
         if (lampOn) {
-          // Internal bulb glow (balanced)
+          
           var ig = ctx.createRadialGradient(px(lbX), py(shBotY - 0.02 * sc), 0, px(lbX), py(shBotY - 0.02 * sc), px(0.08 * sc));
           ig.addColorStop(0, 'rgba(255,250,220,0.85)'); ig.addColorStop(0.5, 'rgba(255,210,120,0.4)'); ig.addColorStop(1, 'rgba(255,160,60,0)');
           ctx.fillStyle = ig; ctx.beginPath(); ctx.ellipse(px(lbX), py(shBotY), px(shW_B * 1.1), py(0.020 * sc), 0, 0, Math.PI * 2); ctx.fill();
         }
       })();
 
-      // ── 17. DUST MOTES ─────────────────────────────────────────────
       if (lampOn) {
         for (var dmi = 0; dmi < dust.length; dmi++) {
           var d = dust[dmi];
@@ -839,51 +855,44 @@
         }
       }
 
-      // ── 18. VIGNETTE ──────────────────────────────────────────────
       var vgA = lampOn ? 0.38 : 0.68;
       var vg = ctx.createRadialGradient(W * 0.5, H * 0.5, H * 0.16, W * 0.5, H * 0.5, H * 0.85);
       vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,' + vgA + ')');
       ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
-      // Hover halo
+      
       if (hov) drawUIHalo(hov);
 
-      // ── 19. UPDATE BADGES ─────────────────────────────────────────
       var tLab = { dawn: 'pale morning light', day: 'afternoon at your desk', dusk: 'golden hour fading', night: 'deep evening quiet' };
       document.getElementById('timebadge').textContent = tLab[getTOD()] || 'a quiet moment';
       var wLab = { rain: 'soft rain outside', snow: 'snow falling quietly' };
       document.getElementById('weatherbadge').textContent = wLab[weatherType] || (anyOpen ? 'a gentle breeze' : '');
     }
-    // ── SIDE BOOKSHELF (left wall, foreshortened) ─────────────────
+    
     function drawFrontBookshelf() {
-      // Front-facing bookshelf on the left wall, full height
+      
       var cabX = SX, cabY = SY, cabW = SW, cabH = SH;
 
-      // Shelf frame / back panel (darker wood)
       fr(cabX, cabY, cabW, cabH, '#1C0C06');
-      fr(cabX + 0.012, cabY + 0.010, cabW - 0.024, cabH - 0.020, '#0E0604'); // back panel dark
+      fr(cabX + 0.012, cabY + 0.010, cabW - 0.024, cabH - 0.020, '#0E0604'); 
 
-      // Side panels
       fr(cabX, cabY, 0.014, cabH, '#2E1608');
       fr(cabX + cabW - 0.014, cabY, 0.014, cabH, '#2E1608');
 
-      // Top cap
       fr(cabX - 0.005, cabY - 0.014, cabW + 0.010, 0.018, '#3A1C0A');
       fr(cabX - 0.005, cabY - 0.003, cabW + 0.010, 0.006, '#4A2610');
-      // Base / feet
+      
       fr(cabX - 0.004, cabY + cabH, cabW + 0.008, 0.017, '#2A1206');
       fr(cabX + 0.014, cabY + cabH + 0.017, 0.018, 0.012, '#231008');
       fr(cabX + cabW - 0.032, cabY + cabH + 0.017, 0.018, 0.012, '#231008');
 
-      // Shelf boards (4 shelves)
       var SHLS = [0.20, 0.40, 0.60, 0.80];
       for (var shi = 0; shi < SHLS.length; shi++) {
         var shY2 = cabY + SHLS[shi] * cabH;
         fr(cabX + 0.012, shY2, cabW - 0.024, 0.014, '#3A1C0A');
-        fr(cabX + 0.014, shY2 + 0.014, cabW - 0.028, 0.005, 'rgba(0,0,0,.35)'); // shelf shadow
-        fr(cabX + 0.014, shY2, cabW - 0.028, 0.004, 'rgba(100,60,20,.22)'); // shelf top highlight
+        fr(cabX + 0.014, shY2 + 0.014, cabW - 0.028, 0.005, 'rgba(0,0,0,.35)'); 
+        fr(cabX + 0.014, shY2, cabW - 0.028, 0.004, 'rgba(100,60,20,.22)'); 
       }
 
-      // Books on each shelf
       for (var bi = 0; bi < books.length; bi++) {
         var b = books[bi];
         var shelfIdx = b.shelf;
@@ -891,29 +900,22 @@
         var bXf = cabX + 0.016 + b.bx * (cabW - 0.032) / (SW - 0.022);
         var bWf = b.bw * (cabW - 0.032) / (SW - 0.022);
         if (bXf + bWf > cabX + cabW - 0.016) continue;
-        // Book body
+        
         fr(bXf, shTop2 - b.bh * 0.88, bWf, b.bh * 0.88, b.col);
-        // Spine highlight (left edge)
+        
         fr(bXf, shTop2 - b.bh * 0.88, bWf * 0.12, b.bh * 0.88, 'rgba(255,255,255,.10)');
-        // Shadow divider
+        
         fr(bXf + bWf, shTop2 - b.bh * 0.88, 0.002, b.bh * 0.88, 'rgba(0,0,0,.25)');
-        // Top edge
+        
         fr(bXf, shTop2 - b.bh * 0.88, bWf, 0.004, 'rgba(255,255,255,.12)');
       }
 
-      // Mood plant (top section of shelf, above first shelf)
-      // drawPlant(cabX + 0.040, cabY + 0.010, journalDays);
-
-
-
-      // Separator panel edge shadow (right side of shelf fades into wall)
       var sEdge = ctx.createLinearGradient(px(cabX + cabW), 0, px(cabX + cabW + 0.04), 0);
       sEdge.addColorStop(0, 'rgba(0,0,0,.15)'); sEdge.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = sEdge; ctx.fillRect(px(cabX + cabW), py(cabY), px(0.04), py(cabH + 0.04));
 
-      // ── NAVIGATION BOOKS (glowing featured books on specific shelves) ──
       var SHLS_NAV = [0.20, 0.40, 0.60, 0.80];
-      navBookZones = []; // reset each frame
+      navBookZones = []; 
       for (var ni = 0; ni < NAV_BOOKS.length; ni++) {
         var nb = NAV_BOOKS[ni];
         var nbShelfY = cabY + SHLS_NAV[nb.shelf] * cabH;
@@ -922,7 +924,6 @@
         var nbW = nb.bw;
         var nbTop = nbShelfY - nbH * 0.92;
 
-        // Pulsing glow aura behind the book
         var glowPulse = (Math.sin(time * 0.045 + ni * 1.3) + 1) * 0.5;
         var glowR = 0.022 + glowPulse * 0.008;
         var gAura = ctx.createRadialGradient(px(nbX + nbW * 0.5), py(nbTop + nbH * 0.5), 0,
@@ -932,7 +933,6 @@
         ctx.fillStyle = gAura;
         ctx.fillRect(px(nbX - glowR), py(nbTop - glowR * 0.5), px(nbW + glowR * 2), py(nbH + glowR));
 
-        // Book body
         var nbG = ctx.createLinearGradient(px(nbX), py(nbTop), px(nbX + nbW), py(nbTop));
         nbG.addColorStop(0, 'rgba(0,0,0,0.3)');
         nbG.addColorStop(0.15, nb.col);
@@ -941,15 +941,12 @@
         ctx.fillStyle = nbG;
         ctx.fillRect(px(nbX), py(nbTop), px(nbW), py(nbH * 0.92));
 
-        // Spine highlight
         ctx.fillStyle = 'rgba(255,255,255,0.14)';
         ctx.fillRect(px(nbX), py(nbTop), px(nbW * 0.12), py(nbH * 0.92));
 
-        // Top edge glow
         ctx.fillStyle = nb.glowCol + (0.6 + glowPulse * 0.3) + ')';
         ctx.fillRect(px(nbX), py(nbTop), px(nbW), py(0.003));
 
-        // Small label on spine (rotated text)
         ctx.save();
         ctx.translate(px(nbX + nbW * 0.5), py(nbTop + nbH * 0.46));
         ctx.rotate(-Math.PI / 2);
@@ -959,7 +956,6 @@
         ctx.fillText(nb.label.toUpperCase(), 0, 0);
         ctx.restore();
 
-        // Register as a clickable zone
         navBookZones.push({
           x: nbX, y: nbTop, w: nbW, h: nbH * 0.92,
           title: nb.label, sub: nb.href ? ('go to ' + nb.label.toLowerCase()) : 'your emotional weather',
@@ -968,31 +964,30 @@
       }
     }
     function drawSideBookshelf() {
-      // The left wall recedes into the background.
-      // We draw the bookshelf as a foreshortened cabinet on the left strip.
+
       var cabX = 0.00, cabW = SW, cabY = WY + 0.02, cabH = WH + 0.14;
-      // Wall shadow behind cabinet
+      
       var bss = ctx.createLinearGradient(px(cabX + cabW), 0, px(cabX + cabW + 0.06), 0);
       bss.addColorStop(0, 'rgba(0,0,0,.60)'); bss.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = bss; ctx.fillRect(px(cabX + cabW), py(cabY), px(0.06), py(cabH));
-      // Cabinet body — slightly compressed in X to look foreshortened
+      
       fr(cabX, cabY, cabW, cabH, '#140802');
       fr(cabX + 0.010, cabY + 0.010, cabW - 0.014, cabH - 0.020, '#0A0400');
       fr(cabX, cabY, cabW, 0.013, '#2E1606'); fr(cabX, cabY + cabH - 0.013, cabW, 0.013, '#1E0E04');
       fr(cabX + cabW - 0.012, cabY, 0.012, cabH, '#221008');
-      // Shelf boards
+      
       var SHLS = [0.22, 0.40, 0.58, 0.76];
       for (var shi = 0; shi < SHLS.length; shi++) {
         fr(cabX + 0.010, cabY + SHLS[shi] * cabH, cabW - 0.014, 0.013, '#2E1606');
         fr(cabX + 0.012, cabY + SHLS[shi] * cabH + 0.013, cabW - 0.018, 0.004, 'rgba(70,35,15,.50)');
       }
-      // Top molding
+      
       fr(cabX, cabY - 0.016, cabW + 0.006, 0.018, '#3A1C0A');
-      // Books (foreshortened — drawn narrow, stacked horizontally)
+      
       for (var bi = 0; bi < books.length; bi++) {
         var b = books[bi];
         var shTop = cabY + SHLS[b.shelf] * cabH;
-        // Foreshorten book width by ~38% to simulate side-wall angle
+        
         var bwF = b.bw * 0.62;
         var bX = cabX + 0.011 + b.bx * 0.62;
         if (bX + bwF > cabX + cabW - 0.014) continue;
@@ -1002,7 +997,6 @@
       }
     }
 
-    // ── OBJECT DRAWERS ────────────────────────────────────────────
     function drawUIHalo(zone) {
       if (!zone) return;
       var cx = zone.x + zone.w / 2, cy = zone.y + zone.h / 2;
@@ -1012,20 +1006,18 @@
       ctx.fillStyle = g; ctx.fillRect(px(cx - r), py(cy - r), px(r * 2), py(r * 2));
     }
 
-    // ── ZONES ─────────────────────────────────────────────────────
     var zones = [
-      // Window panels
+      
       { x: WX, y: WY, w: WW * 0.5, h: WH, title: 'Left Window', sub: leftOpen ? 'click to close' : 'click to open', winLeft: true },
       { x: WX + WW * 0.5, y: WY, w: WW * 0.5, h: WH, title: 'Right Window', sub: rightOpen ? 'click to close' : 'click to open', winRight: true },
-      // Desk items (mapped to the 3D surface)
+      
       { x: 0.40, y: DESK_TOP_Y + 0.01, w: 0.20, h: 0.14, title: 'Writing Desk', sub: window.hasJournals ? 'start a new entry' : 'create your first journal', key: 'write' },
       { x: 0.64, y: DESK_TOP_Y + 0.01, w: 0.08, h: 0.08, title: 'Firefly Jar', sub: 'glowing thoughts', key: 'jar' },
       { x: 0.75, y: DESK_TOP_Y + 0.03, w: 0.08, h: 0.09, title: 'Morning Mug', sub: 'still warm', key: 'home' },
-      // Lamp (moved to left and scaled up)
+      
       { x: 0.20, y: DESK_TOP_Y - 0.22, w: 0.16, h: 0.32, title: 'Desk Lamp', sub: 'click to toggle light', lamp: true },
     ];
 
-    // ── CLICK: WINDOW TOGGLES ─────────────────────────────────────
     function toggleLeftWindow() { leftOpen = !leftOpen; zones[0].sub = leftOpen ? 'click to close' : 'click to open'; }
     function toggleRightWindow() { rightOpen = !rightOpen; zones[1].sub = rightOpen ? 'click to close' : 'click to open'; }
 
@@ -1035,12 +1027,11 @@
       mouseX = e.clientX / W; mouseY = e.clientY / H;
       var mx = mouseX, my = mouseY, f = null;
 
-      // Check nav book zones first (drawn on top of bookshelf)
       for (var ni = 0; ni < navBookZones.length; ni++) {
         var nz = navBookZones[ni];
         if (mx >= nz.x && mx <= nz.x + nz.w && my >= nz.y && my <= nz.y + nz.h) { f = nz; break; }
       }
-      // Then check regular zones
+      
       if (!f) {
         for (var i = 0; i < zones.length; i++) { var z = zones[i]; if (mx >= z.x && mx <= z.x + z.w && my >= z.y && my <= z.y + z.h) { f = z; break; } }
       }
@@ -1053,13 +1044,11 @@
         TIP.style.opacity = '1';
       } else { TIP.style.opacity = '0'; }
 
-      // Bottom dock is always visible — no proximity logic needed
     });
 
     canv.addEventListener('click', function (e) {
       var mx = e.clientX / W, my = e.clientY / H;
 
-      // Check nav book zones first
       for (var ni = 0; ni < navBookZones.length; ni++) {
         var nz = navBookZones[ni];
         if (mx >= nz.x && mx <= nz.x + nz.w && my >= nz.y && my <= nz.y + nz.h) {
@@ -1068,7 +1057,6 @@
         }
       }
 
-      // Regular zones
       for (var i = 0; i < zones.length; i++) {
         var z = zones[i];
         if (mx >= z.x && mx <= z.x + z.w && my >= z.y && my <= z.y + z.h) {
@@ -1096,4 +1084,3 @@
     function loop() { time++; draw(); requestAnimationFrame(loop); }
     resize();
     loop();
-  

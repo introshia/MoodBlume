@@ -2,7 +2,6 @@
 
     <div class="paper-sidebar-note" id="paper-sidebar-note">
 
-        <!-- Paperclip SVG -->
         <svg class="paper-clip-svg" viewBox="0 0 38 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M 19,4 Q 34,4 34,20 L 34,76 Q 34,92 19,92 Q 4,92 4,76 L 4,24 Q 4,12 14,10 Q 24,8 24,20 L 24,72 Q 24,80 19,80 Q 14,80 14,72 L 14,22"
                 stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -10,16 +9,13 @@
             <path d="M 19,5 Q 32,5 32,20" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
         </svg>
 
-        <!-- Collapse button -->
         <button class="paper-collapse-btn" id="sidebar-close-btn" title="Collapse sidebar" aria-label="Collapse sidebar">×</button>
 
-        <!-- Brand / Logo -->
         <div class="paper-brand">
             <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}" alt="MoodBlume" class="paper-brand-logo">
             <div class="paper-brand-name">MoodBlume</div>
         </div>
 
-        <!-- Main Nav -->
         <nav class="paper-main-nav">
             <ul>
                 <li>
@@ -39,13 +35,10 @@
             </ul>
         </nav>
 
-        <!-- Spacer between nav sections -->
         <div style="height: 24px;"></div>
 
-        <!-- Decorative divider -->
         <div class="paper-rule">~·~</div>
 
-        <!-- Footer Nav -->
         <nav class="paper-footer-nav">
             <ul>
                 <li>
@@ -60,15 +53,12 @@
 
 </aside>
 
-<!-- Button shown when sidebar is collapsed -->
 <button class="sidebar-open-btn" id="sidebar-open-btn" title="Open sidebar" aria-label="Open sidebar" style="display: none;">
     <i class="ti ti-layout-sidebar-left-expand"></i>
 </button>
 
-<!-- Mobile overlay -->
 <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-<!-- Mobile top bar -->
 <div class="mobile-top-bar" id="mobile-top-bar">
     <button class="mobile-toggle-btn" id="mobile-sidebar-toggle-btn" aria-label="Toggle menu">
         <i class="ti ti-menu-2"></i>

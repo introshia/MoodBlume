@@ -1,5 +1,3 @@
-/* ── Collection folder cards (glassmorphism + fanned journals) ── */
-
 .yc-folders-grid {
     display: flex;
     flex-wrap: wrap;
@@ -55,9 +53,6 @@
     border-radius: 8px;
 }
 
-/* Pocket folder: back panel, contents, then front pocket. */
-
-/* Stack */
 .folder-stack {
     position: relative;
     width: 100%;
@@ -98,7 +93,6 @@
         0 2px 0 rgba(255, 255, 255, 0.18);
 }
 
-/* Fanned journal cards */
 .folder-journals {
     position: absolute;
     bottom: 58px;
@@ -176,7 +170,6 @@
     }
 }
 
-/* Hover: flap opens, entry pages fan out (mood / volumes) */
 @media (hover: hover) and (pointer: fine) {
     .collection-folder:hover .folder-stack {
         transform: translateY(-2px);
@@ -230,7 +223,6 @@
     }
 }
 
-/* Keyboard focus — entry pages */
 .collection-folder--entries:focus-visible .folder-journal-card {
     animation: none;
     filter: drop-shadow(0 8px 14px rgba(75, 46, 31, 0.18));
@@ -264,7 +256,6 @@
         0 10px 24px rgba(75, 46, 31, 0.22);
 }
 
-/* ── Book folders (monthly + volume): one bound journal ── */
 .folder-journals--book {
     width: 170px;
     height: 118px;
@@ -526,7 +517,6 @@
     overflow: hidden;
 }
 
-/* Mini journal page inside folder */
 .mini-journal {
     position: relative;
     z-index: 1;
@@ -601,7 +591,6 @@
     margin: 0;
 }
 
-/* Front pocket */
 .folder-front {
     position: absolute;
     left: 0;
@@ -651,7 +640,6 @@
     clip-path: polygon(0 44%, 28% 0, 100% 0, 100% 100%, 0 100%);
 }
 
-/* Stickers on folder */
 .folder-sticker {
     position: absolute;
     display: flex;
@@ -710,7 +698,6 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
-/* Meta below folder */
 .folder-meta {
     display: flex;
     flex-direction: column;

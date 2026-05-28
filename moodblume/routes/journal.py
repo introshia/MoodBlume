@@ -7,7 +7,6 @@ from ..ai.helpers import analyze_sentiment, generate_letter, get_quote_for_entry
 
 journal_bp = Blueprint('journal', __name__)
 
-
 @journal_bp.route('/save_entry', methods=['POST'])
 def save_entry():
     if 'user_id' not in session:
@@ -16,7 +15,7 @@ def save_entry():
     try:
         data                 = request.get_json()
         content              = data.get('content', '').strip()
-        mood_score_override  = data.get('mood_score', None)  # noqa (reserved for future use)
+        mood_score_override  = data.get('mood_score', None)
 
         if not content:
             return {'success': False, 'message': 'Content cannot be empty'}, 400
@@ -27,7 +26,6 @@ def save_entry():
         quote      = get_quote_for_entry(content)
         collection_id = data.get('collection_id', None)
 
-        # Determine whether this is an insert or an update
         entry_id = data.get('id', None)
         if not entry_id:
             try:
@@ -67,7 +65,7 @@ def save_entry():
         conn.close()
 
         username = session.get('username', 'friend')
-        letter   = generate_letter(ai_result['compound'], username)
+        letter   = generate_letter(ai_result['score'], username, content)
 
         return {
             'success':     True,
@@ -80,7 +78,6 @@ def save_entry():
 
     except Exception as e:
         return {'success': False, 'message': str(e)}, 500
-
 
 @journal_bp.route('/upload_media', methods=['POST'])
 def upload_media():
@@ -112,7 +109,6 @@ def upload_media():
         "url":  f"/get_media/{media_id}",
         "type": "video" if filename.lower().endswith(('.mp4', '.webm', '.mov')) else "image",
     }
-
 
 @journal_bp.route('/get_media/<int:media_id>')
 def get_media(media_id):
