@@ -32,7 +32,7 @@
 
   /* Logo */
   .welcome-logo {
-    height: 52px;
+    height: 90px;
     width: auto;
     opacity: 0.8;
     margin-bottom: 52px;
@@ -183,7 +183,7 @@
   <h1 class="welcome-heading">Welcome to your digital sanctuary.</h1>
   <p class="welcome-sub">What should we call you?</p>
 
-  <form method="POST" action="{{ url_for('auth.welcome') }}" style="display:flex;flex-direction:column;align-items:center;">
+  <form method="POST" action="{{ url_for('auth.welcome') }}" id="welcomeForm" style="display:flex;flex-direction:column;align-items:center;">
     <label class="welcome-label" for="display_name">Your name</label>
     <div class="welcome-input-wrap">
       <input
@@ -202,11 +202,8 @@
       Enter my sanctuary
       <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
-  </form>
 
-  <form method="POST" action="{{ url_for('auth.welcome') }}">
-    <input type="hidden" name="display_name" value="">
-    <button type="submit" class="welcome-skip">skip for now</button>
+    <button type="button" class="welcome-skip" id="skipBtn" onclick="document.getElementById('display_name').value=''; document.getElementById('welcomeForm').submit();">skip for now</button>
   </form>
 </div>
 
