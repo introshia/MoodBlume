@@ -144,8 +144,7 @@
 
   .preview-col .left-half {
     border-radius: 16px 0 0 16px !important;
-    background: #C8D898;
-    transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1), background-color 0.3s ease;
+    transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
   }
 
   .preview-col .front-cover-design {
@@ -156,21 +155,18 @@
       transparent 5%,
       rgba(0, 0, 0, 0.15) 6%,
       rgba(0, 0, 0, 0.3) 7%,
-      transparent 9%), #C8D898 !important;
-    transition: background-color 0.3s ease;
+      transparent 9%), var(--cover-color, #C8D898) !important;
+    box-shadow: 8px 0 20px rgba(0,0,0,0.35) !important;
+    transition: background 0.3s ease;
   }
 
   .preview-col .right-wing {
     border-radius: 0 16px 16px 0 !important;
-    background: #C8D898;
-    box-shadow: -1px 0 0 #C8D898 !important;
-    transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1), background-color 0.3s ease;
+    transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
   }
 
   .preview-col .back-cover-design {
     border-radius: 0 16px 16px 0 !important;
-    background: #C8D898 !important;
-    transition: background-color 0.3s ease;
   }
 
   .preview-col .cover-inside {
@@ -680,13 +676,10 @@
       }
     }
 
-    // 1. Live color updating (updates exact cover elements background color)
+    // 1. Live color updating (only updates the visible front cover face)
     setupSelectionGroup('colorGrid', (colorVal) => {
       currentColor = colorVal;
-      leftHalf.style.backgroundColor = colorVal;
-      frontCoverDesign.style.backgroundColor = colorVal;
-      rightWing.style.backgroundColor = colorVal;
-      backCoverDesign.style.backgroundColor = colorVal;
+      document.querySelector('.preview-col').style.setProperty('--cover-color', colorVal);
       updateCoverPattern();
     });
 
@@ -718,7 +711,8 @@
       createBtn.disabled = !val;
     });
 
-    // Initialize cover pattern
+    // Initialize cover color and pattern
+    document.querySelector('.preview-col').style.setProperty('--cover-color', currentColor);
     updateCoverPattern();
   });
 </script>
