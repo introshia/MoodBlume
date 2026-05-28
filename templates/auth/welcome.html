@@ -1,0 +1,217 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Welcome — MoodBlume{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body, html {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'DM Sans', 'Inter', sans-serif;
+    background:
+      radial-gradient(ellipse 70% 55% at 75% 25%, rgba(193,210,160,0.25) 0%, transparent 65%),
+      radial-gradient(ellipse 55% 45% at 18% 85%, rgba(220,190,140,0.18) 0%, transparent 65%),
+      #F6F3EE;
+    color: #2b1a11;
+  }
+
+  .welcome-wrap {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  /* Logo */
+  .welcome-logo {
+    height: 52px;
+    width: auto;
+    opacity: 0.8;
+    margin-bottom: 52px;
+    opacity: 0;
+    transform: translateY(-8px);
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  /* Heading */
+  .welcome-heading {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #2b1a11;
+    text-align: center;
+    line-height: 1.45;
+    max-width: 420px;
+    margin-bottom: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeUp 0.65s ease forwards 0.25s;
+  }
+
+  .welcome-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #9c8676;
+    text-align: center;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.65s ease forwards 0.4s;
+  }
+
+  /* Input group */
+  .welcome-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9c8676;
+    display: block;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.65s ease forwards 0.5s;
+  }
+
+  .welcome-input-wrap {
+    position: relative;
+    width: 320px;
+    opacity: 0;
+    animation: fadeUp 0.65s ease forwards 0.55s;
+  }
+
+  .welcome-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid #c4b5a8;
+    padding: 8px 0;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 18px;
+    color: #2b1a11;
+    outline: none;
+    transition: border-color 0.25s;
+    text-align: center;
+    caret-color: #85acc9;
+  }
+
+  .welcome-input::placeholder {
+    color: #c4b5a8;
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  .welcome-input:focus {
+    border-bottom-color: #85acc9;
+  }
+
+  /* Button */
+  .welcome-btn {
+    margin-top: 40px;
+    background: transparent;
+    border: 1.5px solid #85acc9;
+    color: #85acc9;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 11px 36px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.65s ease forwards 0.7s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .welcome-btn:hover {
+    background: #85acc9;
+    color: #FFFDF8;
+  }
+
+  .welcome-btn svg {
+    width: 12px;
+    height: 12px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s;
+  }
+
+  .welcome-btn:hover svg {
+    transform: translateX(3px);
+  }
+
+  /* Skip */
+  .welcome-skip {
+    margin-top: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: #b8a898;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0;
+    animation: fadeUp 0.65s ease forwards 0.8s;
+  }
+
+  .welcome-skip:hover {
+    color: #9c8676;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="welcome-wrap">
+  <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}" class="welcome-logo" alt="MoodBlume">
+
+  <h1 class="welcome-heading">Welcome to your digital sanctuary.</h1>
+  <p class="welcome-sub">What should we call you?</p>
+
+  <form method="POST" action="{{ url_for('auth.welcome') }}" style="display:flex;flex-direction:column;align-items:center;">
+    <label class="welcome-label" for="display_name">Your name</label>
+    <div class="welcome-input-wrap">
+      <input
+        type="text"
+        id="display_name"
+        name="display_name"
+        class="welcome-input"
+        placeholder="e.g. Luna, River, Sam…"
+        maxlength="40"
+        autocomplete="off"
+        autofocus
+      >
+    </div>
+
+    <button type="submit" class="welcome-btn" id="continueBtn">
+      Enter my sanctuary
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </form>
+
+  <form method="POST" action="{{ url_for('auth.welcome') }}">
+    <input type="hidden" name="display_name" value="">
+    <button type="submit" class="welcome-skip">skip for now</button>
+  </form>
+</div>
+
+<script>
+  // Auto-focus cursor blink on load
+  document.getElementById('display_name').focus();
+</script>
+{% endblock %}

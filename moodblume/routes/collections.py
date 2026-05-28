@@ -57,7 +57,7 @@ def delete_collection(collection_id):
     if not cursor.fetchone():
         conn.close()
         return {'success': False, 'message': 'Not found or unauthorized'}, 404
-    cursor.execute("UPDATE journal_entries SET collection_id = NULL WHERE collection_id = %s", (collection_id,))
+    cursor.execute("UPDATE journal_entries SET collection_id = NULL WHERE collection_id = %s AND user_id = %s", (collection_id, user_id))
     cursor.execute("DELETE FROM collections WHERE id = %s", (collection_id,))
     conn.commit()
     conn.close()

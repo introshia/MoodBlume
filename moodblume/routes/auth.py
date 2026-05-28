@@ -40,14 +40,43 @@ def register():
                 (email, email, hashed_password)
             )
             conn.commit()
+            new_user_id = cursor.lastrowid
             cursor.close()
             conn.close()
-            return redirect(url_for('auth.login'))
+            # Auto-login and send to welcome onboarding
+            session['user_id'] = new_user_id
+            session['username'] = email.split('@')[0].capitalize()
+            return redirect(url_for('auth.welcome'))
         except mysql.connector.Error as e:
             cursor.close()
             conn.close()
             return render_template('auth/sign_up.html', error="Email address might already be registered. Try logging in!")
     return render_template('auth/sign_up.html')
+
+
+@auth_bp.route('/welcome', methods=['GET', 'POST'])
+def welcome():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        display_name = request.form.get('display_name', '').strip()
+        user_id = session['user_id']
+        conn    = get_db_connection()
+        cursor  = conn.cursor()
+        if display_name:
+            cursor.execute(
+                "UPDATE users SET username = %s, onboarded = 1 WHERE id = %s",
+                (display_name, user_id)
+            )
+            session['username'] = display_name
+        else:
+            # Skipped — still mark as onboarded so they're not looped back
+            cursor.execute("UPDATE users SET onboarded = 1 WHERE id = %s", (user_id,))
+        conn.commit()
+        conn.close()
+        session['onboarded'] = 1
+        return redirect(url_for('main.sanctuary'))
+    return render_template('auth/welcome.html')
 
 
 @auth_bp.route('/forgot-password', methods=['GET', 'POST'])
@@ -77,9 +106,17 @@ def login():
         cursor.close()
         conn.close()
         if user and check_password_hash(user['password_hash'], password_attempt):
-            session['user_id'] = user['id']
-            # Save the clean local-part of email as username for sidebar/header display
-            session['username'] = user['username'].split('@')[0].capitalize()
+            session['user_id']   = user['id']
+            session['onboarded'] = user.get('onboarded', 0)
+            # Use real stored username; fall back to email local-part if not yet set
+            stored = user.get('username', '') or ''
+            if stored and stored != email:
+                session['username'] = stored
+            else:
+                session['username'] = email.split('@')[0].capitalize()
+            # New user who hasn't completed onboarding yet
+            if not user.get('onboarded'):
+                return redirect(url_for('auth.welcome'))
             return redirect(url_for('main.sanctuary'))
         return render_template('auth/login.html', error="Invalid email or password. Please try again.")
     return render_template('auth/login.html')
