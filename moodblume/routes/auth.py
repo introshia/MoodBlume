@@ -76,7 +76,7 @@ def welcome():
         conn.close()
         session['onboarded'] = 1
         return redirect(url_for('main.sanctuary'))
-    return render_template('auth/welcome.html')
+    return render_template('auth/welcome.html', hide_chrome=True)
 
 
 @auth_bp.route('/forgot-password', methods=['GET', 'POST'])

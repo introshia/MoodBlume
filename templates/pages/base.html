@@ -58,11 +58,10 @@
     <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-theme');</script>
 
     {% block page_topbar %}{% endblock %}
-    {% block hide_chrome %}{% endblock %}
 
     {% if session.get('user_id') %}
     <div class="app-layout">
-        {% if not request.args.get('embedded') == 'true' and not self.hide_chrome() %}
+        {% if not request.args.get('embedded') == 'true' and not hide_chrome %}
             {% include 'components/_sidebar.html' %}
 
             <!-- Profile Avatar -->
