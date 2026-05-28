@@ -121,25 +121,29 @@
     gap: 12px;
   }
 
-  /* The Premium Closed Journal Preview */
+  /* The Premium Journal Container */
   .journal-container {
-    width: 220px;
+    width: 240px;
     height: 300px;
     position: relative;
     border-radius: 0 24px 24px 0;
     box-shadow: 12px 16px 36px rgba(43, 26, 17, 0.16);
-    transition: transform 0.5s ease;
-    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   }
 
-  /* Cover View specific styles */
+  .journal-container.open-view {
+    width: 380px;
+    border-radius: 12px;
+  }
+
+  /* Cover View Panel */
   .journal-cover-view {
     width: 100%;
     height: 100%;
     position: absolute;
     inset: 0;
     transition: opacity 0.3s ease;
-    background: #3D2B1F; /* Default base cover color */
+    background: #C8D898; /* Default base cover color */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -222,33 +226,62 @@
     display: block;
   }
 
-  /* Inside Pages View */
+  /* Inside Open Spread Pages View */
   .journal-pages-view {
     width: 100%;
     height: 100%;
     position: absolute;
     inset: 0;
-    background: #FFFDF8;
-    border-radius: 0 24px 24px 0;
-    box-shadow: inset 16px 0 24px rgba(0,0,0,0.08);
+    background: #C8D898; /* Automatically matches cover color */
+    border-radius: 12px;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
     transition: opacity 0.3s ease;
     opacity: 0;
     pointer-events: none;
-    padding: 24px;
+    padding: 8px;
+    display: flex;
   }
 
-  .journal-pages-spine {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 12px;
-    background: linear-gradient(to right, rgba(0,0,0,0.2), transparent);
+  .journal-pages-left {
+    flex: 1;
+    height: 100%;
+    background: #f4eee0;
+    border-radius: 6px 0 0 6px;
+    box-shadow: inset -6px 0 12px rgba(0,0,0,0.04);
+  }
+
+  .journal-pages-crease {
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.2) 100%);
+    z-index: 10;
+  }
+
+  .journal-pages-right {
+    flex: 1;
+    height: 100%;
+    background: #FFFDF8;
+    border-radius: 0 6px 6px 0;
+    position: relative;
+    box-shadow: inset 6px 0 12px rgba(0,0,0,0.04);
+    padding: 14px 12px;
+  }
+
+  .begin-here-text {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 8px;
+    font-style: italic;
+    color: #c4b5a8;
+    display: block;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 5;
   }
 
   .paper-pattern {
     position: absolute;
-    inset: 20px;
+    inset: 12px;
+    top: 24px;
     pointer-events: none;
     opacity: 0.45;
   }
@@ -456,7 +489,7 @@
         <button class="view-toggle-btn" id="btnShowInside" type="button">Inside Page</button>
       </div>
       
-      <!-- The Closed Journal structure matching journal page -->
+      <!-- The Closed/Open Journal preview container -->
       <div class="journal-container" id="journalPreview">
         <!-- Cover view panel -->
         <div class="journal-cover-view" id="coverView" style="background-color: #C8D898;">
@@ -469,10 +502,14 @@
           </div>
         </div>
         
-        <!-- Inside page view panel -->
-        <div class="journal-pages-view" id="pagesView">
-          <div class="journal-pages-spine"></div>
-          <div class="paper-pattern lined" id="paperPattern"></div>
+        <!-- Inside open spread pages view panel -->
+        <div class="journal-pages-view" id="pagesView" style="background-color: #C8D898;">
+          <div class="journal-pages-left"></div>
+          <div class="journal-pages-crease"></div>
+          <div class="journal-pages-right">
+            <span class="begin-here-text">begin here...</span>
+            <div class="paper-pattern lined" id="paperPattern"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -665,8 +702,10 @@
   document.addEventListener('DOMContentLoaded', () => {
     // 1. Live color updating
     const coverView = document.getElementById('coverView');
+    const pagesView = document.getElementById('pagesView');
     setupSelectionGroup('colorGrid', (colorVal) => {
       coverView.style.backgroundColor = colorVal;
+      pagesView.style.backgroundColor = colorVal;
     });
 
     // 2. Live pattern updating
@@ -710,10 +749,14 @@
     const btnShowInside = document.getElementById('btnShowInside');
     const coverViewEl = document.getElementById('coverView');
     const pagesViewEl = document.getElementById('pagesView');
+    const journalPreview = document.getElementById('journalPreview');
 
     btnShowCover.addEventListener('click', () => {
       btnShowCover.classList.add('active');
       btnShowInside.classList.remove('active');
+      
+      journalPreview.classList.remove('open-view');
+      
       coverViewEl.style.opacity = '1';
       coverViewEl.style.pointerEvents = 'all';
       pagesViewEl.style.opacity = '0';
@@ -723,6 +766,9 @@
     btnShowInside.addEventListener('click', () => {
       btnShowInside.classList.add('active');
       btnShowCover.classList.remove('active');
+      
+      journalPreview.classList.add('open-view');
+      
       pagesViewEl.style.opacity = '1';
       pagesViewEl.style.pointerEvents = 'all';
       coverViewEl.style.opacity = '0';
