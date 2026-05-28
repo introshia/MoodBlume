@@ -68,11 +68,23 @@ def sanctuary():
     cursor.execute("""
         SELECT c.cover_color, c.art_style
         FROM journal_entries e
-        LEFT JOIN collections c ON e.collection_id = c.id
+        JOIN collections c ON e.collection_id = c.id
         WHERE e.user_id = %s AND e.collection_id IS NOT NULL
         ORDER BY e.entry_date DESC LIMIT 1
     """, (user_id,))
     latest_journal = cursor.fetchone()
+
+    # Fall back to the user's most recently created journal — e.g. a brand-new
+    # user who customized a journal but hasn't written any entries yet.
+    if not latest_journal:
+        cursor.execute("""
+            SELECT cover_color, art_style
+            FROM collections
+            WHERE user_id = %s
+            ORDER BY created_at DESC LIMIT 1
+        """, (user_id,))
+        latest_journal = cursor.fetchone()
+
     cursor.close()
     conn.close()
 

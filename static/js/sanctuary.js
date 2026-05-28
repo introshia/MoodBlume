@@ -711,32 +711,6 @@ var lampOn = true, time = 0, hov = null;
         ctx.lineTo(bandX + bandW, y + h);
         ctx.stroke();
 
-        var coverDateStr = "";
-        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        if (typeof journalEntries !== 'undefined' && typeof window.currentSpread !== 'undefined' && journalEntries[window.currentSpread]) {
-            var ent = journalEntries[window.currentSpread];
-            if (ent.formatted_date) {
-                coverDateStr = ent.formatted_date;
-            }
-        }
-        if (!coverDateStr) {
-            var now = new Date();
-            coverDateStr = months[now.getMonth()] + ' ' + now.getDate();
-        }
-
-        var textX = x + (w - px(0.010 * sc)) * 0.44; 
-        var titleSize = Math.max(6, Math.round(h * 0.052));
-        var dateSize = Math.max(7, Math.round(h * 0.075));
-
-        ctx.fillStyle = 'rgba(224, 204, 184, 0.55)';
-        ctx.font = 'italic ' + titleSize + 'px Lora, serif';
-        ctx.textAlign = 'center';
-        ctx.fillText("a memory from", textX, y + h * 0.44);
-
-        ctx.fillStyle = 'rgba(245, 235, 225, 0.9)';
-        ctx.font = 'normal ' + dateSize + 'px Lora, serif';
-        ctx.fillText(coverDateStr, textX, y + h * 0.56);
-
         ctx.restore();
       })();
 
