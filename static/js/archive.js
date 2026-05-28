@@ -216,10 +216,7 @@
             if (score === 1) return 'e-anger';
         }
         
-        // Fallback to Claude's deterministic hash randomizer to populate the preview
-        const h = hash(y, m, d);
-        if (h % 4 === 0) return 'e-none';
-        return EMOTIONS[h % EMOTIONS.length];
+        return 'e-none';
     }
 
     function isFuture(y, m, d) {
