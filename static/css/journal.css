@@ -398,13 +398,10 @@
         align-items: center;
         justify-content: center;
         gap: 16px;
-        background: rgba(255, 255, 255, 0.82);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(75, 46, 31, 0.08);
-        border-radius: 99px;
-        padding: 8px 20px;
-        box-shadow: 0 10px 30px rgba(75, 46, 31, 0.04);
+        background: transparent;
+        border: none;
+        padding: 8px 0;
+        box-shadow: none;
     }
 
     .controls-divider {
@@ -474,29 +471,27 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        height: 36px;
-        background: #ffffff;
+        background: transparent;
         color: var(--text);
-        border: 1px solid rgba(75, 46, 31, 0.09);
-        padding: 0 16px;
-        border-radius: 18px;
+        border: none;
+        padding: 0;
+        text-decoration: underline;
         font-family: 'DM Sans', sans-serif;
-        font-size: 12.5px;
+        font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(75, 46, 31, 0.04);
+        transition: opacity 0.2s ease;
+        box-shadow: none;
     }
 
     .btn-journal-h:hover {
-        transform: translateY(-1px);
-        border-color: rgba(75, 46, 31, 0.16);
-        box-shadow: 0 4px 12px rgba(75, 46, 31, 0.08);
+        opacity: 0.8;
+        transform: none;
+        box-shadow: none;
     }
 
     .btn-journal-h:active {
-        transform: translateY(0);
+        transform: none;
     }
 
     .btn-save-entry-h {
