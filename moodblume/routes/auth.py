@@ -60,19 +60,18 @@ def welcome():
         return redirect(url_for('auth.login'))
     if request.method == 'POST':
         display_name = request.form.get('display_name', '').strip()
+        if not display_name:
+            return render_template('auth/welcome.html', error="Please enter how we should call you to continue.", hide_chrome=True)
         user_id = session['user_id']
         conn    = get_db_connection()
         cursor  = conn.cursor()
-        if display_name:
-            cursor.execute(
-                "UPDATE users SET username = %s, onboarded = 1 WHERE id = %s",
-                (display_name, user_id)
-            )
-            session['username'] = display_name
-        else:
-            # Skipped — still mark as onboarded so they're not looped back
-            cursor.execute("UPDATE users SET onboarded = 1 WHERE id = %s", (user_id,))
+        cursor.execute(
+            "UPDATE users SET username = %s, onboarded = 1 WHERE id = %s",
+            (display_name, user_id)
+        )
+        session['username'] = display_name
         conn.commit()
+        cursor.close()
         conn.close()
         session['onboarded'] = 1
         return redirect(url_for('main.sanctuary'))

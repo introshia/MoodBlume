@@ -160,23 +160,27 @@
     transform: translateX(3px);
   }
 
-  /* Skip */
-  .welcome-skip {
-    margin-top: 20px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    color: #b8a898;
-    cursor: pointer;
-    background: none;
-    border: none;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+  /* Notice text */
+  .welcome-notice {
+    margin-top: 24px;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 12px;
+    font-style: italic;
+    color: #9c8676;
+    text-align: center;
     opacity: 0;
     animation: fadeUp 0.65s ease forwards 0.8s;
   }
 
-  .welcome-skip:hover {
-    color: #9c8676;
+  .welcome-error {
+    color: #B23C30;
+    font-size: 12.5px;
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    margin-bottom: 20px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.3s ease forwards;
   }
 
   @keyframes fadeUp {
@@ -189,6 +193,10 @@
 
   <h1 class="welcome-heading">Welcome to your digital sanctuary.</h1>
   <p class="welcome-sub">What should we call you?</p>
+
+  {% if error %}
+    <p class="welcome-error">{{ error }}</p>
+  {% endif %}
 
   <form method="POST" action="{{ url_for('auth.welcome') }}" id="welcomeForm" style="display:flex;flex-direction:column;align-items:center;">
     <label class="welcome-label" for="display_name">Your name</label>
@@ -210,7 +218,7 @@
       <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
 
-    <button type="button" class="welcome-skip" id="skipBtn" onclick="document.getElementById('display_name').value=''; document.getElementById('welcomeForm').submit();">skip for now</button>
+    <p class="welcome-notice">You can change this name anytime in your settings.</p>
   </form>
 </div>
 
