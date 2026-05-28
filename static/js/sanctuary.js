@@ -578,6 +578,7 @@
       }
 
       (function () {
+        if (!window.hasJournals) return;
         // Centered (fx: 0.50) and positioned for a focal point look (fy: 0.45)
         var pos = deskPos(0.50, 0.45); var sc = pos.scale;
         var jW = 0.10 * sc, jD = 0.20 * sc; // Balanced portrait size
@@ -1017,7 +1018,7 @@
       { x: WX, y: WY, w: WW * 0.5, h: WH, title: 'Left Window', sub: leftOpen ? 'click to close' : 'click to open', winLeft: true },
       { x: WX + WW * 0.5, y: WY, w: WW * 0.5, h: WH, title: 'Right Window', sub: rightOpen ? 'click to close' : 'click to open', winRight: true },
       // Desk items (mapped to the 3D surface)
-      { x: 0.40, y: DESK_TOP_Y + 0.01, w: 0.20, h: 0.14, title: 'Writing Desk', sub: 'start a new entry', key: 'write' },
+      { x: 0.40, y: DESK_TOP_Y + 0.01, w: 0.20, h: 0.14, title: 'Writing Desk', sub: window.hasJournals ? 'start a new entry' : 'create your first journal', key: 'write' },
       { x: 0.64, y: DESK_TOP_Y + 0.01, w: 0.08, h: 0.08, title: 'Firefly Jar', sub: 'glowing thoughts', key: 'jar' },
       { x: 0.75, y: DESK_TOP_Y + 0.03, w: 0.08, h: 0.09, title: 'Morning Mug', sub: 'still warm', key: 'home' },
       // Lamp (moved to left and scaled up)
@@ -1074,7 +1075,14 @@
           if (z.winLeft) { toggleLeftWindow(); return; }
           if (z.winRight) { toggleRightWindow(); return; }
           if (z.lamp) { toggleLamp(); return; }
-          if (z.key === 'write') { startOpenJournal(); return; }
+          if (z.key === 'write') {
+            if (!window.hasJournals) {
+              location.href = '/new-journal';
+            } else {
+              startOpenJournal();
+            }
+            return;
+          }
           if (z.key === 'archive') { location.href = '/archive'; return; }
           if (z.key) { openM(z.key); return; }
         }

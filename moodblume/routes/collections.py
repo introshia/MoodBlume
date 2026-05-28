@@ -25,25 +25,63 @@ def create_collection():
     if 'user_id' not in session:
         return {'success': False, 'message': 'Unauthorized'}, 401
     try:
-        data       = request.get_json()
-        name       = data.get('name', '').strip()
+        data        = request.get_json()
+        name        = data.get('name', '').strip()
         cover_color = data.get('cover_color', '#C8D898')
-        art_style  = data.get('art_style', 'linen')
+        art_style   = data.get('art_style', 'linen')
+        paper_type  = data.get('paper_type', 'lined')
+        page_type   = data.get('page_type', 'endless')
         if not name:
             return {'success': False, 'message': 'A collection needs a name.'}, 400
         user_id = session['user_id']
         conn    = get_db_connection()
         cursor  = conn.cursor()
         cursor.execute(
-            "INSERT INTO collections (user_id, name, cover_color, art_style) VALUES (%s, %s, %s, %s)",
-            (user_id, name, cover_color, art_style)
+            "INSERT INTO collections (user_id, name, cover_color, art_style, paper_type, page_type) VALUES (%s, %s, %s, %s, %s, %s)",
+            (user_id, name, cover_color, art_style, paper_type, page_type)
         )
         new_id = cursor.lastrowid
         conn.commit()
         conn.close()
-        return {'success': True, 'id': new_id, 'name': name, 'cover_color': cover_color, 'art_style': art_style}, 201
+        return {'success': True, 'id': new_id, 'name': name, 'cover_color': cover_color, 'art_style': art_style, 'paper_type': paper_type, 'page_type': page_type}, 201
     except Exception as e:
         return {'success': False, 'message': str(e)}, 500
+
+
+@collections_bp.route('/new-journal', methods=['GET', 'POST'])
+def new_journal():
+    from flask import render_template, redirect, url_for, flash
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    if request.method == 'POST':
+        name        = request.form.get('name', '').strip()
+        cover_color = request.form.get('cover_color', '#C8D898')
+        art_style   = request.form.get('art_style', 'linen')
+        paper_type  = request.form.get('paper_type', 'lined')
+        page_type   = request.form.get('page_type', 'endless')
+        
+        if not name:
+            return render_template('auth/new_journal.html', error="Please enter a name for your journal.", hide_chrome=True)
+            
+        user_id = session['user_id']
+        conn    = get_db_connection()
+        cursor  = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO collections (user_id, name, cover_color, art_style, paper_type, page_type) VALUES (%s, %s, %s, %s, %s, %s)",
+                (user_id, name, cover_color, art_style, paper_type, page_type)
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return redirect(url_for('main.sanctuary'))
+        except Exception as e:
+            cursor.close()
+            conn.close()
+            return render_template('auth/new_journal.html', error=f"Error creating journal: {str(e)}", hide_chrome=True)
+            
+    return render_template('auth/new_journal.html', hide_chrome=True)
 
 
 @collections_bp.route('/collections/<int:collection_id>', methods=['DELETE'])

@@ -48,10 +48,18 @@ def sanctuary():
         return redirect(url_for('auth.login'))
     import json as _json
     user_id = session['user_id']
-    streak  = calculate_streak(user_id)
-
+    
     conn   = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT COUNT(*) as count FROM collections WHERE user_id = %s", (user_id,))
+    has_journals = cursor.fetchone()['count'] > 0
+    
+    if not has_journals:
+        cursor.close()
+        conn.close()
+        return redirect(url_for('collections.new_journal'))
+
+    streak  = calculate_streak(user_id)
     cursor.execute(
         "SELECT id, content, entry_date FROM journal_entries WHERE user_id = %s ORDER BY entry_date DESC LIMIT 30",
         (user_id,)
@@ -65,6 +73,7 @@ def sanctuary():
         ORDER BY e.entry_date DESC LIMIT 1
     """, (user_id,))
     latest_journal = cursor.fetchone()
+    cursor.close()
     conn.close()
 
     active_bg  = latest_journal['cover_color'] or "#C8D898" if latest_journal else "#C8D898"
@@ -122,7 +131,7 @@ def sanctuary():
         active_bg=active_bg, active_art=active_art,
         open_journal=open_journal, target_entry_id=target_entry_id,
         greeting=greeting, companion=calculate_energy_data(latest_text),
-        streak_stage=streak_stage)
+        streak_stage=streak_stage, has_journals=True)
 
 
 @main_bp.route('/archive')

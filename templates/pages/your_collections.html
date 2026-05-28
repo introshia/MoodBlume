@@ -182,6 +182,11 @@
         height: 2px !important;
         margin-top: 1px !important;
     }
+    
+    .yc-new-btn:hover {
+        background: #85acc9;
+        color: #FFFDF8 !important;
+    }
 </style>
 {% endblock %}
 
@@ -226,13 +231,18 @@
                 {{ stats_msg }}
             </p>
         </div>
-        <div class="yc-view-toggle" style="margin-top: 4px;">
-            <button class="yc-view-btn active" id="yc-grid-btn" title="Grid view" type="button">
-                <i class="ti ti-layout-grid"></i>
-            </button>
-            <button class="yc-view-btn" id="yc-list-btn" title="List view" type="button">
-                <i class="ti ti-layout-list"></i>
-            </button>
+        <div style="display: flex; gap: 12px; align-items: center; margin-top: 4px;">
+            <a href="/new-journal" class="yc-new-btn" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1.5px solid #85acc9; color: #85acc9; text-decoration: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s;">
+                <i class="fa-solid fa-plus"></i> New Journal
+            </a>
+            <div class="yc-view-toggle">
+                <button class="yc-view-btn active" id="yc-grid-btn" title="Grid view" type="button">
+                    <i class="ti ti-layout-grid"></i>
+                </button>
+                <button class="yc-view-btn" id="yc-list-btn" title="List view" type="button">
+                    <i class="ti ti-layout-list"></i>
+                </button>
+            </div>
         </div>
     </div>
 

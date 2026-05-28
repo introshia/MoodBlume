@@ -127,6 +127,9 @@
   <script id="recent-entries-data" type="application/json">
     {{ recent_entries | default([]) | tojson }}
   </script>
+  <script>
+    window.hasJournals = {{ has_journals | default(false) | tojson }};
+  </script>
   <script src="/static/js/sanctuary.js"></script>
 
   {% include 'components/journal_overlay.html' %}
