@@ -23,8 +23,8 @@
         <nav class="paper-main-nav">
             <ul>
                 <li>
-                    <a href="{{ url_for('main.home') }}" class="paper-link {% if request.endpoint == 'main.home' %}active{% endif %}">
-                        <span class="paper-arrow">{% if request.endpoint == 'main.home' %}→{% else %}&thinsp;{% endif %}</span>Home
+                    <a href="{{ url_for('main.sanctuary') }}" class="paper-link {% if request.endpoint == 'main.sanctuary' %}active{% endif %}">
+                        <span class="paper-arrow">{% if request.endpoint == 'main.sanctuary' %}→{% else %}&thinsp;{% endif %}</span>Sanctuary
                     </a>
                 </li>
                 <li>
@@ -36,12 +36,6 @@
                     <a href="{{ url_for('main.archive') }}" class="paper-link {% if request.endpoint == 'main.archive' %}active{% endif %}">
                         <span class="paper-arrow">{% if request.endpoint == 'main.archive' %}→{% else %}&thinsp;{% endif %}</span>Archive
                     </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('main.sanctuary') }}" class="paper-link {% if request.endpoint == 'main.sanctuary' %}active{% endif %}">
-                        <span class="paper-arrow">{% if request.endpoint == 'main.sanctuary' %}→{% else %}&thinsp;{% endif %}</span>Sanctuary
-                    </a>
-                </li>
             </ul>
         </nav>
 
@@ -93,12 +87,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function collapseSidebar() {
         sidebar.classList.add('collapsed');
+        document.body.classList.add('sidebar-collapsed');
         if (openBtn) openBtn.style.display = 'flex';
         localStorage.setItem('sidebarCollapsed', '1');
     }
 
     function expandSidebar() {
         sidebar.classList.remove('collapsed');
+        document.body.classList.remove('sidebar-collapsed');
         if (openBtn) openBtn.style.display = 'none';
         localStorage.setItem('sidebarCollapsed', '0');
     }

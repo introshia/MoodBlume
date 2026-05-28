@@ -3,8 +3,8 @@
     #desk-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(234, 232, 225, 0.96); /* Light aesthetic */
-      z-index: 1000;
+      background: rgba(234, 232, 225, 0.96); /* Light cozy overlay */
+      z-index: 10000; /* Set z-index above bottom-dock (9999) to prevent overlay overlaps */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -12,6 +12,7 @@
       pointer-events: none;
       transition: opacity 0.6s ease;
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
     #desk-overlay.show {
@@ -20,6 +21,7 @@
     }
 
     .btn-back-room {
+      display: none !important; /* Hide duplicate overlay exit button to prevent overlapping with topbar */
       position: absolute;
       top: 30px;
       left: 30px;
@@ -33,7 +35,7 @@
       font-size: 12px;
       letter-spacing: 0.05em;
       transition: all 0.3s ease;
-      z-index: 10;
+      z-index: 10010; /* Ensure button stays above the iframe */
     }
 
     .btn-back-room:hover {
@@ -41,695 +43,71 @@
       color: #2C2820;
     }
 
-    /* Journal Animation States */
-    #j-open {
-        opacity: 0;
-        transform: translateY(22px) scale(0.86);
-        transition: all 0.6s cubic-bezier(0.34, 1.08, 0.64, 1);
-        pointer-events: none;
-        display: flex; /* For fanned pages */
-        align-items: stretch;
-        position: relative;
-    }
-    #j-open.visible {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        pointer-events: all;
-    }
-
-    /* Outer journal container (obo-book-body style) */
-    .journal-outer {
-      display: flex;
-      width: min(92vw, 900px); /* Slightly narrower for elegance */
-      height: min(85vh, 600px); /* Fixed ratio */
-      border-radius: 3px;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.16), 0 4px 12px rgba(0,0,0,0.07);
-      overflow: hidden;
-      transform: perspective(900px) rotateX(2deg);
-      background: #F8F4EE; /* Base right page color */
-    }
-
-    .journal-outer.flip-fwd { animation: jflip-fwd .55s cubic-bezier(.4, 0, .2, 1) both }
-    .journal-outer.flip-bwd { animation: jflip-bwd .55s cubic-bezier(.4, 0, .2, 1) both }
-
-    @keyframes jflip-fwd {
-      0% { transform: perspective(900px) rotateX(2deg) rotateY(0) scale(1); opacity: 1 }
-      45% { transform: perspective(900px) rotateX(2deg) rotateY(-8deg) scale(.98); opacity: .8; filter: brightness(.9) }
-      100% { transform: perspective(900px) rotateX(2deg) rotateY(0) scale(1); opacity: 1; filter: brightness(1) }
-    }
-
-    @keyframes jflip-bwd {
-      0% { transform: perspective(900px) rotateX(2deg) rotateY(0) scale(1); opacity: 1 }
-      45% { transform: perspective(900px) rotateX(2deg) rotateY(8deg) scale(.98); opacity: .8; filter: brightness(.9) }
-      100% { transform: perspective(900px) rotateX(2deg) rotateY(0) scale(1); opacity: 1; filter: brightness(1) }
-    }
-
-    /* ─── LEFT PAGE (obo-left style) ─── */
-    .jl-page {
-      flex: 1; flex-basis: 0; background: #EDE4D2;
-      padding: clamp(16px, 2.5vw, 28px);
-      display: flex; flex-direction: column; gap: 12px;
-      overflow: hidden; position: relative;
-      box-shadow: inset -10px 0 24px rgba(0,0,0,0.06);
-    }
-
-    .jl-date-row { display: flex; align-items: flex-start; gap: 10px; position: relative; z-index: 1 }
-    .jl-sun { font-size: clamp(20px, 2.8vw, 34px); line-height: 1; flex-shrink: 0; color: #8A8070; filter: none; }
-    .jl-date-text { flex: 1 }
-    .jl-weekday { font-family: 'Lora', serif; font-weight: 400; font-size: clamp(13px, 1.5vw, 18px); color: #2C2820; line-height: 1.2 }
-    .jl-datestr { font-family: 'DM Sans', sans-serif; font-size: clamp(9px, .95vw, 12px); color: #9A9288; letter-spacing: .18em; text-transform: uppercase; margin-top: 4px }
-    .jl-entry-num { font-family: 'Lora', serif; font-size: clamp(16px, 2vw, 24px); font-weight: 400; color: rgba(44, 40, 32, .3); line-height: 1; letter-spacing: 0.05em; align-self: flex-start }
-
-    .jl-image-frame { flex: 1; display: flex; flex-direction: column; gap: 8px; min-height: 0; position: relative; z-index: 1 }
-    .jl-image-inner { flex: 1; min-height: 0; border-radius: 4px; overflow: hidden; background: #F8F4EE; border: 1px solid rgba(0,0,0,0.05); }
-    .jl-image-inner svg { width: 100%; height: 100%; display: block }
-    .jl-caption { font-family: 'Lora', serif; font-style: italic; font-size: clamp(9px, .95vw, 12px); color: #A09080; text-align: center; line-height: 1.5; }
-
-    .jl-categories { display: flex; justify-content: space-around; padding: 12px 0 2px; border-top: 1px solid #C8BEAE; position: relative; z-index: 1; flex-shrink: 0; }
-    .jl-cat { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; opacity: .4; transition: all .4s cubic-bezier(.4, 0, .2, 1); position: relative; }
-    .jl-cat:hover { opacity: .85; transform: translateY(-2px); }
-    .jl-cat.active { opacity: 1; transform: scale(1.05); }
-    .jl-cat.active svg { stroke: #2C2820; filter: none; }
-    .jl-cat.active .jl-cat-label { color: #2C2820; font-weight: 500; }
-    .jl-cat svg { width: clamp(16px, 2vw, 20px); height: clamp(16px, 2vw, 20px); stroke: #8A8070; fill: none; stroke-width: 1.2; transition: all .4s; }
-    .jl-cat-label { font-family: 'DM Sans', sans-serif; font-size: clamp(7px, .7vw, 9px); letter-spacing: .18em; text-transform: uppercase; color: #9A9288; transition: color .4s; }
-
-    .jl-image-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: filter 1.2s ease, opacity 0.8s ease; }
-    .mood-vibrant { filter: saturate(1.2) contrast(1.05) }
-    .mood-serene { filter: hue-rotate(5deg) saturate(0.9); }
-    .mood-pensive { filter: grayscale(0.1) sepia(0.05); }
-    .mood-heavy { filter: grayscale(0.4) brightness(0.9); }
-
-    /* ─── RIGHT PAGE (obo-right style) ─── */
-    .jr-page { flex: 1; flex-basis: 0; background: #F8F4EE; padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; gap: 16px; position: relative; border-left: 1px solid rgba(0,0,0,0.05); }
-    
-    .obo-crease { position: absolute; top:0; left: 0px; bottom: 0; width: 1px; background: rgba(200, 155, 135, 0.22); }
-    .obo-shadow { position: absolute; top:0; left: 0; width: 20px; height: 100%; background: linear-gradient(to right, rgba(0,0,0,0.07), transparent); pointer-events: none; z-index: 10;}
-    
-    .jr-card-wrap { position: relative; flex-shrink: 0; z-index: 2; margin-bottom: 8px;}
-    .jr-card { background: #FFFDF7; border-radius: 8px; padding: clamp(16px, 2vw, 24px); position: relative; box-shadow: 0 4px 12px rgba(0, 0, 0, .04); border: 1px solid rgba(0, 0, 0, .03); }
-    .jr-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
-    .jr-card-icon { font-size: 11px; color: #9A9080 }
-    .jr-card-title { font-family: 'DM Sans', sans-serif; font-size: clamp(9px, 1vw, 11px); font-weight: 500; color: #8A8070; letter-spacing: .1em; text-transform: uppercase; flex: 1; }
-    .jr-card-time { font-family: 'DM Sans', sans-serif; font-size: 9px; color: #B0A090; letter-spacing: .08em; text-transform: uppercase; }
-    .jr-card-quote { font-family: 'Lora', serif; font-size: clamp(14px, 1.6vw, 18px); font-weight: 400; color: #2C2820; line-height: 1.6; margin-bottom: 12px; }
-    .jr-card-actions { display: flex; gap: 18px; align-items: center }
-    .jr-action-btn { background: none; border: none; color: #A09080; cursor: pointer; font-size: 14px; padding: 0; transition: color .2s, transform .15s; line-height: 1; }
-    .jr-action-btn:hover { color: #2C2820; transform: scale(1.1) }
-
-    .jr-journal-area { flex: 1; display: flex; flex-direction: column; gap: 7px; min-height: 0; position: relative; z-index: 2; }
-    .jr-instruction { font-family: 'Lora', serif; font-style: italic; font-size: clamp(10px, 1vw, 13px); color: #9A9080; line-height: 1.6; flex-shrink: 0; }
-    .jr-textarea { flex: 1; background: transparent; border: none; outline: none; resize: none; font-family: 'Lora', serif; font-size: clamp(12px, 1.25vw, 16px); line-height: 25px; color: #2C2820; padding: 0; background-image: repeating-linear-gradient(transparent, transparent 24px, #E4DDD4 24px, #E4DDD4 25px); background-size: 100% 25px; background-position: 0 10px; caret-color: #A09080; }
-    .jr-textarea::placeholder { color: #C0B0A0; font-style: italic }
-
-    .jr-bottom { display: flex; align-items: center; gap: 8px; padding-top: 12px; flex-shrink: 0; position: relative; z-index: 2; }
-    .jr-loc-icon { color: #A09080; font-size: 10px; flex-shrink: 0 }
-    .jr-location-input { flex: 1; background: transparent; border: none; outline: none; font-family: 'Lora', serif; font-style: italic; font-size: clamp(11px, 1.1vw, 14px); color: #8A8070; }
-    .jr-location-input::placeholder { color: #C0B0A0 }
-    .jr-save-btn { padding: 6px 20px; border-radius: 20px; flex-shrink: 0; background: transparent; border: 1px solid #C8BEAE; color: #8A8070; font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
-    .jr-save-btn:hover { background: #E4DDD4; color: #2C2820; border-color: #A09080; }
-
-    /* Fanned pages */
-    .obo-fanned { position: relative; flex-shrink: 0; width: 42px; height: 100%; align-self: stretch; z-index: -1; }
-    .fpage { position: absolute; top: 2px; bottom: 2px; border-radius: 0 3px 3px 0; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
-
-    .journal-controls { display: flex; align-items: center; gap: 14px; position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%); z-index: 20; }
-    .j-nav-btn { width: 36px; height: 36px; border-radius: 50%; background: #FAF3E0; border: 1px solid #C8BEAE; color: #8A8070; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; font-family: inherit; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .j-nav-btn:hover:not(:disabled) { background: #FFFDF7; color: #2C2820; border-color: #A09080; }
-    .j-nav-btn:disabled { opacity: .3; cursor: default }
-    .spread-indicator { font-family: 'DM Sans', sans-serif; font-size: 10px; color: #8A8070; min-width: 52px; text-align: center; letter-spacing: .15em; text-transform: uppercase;}
-    .j-close-btn { margin-left: 16px; padding: 8px 20px; border-radius: 20px; background: rgba(196, 192, 184, 0.4); border: 1px solid rgba(196, 192, 184, 0.6); color: #5A544A; font-size: 10px; cursor: pointer; font-family: 'DM Sans', sans-serif; letter-spacing: .12em; text-transform: uppercase; transition: all .2s; }
-    .j-close-btn:hover { background: rgba(176, 172, 164, 0.8); color: #2C2820; }
-    .save-status { font-family: 'Lora', serif; font-style: italic; font-size: 12px; color: #8A9A70; letter-spacing: .04em; opacity: 0; transition: opacity .4s; position: absolute; right: -80px;}
-    .save-status.show { opacity: 1 }
-
-    /* CLOSED JOURNAL — premium brown leather look */
-    #j-closed-wrapper {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 100;
-      transition: opacity 0.45s ease;
-    }
-    #j-closed-wrapper.hide {
-      opacity: 0;
-      pointer-events: none;
-    }
-    #j-closed {
-      width: clamp(120px, 14vw, 180px);
-      aspect-ratio: 0.72 / 1;
-      position: absolute;
-      left: 50%; top: 52%;
-      transform: translate(-50%, -52%) perspective(1000px) rotateX(12deg) rotateZ(-2deg);
-      cursor: pointer;
-      pointer-events: auto;
-      transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-      border-radius: 4px 12px 12px 4px;
-      box-shadow: 5px 12px 30px rgba(0, 0, 0, 0.35);
-      background: #3D2B1F;
-    }
-    #j-closed:hover {
-      transform: translate(-50%, -55%) perspective(1000px) rotateX(10deg) rotateZ(-2deg) scale(1.02);
-      filter: brightness(1.08);
-      box-shadow: 7px 18px 36px rgba(0, 0, 0, 0.45);
-    }
-    .j-cover-body {
-      width: 100%; height: 100%;
-      border-radius: 4px 12px 12px 4px;
-      position: relative; overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
-      box-sizing: border-box;
-    }
-    .j-spine-shadow {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 12px;
-      background: linear-gradient(to right, rgba(0,0,0,0.35), rgba(0,0,0,0.08) 80%, transparent);
-      z-index: 2;
-    }
-    .j-spine-crease {
-      position: absolute;
-      left: 12px; top: 0; bottom: 0;
-      width: 1px;
-      background: rgba(255,255,255,0.06);
-      box-shadow: -1px 0 2px rgba(0,0,0,0.4);
-      z-index: 2;
-    }
-    .j-elastic-band {
-      position: absolute;
-      right: 22px; top: 0; bottom: 0;
-      width: 7px;
-      background: #151515;
-      box-shadow: -1px 0 4px rgba(0,0,0,0.5), 1px 0 4px rgba(0,0,0,0.5);
-      z-index: 3;
-    }
-    .j-cover-content {
-      text-align: center;
-      z-index: 4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    .embedded-journal-iframe {
       width: 100%;
-      padding-right: 15px; /* offset for elastic band / spine */
-      padding-left: 10px;
-      box-sizing: border-box;
-    }
-    .j-cover-sub {
-      font-family: 'Lora', serif;
-      font-style: italic;
-      font-size: clamp(8px, 0.9vw, 10px);
-      color: rgba(220, 200, 180, 0.55);
-      margin-bottom: 5px;
-      letter-spacing: 0.02em;
-    }
-    .j-cover-date {
-      font-family: 'Lora', serif;
-      font-weight: 400;
-      font-size: clamp(10px, 1.2vw, 13px);
-      color: rgba(245, 235, 225, 0.9);
-      letter-spacing: 0.02em;
-      line-height: 1.3;
+      height: 100%;
+      border: none;
+      background: transparent;
     }
 
-    .btn-journal-open {
-      position: absolute;
-      left: 50%;
-      top: calc(52% + clamp(110px, 13vh, 160px));
-      transform: translateX(-50%);
-      background: #3D2B1F;
-      border: 1px solid rgba(255,255,255,0.12);
-      color: #F5EBE1;
-      padding: 8px 24px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      pointer-events: auto;
-      z-index: 100;
+    /* Dark Mode Support for Overlay Background */
+    body.dark-theme #desk-overlay {
+      background: rgba(28, 16, 8, 0.96); /* Dark espresso tint */
     }
-    .btn-journal-open:hover {
-      background: #503A2A;
+    body.dark-theme .btn-back-room {
+      background: rgba(42, 26, 14, 0.6);
+      border-color: rgba(246, 243, 238, 0.12);
+      color: #d4c9b0;
+    }
+    body.dark-theme .btn-back-room:hover {
+      background: rgba(42, 26, 14, 0.9);
       color: #FFFFFF;
-      transform: translateX(-50%) translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-    }
-    .btn-journal-open:active {
-      transform: translateX(-50%) translateY(0);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-    }
-
-    /* COVER FLIP ANIMATION */
-    #j-cover-flap {
-      width: clamp(120px, 14vw, 180px);
-      aspect-ratio: 0.72 / 1;
-      position: absolute;
-      left: 50%; top: 52%;
-      transform: translate(-50%, -52%) perspective(1000px);
-      background: #3D2B1F;
-      border-radius: 4px 12px 12px 4px;
-      display: none; z-index: 110; transform-origin: left center;
-      box-shadow: 5px 12px 30px rgba(0, 0, 0, 0.35);
-    }
-    #j-cover-flap.flipping { animation: j-flip-open 0.85s cubic-bezier(0.4, 0, 0.2, 1) forwards; display: block; }
-    @keyframes j-flip-open {
-      0% { transform: translate(-50%, -52%) perspective(1200px) rotateY(0deg); opacity: 1; }
-      100% { transform: translate(-140%, -52%) perspective(1200px) rotateY(-160deg); opacity: 0.8; }
     }
 </style>
 
 <div id="desk-overlay">
-    <div class="desk-surface"></div>
     <button class="btn-back-room" onclick="backToRoom()">&#8592; return to room</button>
-
-    <!-- CLOSED JOURNAL WRAPPER -->
-    <div id="j-closed-wrapper">
-      <div id="j-closed" onclick="startOpenJournal()">
-        <div class="j-cover-body">
-          <div class="j-spine-shadow"></div>
-          <div class="j-spine-crease"></div>
-          <div class="j-elastic-band"></div>
-          <div class="j-cover-content">
-            <div class="j-cover-sub">a memory from</div>
-            <div class="j-cover-date" id="j-closed-date">...</div>
-          </div>
-        </div>
-      </div>
-      <button class="btn-journal-open" onclick="startOpenJournal()">Open Journal</button>
-    </div>
-
-    <!-- COVER FLIP ANIMATION -->
-    <div id="j-cover-flap"></div>
-
-    <!-- OPEN JOURNAL -->
-    <div id="j-open">
-      <div class="journal-outer" id="journal-outer">
-        <div class="jl-page">
-          <div class="jl-date-row">
-            <span class="jl-sun" id="jl-tod-icon">&#9728;</span>
-            <div class="jl-date-text">
-              <div class="jl-weekday" id="jl-weekday">Wednesday</div>
-              <div class="jl-datestr" id="jl-datestr">Apr 15, 2026</div>
-            </div>
-            <div class="jl-entry-num" id="jl-entry-num">001</div>
-          </div>
-          <div class="jl-image-frame">
-            <div class="jl-image-inner" id="jl-image"></div>
-            <div class="jl-caption" id="jl-caption">A silence that held all the answers.</div>
-          </div>
-          <div class="jl-categories" id="jl-categories">
-            <div class="jl-cat" data-cat="balance" onclick="toggleCat(this)">
-              <svg viewBox="0 0 24 24"><path d="M12 3v18M4 8l8-5 8 5M4 16l8 5 8-5" /></svg>
-              <span class="jl-cat-label">Balance</span>
-            </div>
-            <div class="jl-cat" data-cat="peace" onclick="toggleCat(this)">
-              <svg viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zM12 2v20M2 12h20M5 5l14 14M19 5L5 19" stroke-linecap="round" /></svg>
-              <span class="jl-cat-label">Peace</span>
-            </div>
-            <div class="jl-cat" data-cat="growth" onclick="toggleCat(this)">
-              <svg viewBox="0 0 24 24"><path d="M12 22V8M5 14c2-4 5-6 7-6s5 2 7 6M8 8c1-3 2-5 4-5s3 2 4 5" stroke-linecap="round" /></svg>
-              <span class="jl-cat-label">Growth</span>
-            </div>
-            <div class="jl-cat" data-cat="wellness" onclick="toggleCat(this)">
-              <svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a8 8 0 0116 0c0 5.5-8 11-8 11z" stroke-linecap="round" stroke-linejoin="round" /><path d="M12 10a2 2 0 100 4 2 2 0 000-4z" /></svg>
-              <span class="jl-cat-label">Wellness</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="jr-page">
-          <div class="obo-crease"></div>
-          <div class="obo-shadow"></div>
-          
-          <div class="jr-card-wrap">
-            <div class="jr-card">
-              <div class="jr-card-header">
-                <span class="jr-card-icon" id="jr-card-icon">&#9675;</span>
-                <span class="jr-card-title" id="jr-card-title">Prompt</span>
-                <span class="jr-card-time" id="jr-card-time">8:00 PM</span>
-              </div>
-              <div class="jr-card-quote" id="jr-card-quote">...</div>
-              <div class="jr-card-actions">
-                <button class="jr-action-btn" title="Copy" onclick="copyQuote()">&#10697;</button>
-                <button class="jr-action-btn" title="Favourite" id="btn-fav" onclick="toggleFav(this)">&#9825;</button>
-                <button class="jr-action-btn" title="Share">&#8599;</button>
-              </div>
-            </div>
-          </div>
-          <div class="jr-journal-area">
-            <div class="jr-instruction">&#128221; Write your reflections below</div>
-            <textarea class="jr-textarea" id="txt-main" placeholder="Feel free to journal..."></textarea>
-          </div>
-          <div class="jr-bottom">
-            <span class="jr-loc-icon">&#9673;</span>
-            <input type="text" class="jr-location-input" id="jr-location" placeholder="Where are you..." />
-            <button class="jr-save-btn" onclick="saveContent()">Save</button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Fanned Pages for Ex Libris Aesthetic -->
-      <div class="obo-fanned">
-          <div class="fpage" style="left:0px; width:6px; background:#F2EDE5; opacity:0.45;"></div>
-          <div class="fpage" style="left:5px; width:7px; background:#EDE8DF; opacity:0.515;"></div>
-          <div class="fpage" style="left:10px; width:8px; background:#F2EDE5; opacity:0.58;"></div>
-          <div class="fpage" style="left:15px; width:9px; background:#EDE8DF; opacity:0.645;"></div>
-          <div class="fpage" style="left:20px; width:10px; background:#F2EDE5; opacity:0.71;"></div>
-          <div class="fpage" style="left:25px; width:11px; background:#EDE8DF; opacity:0.775;"></div>
-          <div class="fpage" style="left:30px; width:12px; background:#F2EDE5; opacity:0.84;"></div>
-      </div>
-
-      <div class="journal-controls">
-        <button class="j-nav-btn" id="btn-prev" onclick="prevSpread()" title="Previous">&#8249;</button>
-        <span class="spread-indicator" id="spread-ind">1 / 30</span>
-        <button class="j-nav-btn" id="btn-next" onclick="nextSpread()" title="Next">&#8250;</button>
-        <button class="j-close-btn" onclick="closeJournal()">&#x2715; close</button>
-        <span class="save-status" id="save-status">saved &#10022;</span>
-      </div>
-    </div>
+    <iframe class="embedded-journal-iframe" id="embeddedJournalIframe" src="about:blank"></iframe>
 </div>
 
 <script>
-    // ═══════════════════════════════════════════════════════════
-    // JOURNAL COMPONENT LOGIC
-    // ═══════════════════════════════════════════════════════════
-    var ACTIVE_BG = "{{ active_bg|default('#C8D898') }}";
-    var ACTIVE_ART = "{{ active_art|default('botanical') }}";
+    // Flag to check if the user did any writing/saves to trigger a reload when closing
+    var journalDirty = false;
 
-    function generateDynamicCover(art, bg) {
-        function darken(color, percent) {
-            var num = parseInt(color.replace("#", ""), 16),
-                amt = Math.round(2.55 * percent),
-                R = (num >> 16) - amt,
-                G = (num >> 8 & 0x00FF) - amt,
-                B = (num & 0x0000FF) - amt;
-            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    // Listen to messages from the iframe to check if entries were saved or if the overlay should close
+    window.addEventListener('message', function(event) {
+        if (event.data === 'journal_saved') {
+            journalDirty = true;
+        } else if (event.data === 'close_journal_overlay') {
+            backToRoom();
         }
-        var darkBg = darken(bg, 20);
-        var BW = 170, BH = 240;
-
-        var linenLines = '';
-        for (var i = 0; i < BW; i += 6) { linenLines += `<line x1="${i}" y1="0" x2="${i}" y2="${BH}" stroke="rgba(0,0,0,0.03)" stroke-width="1.5" />`; }
-        for (var i = 0; i < BH; i += 6) { linenLines += `<line x1="0" y1="${i}" x2="${BW}" y2="${i}" stroke="rgba(0,0,0,0.03)" stroke-width="1.5" />`; }
-
-        var woodPaths = '';
-        var y = 0;
-        while (y < BH) {
-            y += 15 + Math.random() * 20;
-            var w = Math.random() * 8;
-            woodPaths += `<path d="M0,${y} C52,${y + w} 102,${y - w} ${BW},${y + w / 2}" stroke="#2C1C0A" stroke-width="2.5" fill="none" opacity="0.75" />`;
-        }
-
-        const svgs = {
-            'botanical': `
-                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="44" cy="107" rx="26" ry="46" fill="#6A9040" transform="rotate(-18 44 107)" />
-                    <ellipse cx="77" cy="82" rx="20" ry="38" fill="#8AAA58" transform="rotate(12 77 82)" />
-                    <ellipse cx="112" cy="118" rx="23" ry="42" fill="#6A9040" transform="rotate(-8 112 118)" />
-                    <line x1="44" y1="140" x2="44" y2="190" stroke="#4A7028" stroke-width="1.8" />
-                    <line x1="77" y1="115" x2="77" y2="190" stroke="#4A7028" stroke-width="1.8" />
-                    <line x1="112" y1="152" x2="112" y2="190" stroke="#4A7028" stroke-width="1.8" />
-                </svg>`,
-            'linen': `
-                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    ${linenLines}
-                </svg>`,
-            'face': `
-                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="77" cy="100" rx="44" ry="50" fill="#1E0E06" />
-                    <ellipse cx="77" cy="180" rx="38" ry="44" fill="#E07828" />
-                    <circle cx="60" cy="85" r="8" fill="#B84818" />
-                    <circle cx="94" cy="88" r="8" fill="#B84818" />
-                    <path d="M58 115 Q77 130 96 115" stroke="#3C1808" stroke-width="3.5" fill="none" stroke-linecap="round" />
-                </svg>`,
-            'wood': `
-                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    ${woodPaths}
-                </svg>`,
-            'clouds': `
-                <svg viewBox="0 0 ${BW} ${BH}" xmlns="http://www.w3.org/2000/svg">
-                    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8E4F8" /><stop offset="100%" stop-color="#88B8E0" /></linearGradient>
-                    <rect width="${BW}" height="${BH}" fill="url(#skyGrad)" />
-                    <ellipse cx="52" cy="88" rx="46" ry="26" fill="white" opacity="0.72" />
-                    <ellipse cx="70" cy="78" rx="36" ry="24" fill="white" opacity="0.82" />
-                    <ellipse cx="112" cy="156" rx="42" ry="24" fill="white" opacity="0.65" />
-                </svg>`
-        };
-        return svgs[art] || svgs['linen'];
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        // The closed journal is styled as the premium brown leather journal via CSS.
     });
 
-    var TOTAL_SPREADS = 35;
-    var journalIsOpen = false;
-    var isFlipping = false;
-    var journalEntries = [];
-
-    // Prompts library
-    var DAILY_PROMPTS = [
-      { category: 'Deep Reflection', title: 'Still Waters', icon: '&#9678;', time: '8:00 PM', quote: 'Beneath all the noise, there is a quiet part of me that has always known what matters.', scene: 9, caption: 'A reflection that tells the truth.' },
-      { category: 'A Seed of Calm', title: 'Resting Breath', icon: '&#9673;', time: '7:45 AM', quote: 'Today, I choose to move at the speed of my own breathing, not the world’s expectations.', scene: 0, caption: 'Taking the first breath together.' },
-      { category: 'Nature’s Lesson', title: 'The Great Oak', icon: '&#9832;', time: '11:20 AM', quote: 'Growth is not always upwards. Sometimes it is deep, invisible, and silent—the strengthening of roots.', scene: 4, caption: 'Deep roots and quiet growth.' },
-      { category: 'Daily Mindset', title: 'Gentle Horizon', icon: '&#10034;', time: '5:30 PM', quote: 'I am allowed to be both a masterpiece and a work in progress, simultaneously.', scene: 1, caption: 'Accepting the tide as it comes.' },
-      { category: 'Creative Flow', title: 'The Unfolding', icon: '&#10045;', time: '2:15 PM', quote: 'Comparison is the thief of joy. My path is unique, and that is my greatest power.', scene: 7, caption: 'Blooming at your own pace.' },
-      { category: 'Evening Gratitude', title: 'Golden Hour', icon: '&#9728;', time: '6:45 PM', quote: 'Even on the hardest days, there is a small light waiting to be found if I look close enough.', scene: 3, caption: 'Finding light in the shadows.' },
-      { category: 'Self-Compassion', title: 'Soft Landing', icon: '&#9729;', time: '10:00 PM', quote: 'I am doing the best I can with what I have, and that is enough.', scene: 2, caption: 'Gentle rest for a tired mind.' },
-      { category: 'Clarity', title: 'Clear Morning', icon: '&#9788;', time: '6:30 AM', quote: 'The morning is a clean slate. I leave yesterday behind and step into the now.', scene: 5, caption: 'A fresh start every dawn.' },
-      { category: 'Inner Strength', title: 'Mountain Peak', icon: '&#9650;', time: '12:00 PM', quote: 'My resilience is a quiet force. Like a mountain, I remain steady amidst the passing storm.', scene: 8, caption: 'Steady as the earth beneath.' }
-    ];
-
-    (function initJournal() {
-      var myRecent = [];
-      try {
-        var _dataEl = document.getElementById('recent-entries-data');
-        if (_dataEl) myRecent = JSON.parse(_dataEl.textContent);
-      } catch (e) { console.error("Recent entries parse error", e); }
-
-      for (var i = 0; i < TOTAL_SPREADS; i++) {
-        if (i < myRecent.length) journalEntries.push(myRecent[i]);
-        else journalEntries.push({ text: '', location: '', cats: [], fav: false });
-      }
-      var targetId = "{{ target_entry_id|default('') }}";
-      if (targetId) {
-          var targetIndex = myRecent.findIndex(e => e.id == targetId);
-          if (targetIndex !== -1) {
-              window.currentSpread = targetIndex;
-          } else {
-              window.currentSpread = Math.min(myRecent.length, TOTAL_SPREADS - 1);
-          }
-      } else {
-          window.currentSpread = Math.min(myRecent.length, TOTAL_SPREADS - 1);
-      }
-      loadSpread(window.currentSpread);
-    })();
-
-    function saveContent() {
-      if (!journalIsOpen) return;
-      var txtMain = document.getElementById('txt-main');
-      var locMain = document.getElementById('jr-location');
-      if (!txtMain || !locMain) return;
-
-      var text = txtMain.value;
-      var loc = locMain.value;
-      journalEntries[window.currentSpread].text = text;
-      journalEntries[window.currentSpread].location = loc;
-
-      if (text.trim() || loc.trim()) {
-        var payload = {
-          content: JSON.stringify(journalEntries[window.currentSpread]),
-          mood_score: 3
-        };
-        if (journalEntries[window.currentSpread].id) {
-          payload.id = journalEntries[window.currentSpread].id;
-        }
-        fetch('/save_entry', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                if (data.id) {
-                    journalEntries[window.currentSpread].id = data.id;
-                }
-                if (data.ai_analysis) applyAIAnalysis(data.ai_analysis);
-                var ss = document.getElementById('save-status');
-                if (ss) {
-                    ss.classList.add('show');
-                    clearTimeout(ss._t);
-                    ss._t = setTimeout(() => ss.classList.remove('show'), 2200);
-                }
-            }
-        });
-      }
-    }
-
-    function loadSpread(idx) {
-      if (idx < 0 || idx >= TOTAL_SPREADS) return;
-      var p = DAILY_PROMPTS[idx % DAILY_PROMPTS.length];
-      var ent = journalEntries[idx];
-      var today = new Date();
-      var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-      var eIcon = document.getElementById('jl-tod-icon'); if (eIcon) eIcon.innerHTML = getTodIcon ? getTodIcon() : '&#9790;';
-      var eWd = document.getElementById('jl-weekday'); if (eWd) eWd.textContent = days[today.getDay()];
-      var eDt = document.getElementById('jl-datestr'); if (eDt) eDt.textContent = months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
-      var eNum = document.getElementById('jl-entry-num'); if (eNum) eNum.textContent = String(idx + 1).padStart(3, '0');
+    function backToRoom() {
+      document.getElementById('desk-overlay').classList.remove('show');
+      var iframe = document.getElementById('embeddedJournalIframe');
+      iframe.src = "about:blank"; // Clear iframe source to release resources
       
-      var eImg = document.getElementById('jl-image'); 
-      if (eImg) {
-          eImg.innerHTML = getSceneSVG ? getSceneSVG(p.scene) : '';
-          var inner = eImg.querySelector('.jl-image-inner');
-          if (inner) inner.className = 'jl-image-inner';
+      // If the user wrote/saved entries, reload the room page to reflect changes
+      if (journalDirty) {
+          window.location.reload();
       }
-      
-      var eCap = document.getElementById('jl-caption'); if (eCap) eCap.textContent = p.caption;
-      document.querySelectorAll('.jl-cat').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.jl-cat').forEach(c => {
-          if ((ent.cats || []).includes(c.dataset.cat)) c.classList.add('active');
-      });
-
-      document.getElementById('jr-card-icon').innerHTML = p.icon;
-      document.getElementById('jr-card-title').textContent = p.title;
-      document.getElementById('jr-card-time').textContent = p.time;
-      document.getElementById('jr-card-quote').textContent = p.quote;
-
-      var favBtn = document.getElementById('btn-fav');
-      if (favBtn) {
-          favBtn.innerHTML = ent.fav ? '&#9829;' : '&#9825;';
-          favBtn.style.color = ent.fav ? 'rgba(255,120,140,.8)' : '';
-      }
-
-      document.getElementById('txt-main').value = ent.text || '';
-      document.getElementById('jr-location').value = ent.location || '';
-      document.getElementById('spread-ind').textContent = (idx + 1) + ' / ' + TOTAL_SPREADS;
-      document.getElementById('btn-prev').disabled = (idx === 0);
-      document.getElementById('btn-next').disabled = (idx === TOTAL_SPREADS - 1);
-
-      // Dynamically set closed cover date text
-      var coverDateStr = "";
-      if (ent && ent.formatted_date) {
-          coverDateStr = ent.formatted_date;
-      } else {
-          var now = new Date();
-          coverDateStr = months[now.getMonth()] + ' ' + now.getDate();
-      }
-      var closedDateEl = document.getElementById('j-closed-date');
-      if (closedDateEl) {
-          closedDateEl.textContent = coverDateStr;
-      }
-    }
-
-    function toggleCat(el) {
-      el.classList.toggle('active');
-      var ent = journalEntries[window.currentSpread];
-      ent.cats = ent.cats || [];
-      var cat = el.dataset.cat;
-      var i = ent.cats.indexOf(cat);
-      if (i > -1) ent.cats.splice(i, 1); else ent.cats.push(cat);
-    }
-
-    function toggleFav(btn) {
-      var ent = journalEntries[window.currentSpread];
-      ent.fav = !ent.fav;
-      btn.innerHTML = ent.fav ? '&#9829;' : '&#9825;';
-      btn.style.color = ent.fav ? 'rgba(255,120,140,.8)' : '';
-    }
-
-    function copyQuote() {
-      var q = document.getElementById('jr-card-quote').textContent;
-      navigator.clipboard.writeText(q);
-      var btn = document.querySelector('.jr-action-btn');
-      if (btn) { btn.style.color = '#96FF96'; setTimeout(() => btn.style.color = '', 1200); }
-    }
-
-    function applyAIAnalysis(data) {
-        document.querySelectorAll('.jl-cat').forEach(c => c.classList.toggle('active', c.dataset.cat === data.pillar));
-        var cap = document.getElementById('jl-caption');
-        if (cap && data.reflection) {
-            cap.style.opacity = '0';
-            setTimeout(() => {
-                cap.textContent = data.reflection;
-                cap.style.color = '#522C0E';
-                cap.style.fontStyle = 'normal';
-                cap.style.opacity = '1';
-            }, 400);
-        }
-        var inner = document.querySelector('#jl-image .jl-image-inner');
-        if (inner) {
-            var mood = 'mood-serene';
-            if (data.score <= 1) mood = 'mood-heavy';
-            else if (data.score <= 2) mood = 'mood-pensive';
-            else if (data.score >= 5) mood = 'mood-vibrant';
-            inner.className = 'jl-image-inner ' + mood;
-        }
     }
 
     function startOpenJournal() {
-      if (journalIsOpen) return;
       document.getElementById('desk-overlay').classList.add('show');
-      var jWrapper = document.getElementById('j-closed-wrapper'), jFlap = document.getElementById('j-cover-flap'), jOpen = document.getElementById('j-open');
-      if (jWrapper) jWrapper.classList.add('hide');
-      jFlap.style.display = 'block'; jFlap.classList.add('flipping');
-      loadSpread(window.currentSpread);
-      setTimeout(() => { jOpen.classList.add('visible'); journalIsOpen = true; setTimeout(() => document.getElementById('txt-main').focus(), 50); }, 420);
-      setTimeout(() => { jFlap.style.display = ''; jFlap.classList.remove('flipping'); }, 900);
+      var iframe = document.getElementById('embeddedJournalIframe');
+      // Pass open=true parameter to trigger the auto-flip open animation on load
+      iframe.src = "/journal?embedded=true&open=true";
+      journalDirty = false; // Reset dirty state
     }
 
-    function closeJournal() {
-      if (!journalIsOpen) return;
-      saveContent();
-      var jOpen = document.getElementById('j-open'), jWrapper = document.getElementById('j-closed-wrapper'), jFlap = document.getElementById('j-cover-flap');
-      jOpen.classList.remove('visible'); journalIsOpen = false;
-      jFlap.style.animation = 'none'; jFlap.style.display = 'block';
-      jFlap.style.transform = 'translate(-140%,-52%) perspective(1200px) rotateY(-160deg)';
-      setTimeout(() => { jFlap.style.transition = 'transform 0.75s cubic-bezier(.4,0,.2,1)'; jFlap.style.transform = 'translate(-50%,-52%) perspective(1200px) rotateY(0deg)'; }, 20);
-      setTimeout(() => { jFlap.style.display = 'none'; jFlap.style.transition = ''; jFlap.style.transform = ''; if (jWrapper) jWrapper.classList.remove('hide'); }, 800);
-    }
-
-    function nextSpread() {
-      if (isFlipping || window.currentSpread >= TOTAL_SPREADS - 1) return;
-      isFlipping = true; saveContent();
-      document.getElementById('journal-outer').classList.add('flip-fwd');
-      setTimeout(() => { window.currentSpread++; loadSpread(window.currentSpread); }, 275);
-      setTimeout(() => { document.getElementById('journal-outer').classList.remove('flip-fwd'); isFlipping = false; }, 560);
-    }
-
-    function prevSpread() {
-      if (isFlipping || window.currentSpread <= 0) return;
-      isFlipping = true; saveContent();
-      document.getElementById('journal-outer').classList.add('flip-bwd');
-      setTimeout(() => { window.currentSpread--; loadSpread(window.currentSpread); }, 275);
-      setTimeout(() => { document.getElementById('journal-outer').classList.remove('flip-bwd'); isFlipping = false; }, 560);
-    }
-
-    function backToRoom() {
-      if (journalIsOpen) saveContent();
-      document.getElementById('j-open').classList.remove('visible'); journalIsOpen = false;
-      var jWrapper = document.getElementById('j-closed-wrapper');
-      if (jWrapper) jWrapper.classList.remove('hide');
-      document.getElementById('desk-overlay').classList.remove('show');
-    }
-
-    // Auto-open logic with URL cleanup
+    // Auto-open logic if redirecting from writing page
     window.addEventListener('load', function() {
         const urlParams = new URLSearchParams(window.location.search);
         var forceOpen = "{{ open_journal }}" === "True" || urlParams.get('open') === 'main.journal' || urlParams.get('open_journal') === 'true';
         if (forceOpen) {
-            document.getElementById('desk-overlay').classList.add('show');
-            setTimeout(startOpenJournal, 500);
+            startOpenJournal();
             
             // Clean the URL so reloading doesn't auto-open again
             if (window.history && window.history.replaceState) {

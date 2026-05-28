@@ -16,6 +16,7 @@
         isOpen3D = !isOpen3D;
 
         const toolsPanel = document.querySelector('.journal-tools-panel');
+        const editorToolbar = document.getElementById('journalEditorToolbar');
         const btnJournalLabel = btnToggle3d && btnToggle3d.querySelector('.btn-journal-label');
 
         if (isOpen3D) {
@@ -26,11 +27,13 @@
             setTimeout(() => {
                 isAnimating3D = false;
                 if (toolsPanel) toolsPanel.classList.add('is-visible');
+                if (editorToolbar) editorToolbar.classList.add('is-visible');
                 const btnSave = document.getElementById('btn-save-entry');
                 if (btnSave) btnSave.classList.add('visible');
             }, OPEN_DUR);
         } else {
             if (toolsPanel) toolsPanel.classList.remove('is-visible');
+            if (editorToolbar) editorToolbar.classList.remove('is-visible');
             const btnSave = document.getElementById('btn-save-entry');
             if (btnSave) btnSave.classList.remove('visible');
             let delay = 0;
@@ -74,11 +77,24 @@
         const faces = document.querySelectorAll('.journal-spotlight .page-front, .journal-spotlight .page-back');
         faces.forEach(el => el.classList.add('style-' + style));
 
-        document.querySelectorAll('.style-picker .style-btn').forEach(btn => {
+        document.querySelectorAll('.style-picker-h .style-btn-h').forEach(btn => {
             const active = btn.dataset.style === style;
             btn.classList.toggle('is-active', active);
             btn.setAttribute('aria-pressed', active ? 'true' : 'false');
         });
+
+        // Dynamic font-size visibility: only visible on 'blank' (freeform) style
+        const sizeSection = document.getElementById('tb-font-size-section');
+        const sizeDivider = document.getElementById('tb-font-size-divider');
+        if (sizeSection && sizeDivider) {
+            if (style === 'blank') {
+                sizeSection.style.display = 'flex';
+                sizeDivider.style.display = 'block';
+            } else {
+                sizeSection.style.display = 'none';
+                sizeDivider.style.display = 'none';
+            }
+        }
     };
 
     window.addEventListener('load', () => {
@@ -109,6 +125,23 @@
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && isOpen3D && !isAnimating3D) toggleJournal3D();
         });
+
+        // Auto-open 3D journal if query param is set
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('open') === 'true' || urlParams.get('open_journal') === 'true') {
+            setTimeout(() => {
+                if (!isOpen3D && !isAnimating3D) toggleJournal3D();
+            }, 600);
+        }
+
+        // Auto-populate custom title from query parameters if present
+        const customTitle = urlParams.get('title') || urlParams.get('collection') || urlParams.get('collection_name');
+        if (customTitle) {
+            const titleEl = document.querySelector('.topbar-title');
+            if (titleEl) {
+                titleEl.textContent = customTitle;
+            }
+        }
     });
 
     // --- Journal Writing Areas ---
@@ -248,11 +281,14 @@
     }
 
     // --- Toolbar Editor Script ---
-    const FORMAT_CMDS = ['bold', 'italic', 'underline'];
+    const FORMAT_CMDS = ['bold', 'italic', 'underline', 'justifyLeft', 'justifyCenter', 'justifyRight'];
 
     function updateToolbarFormatStates() {
         if (!isOpen3D) return;
-        document.querySelectorAll('#editorToolbar3D .tb-btn[data-cmd]').forEach(btn => {
+        const toolbar = document.getElementById('journalEditorToolbar');
+        if (!toolbar) return;
+
+        toolbar.querySelectorAll('[data-cmd]').forEach(btn => {
             const cmd = btn.dataset.cmd;
             if (!FORMAT_CMDS.includes(cmd)) return;
             let active = false;
@@ -261,23 +297,48 @@
             } catch (_) { /* ignore when no selection */ }
             btn.classList.toggle('is-active', active);
         });
+
+        // Update font size select state if active selection has a size
+        const fontSizeSelect = document.getElementById('tb-font-size');
+        if (fontSizeSelect) {
+            try {
+                const size = document.queryCommandValue('fontSize');
+                if (size && ['2', '3', '4', '5', '6'].includes(size)) {
+                    fontSizeSelect.value = size;
+                }
+            } catch (_) {}
+        }
     }
 
     document.addEventListener('selectionchange', updateToolbarFormatStates);
 
-    document.querySelectorAll('#editorToolbar3D .tb-btn[data-cmd]').forEach(btn => {
-        btn.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // Keep focus and selection on contenteditable area
-            const targetArea = getVisibleWritingArea();
-            if (!targetArea) return;
-            
-            targetArea.focus();
-            const cmd = btn.dataset.cmd;
-            document.execCommand(cmd, false, null);
-            targetArea.dispatchEvent(new Event('input'));
-            requestAnimationFrame(updateToolbarFormatStates);
+    const toolbarEl = document.getElementById('journalEditorToolbar');
+    if (toolbarEl) {
+        toolbarEl.querySelectorAll('[data-cmd]').forEach(btn => {
+            btn.addEventListener('mousedown', (e) => {
+                e.preventDefault(); // Keep focus and selection on contenteditable area
+                const targetArea = getVisibleWritingArea();
+                if (!targetArea) return;
+                
+                targetArea.focus();
+                const cmd = btn.dataset.cmd;
+                document.execCommand(cmd, false, null);
+                targetArea.dispatchEvent(new Event('input'));
+                requestAnimationFrame(updateToolbarFormatStates);
+            });
         });
-    });
+
+        const fontSizeSelect = document.getElementById('tb-font-size');
+        if (fontSizeSelect) {
+            fontSizeSelect.addEventListener('change', () => {
+                const targetArea = getVisibleWritingArea();
+                if (!targetArea) return;
+                targetArea.focus();
+                document.execCommand('fontSize', false, fontSizeSelect.value);
+                targetArea.dispatchEvent(new Event('input'));
+            });
+        }
+    }
 
     const imgBtn = document.getElementById('tb-img-btn');
     const imgInput = document.getElementById('tb-img-input');
@@ -767,6 +828,9 @@
             return;
         }
 
+        const statusInd = document.getElementById('save-status');
+        if (statusInd) statusInd.textContent = 'SAVING...';
+
         fetch('/save_entry', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -775,6 +839,10 @@
         .then(res => res.json())
         .then(data => {
             if (data.success) {
+                if (statusInd) statusInd.textContent = 'SAVED';
+                if (window.parent) {
+                    window.parent.postMessage('journal_saved', '*');
+                }
                 shouldFlipAfterEnvelope = true;
                 const letter = data.letter || 'Thank you for writing today.';
                 showEnvelope(letter);
@@ -785,10 +853,14 @@
                     if (pageId) localStorage.removeItem('journal-page-' + pageId);
                 });
             } else {
+                if (statusInd) statusInd.textContent = 'SAVED';
                 alert('Could not save: ' + (data.message || 'Unknown error'));
             }
         })
-        .catch(err => alert('Save failed: ' + err.message));
+        .catch(err => {
+            if (statusInd) statusInd.textContent = 'SAVED';
+            alert('Save failed: ' + err.message);
+        });
     }
 
     function showEnvelope(letterText) {
@@ -913,3 +985,54 @@
             setTimeout(() => closeEnvelopeWithAnimation(), 300);
         }
     }
+
+    // --- Topbar Custom Action Listeners ---
+    window.handleTopbarBack = function(e) {
+        e.preventDefault();
+        if (window.self !== window.top) {
+            // Embedded inside an iframe (Sanctuary modal room)
+            window.parent.postMessage('close_journal_overlay', '*');
+        } else {
+            // Standalone web page
+            window.location.href = "/archive";
+        }
+    };
+
+    window.setEditorMode = function(mode) {
+        const areas = document.querySelectorAll('.page-writing-area');
+        const btnEdit = document.getElementById('btn-mode-edit');
+        const btnPreview = document.getElementById('btn-mode-preview');
+
+        if (mode === 'preview') {
+            areas.forEach(area => area.setAttribute('contenteditable', 'false'));
+            if (btnEdit) btnEdit.classList.remove('active');
+            if (btnPreview) btnPreview.classList.add('active');
+        } else {
+            areas.forEach(area => area.setAttribute('contenteditable', 'true'));
+            if (btnEdit) btnEdit.classList.add('active');
+            if (btnPreview) btnPreview.classList.remove('active');
+        }
+    };
+
+    // --- Dynamic Zoom Control ---
+    window.zoomJournal = function(factor) {
+        function getBaseScale() {
+            const h = window.innerHeight;
+            const w = window.innerWidth;
+            if (h < 600 || w < 520) return 0.62;
+            if (h < 720 || w < 768) return 0.80;
+            if (h < 850 || w < 900) return 0.95;
+            return 1.15;
+        }
+
+        if (factor === 1.0) {
+            window.currentScale = null;
+            document.documentElement.style.removeProperty('--journal-scale');
+        } else {
+            if (!window.currentScale) {
+                window.currentScale = getBaseScale();
+            }
+            window.currentScale = Math.max(0.35, Math.min(2.0, window.currentScale * factor));
+            document.documentElement.style.setProperty('--journal-scale', window.currentScale);
+        }
+    };

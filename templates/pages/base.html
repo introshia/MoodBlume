@@ -27,28 +27,57 @@
     {% endif %}
 
     {% block head %}{% endblock %}
+    {% if request.args.get('embedded') == 'true' %}
+    <style>
+        body {
+            background-color: transparent !important;
+            background: none !important;
+            overflow: hidden !important;
+        }
+        .main-content-wrapper {
+            background-color: transparent !important;
+            background: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            min-height: auto !important;
+        }
+        .app-layout {
+            min-height: auto !important;
+            width: 100% !important;
+        }
+        .journal-page {
+            padding: 0 !important;
+            padding-top: 10px !important;
+            min-height: auto !important;
+        }
+    </style>
+    {% endif %}
 </head>
 
-<body id="{% block body_id %}{% endblock %}" class="{% if session.get('user_id') %}user-logged-in-layout{% endif %}">
+<body id="{% block body_id %}{% endblock %}" class="{% if session.get('user_id') %}user-logged-in-layout{% endif %} {% if request.args.get('embedded') == 'true' %}is-embedded{% endif %}">
     <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-theme');</script>
+
+    {% block page_topbar %}{% endblock %}
 
     {% if session.get('user_id') %}
     <div class="app-layout">
-        {% include 'components/_sidebar.html' %}
+        {% if not request.args.get('embedded') == 'true' %}
+            {% include 'components/_sidebar.html' %}
 
-        <!-- Profile Avatar -->
-        <button class="profile-avatar-btn" id="profile-avatar-btn" aria-label="Open profile menu">
-            {{ (session.get('username') or 'U')[0] | upper }}
-        </button>
-        <div class="profile-dropdown" id="profile-dropdown" role="menu">
-            <a href="{{ url_for('profile.profile') }}" class="profile-dropdown-item">Account</a>
-            <div class="profile-dropdown-divider"></div>
-            <button class="profile-dropdown-item" id="profile-theme-btn">
-                <span id="profile-theme-label">Dark Mode</span>
+            <!-- Profile Avatar -->
+            <button class="profile-avatar-btn" id="profile-avatar-btn" aria-label="Open profile menu">
+                {{ (session.get('username') or 'U')[0] | upper }}
             </button>
-            <div class="profile-dropdown-divider"></div>
-            <a href="{{ url_for('auth.logout') }}" class="profile-dropdown-item profile-signout">Sign out</a>
-        </div>
+            <div class="profile-dropdown" id="profile-dropdown" role="menu">
+                <a href="{{ url_for('profile.profile') }}" class="profile-dropdown-item">Account</a>
+                <div class="profile-dropdown-divider"></div>
+                <button class="profile-dropdown-item" id="profile-theme-btn">
+                    <span id="profile-theme-label">Dark Mode</span>
+                </button>
+                <div class="profile-dropdown-divider"></div>
+                <a href="{{ url_for('auth.logout') }}" class="profile-dropdown-item profile-signout">Sign out</a>
+            </div>
+        {% endif %}
 
         <div class="main-content-wrapper">
     {% else %}

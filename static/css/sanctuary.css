@@ -337,4 +337,200 @@
       pointer-events: none
     }
 
-  
+
+    /* ── Greeting — ambient lower-left whisper ── */
+    #window-greeting {
+      position: fixed;
+      bottom: 80px;       /* just above the timebadge */
+      left: 44px;         /* aligns with timebadge & weatherbadge */
+      z-index: 15;
+      pointer-events: none;
+      animation: greetingFadeIn 2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+    }
+
+    .greeting-text {
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      color: rgba(200, 140, 60, 0.55); /* same warm amber as timebadge */
+      display: block;
+      line-height: 1;
+    }
+
+    @keyframes greetingFadeIn {
+      0%   { opacity: 0; transform: translateY(4px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Desk MoodBlob Companion ── */
+    #desk-companion {
+      position: fixed;
+      /*
+       * Desk surface sits at roughly DESK_TOP_Y=65% from top.
+       * We nudge the blob to sit right on that surface edge.
+       * left: between the lamp (~26% of W) and the journal (~50% of W).
+       */
+      bottom: 31%;        /* desk surface level */
+      left: 30%;          /* between lamp and journal */
+      z-index: 16;
+      /* Perspective tilt so it looks like it's *on* the angled desk */
+      transform: perspective(400px) rotateX(12deg) scale(0.92);
+      transform-origin: bottom center;
+      /* Warm room-light tint to blend into the amber scene */
+      filter: sepia(0.18) brightness(0.88) drop-shadow(0 6px 14px rgba(0,0,0,0.45));
+      animation: deskBlobEntry 1.2s cubic-bezier(0.34, 1.3, 0.64, 1) 0.5s both;
+    }
+
+    @keyframes deskBlobEntry {
+      0%   { opacity: 0; transform: perspective(400px) rotateX(12deg) scale(0.65) translateY(16px); }
+      100% { opacity: 1; transform: perspective(400px) rotateX(12deg) scale(0.92) translateY(0);    }
+    }
+
+    .sanctuary-blob-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Blob body (smaller, desk-scale) ── */
+    #desk-companion .blob-main {
+      width: 54px;
+      height: 54px;
+      position: relative;
+      animation: blobFloat var(--speed, 3.2s) ease-in-out infinite;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    #desk-companion .blob-main:hover {
+      transform: scale(1.12);
+    }
+
+    #desk-companion .blob-body {
+      width: 100%;
+      height: 100%;
+      border-radius: 50% 40% 60% 40% / 40% 50% 40% 60%;
+      background: radial-gradient(circle at 35% 30%, var(--light), var(--base));
+      animation: blobMorph var(--speed, 3.2s) ease-in-out infinite alternate;
+    }
+
+    #desk-companion .blob-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding-top: 6px;
+      z-index: 3;
+    }
+
+    #desk-companion .blob-eyes {
+      display: flex;
+      gap: 8px;
+    }
+
+    #desk-companion .blob-eye {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+    }
+
+    #desk-companion .blob-mouth {
+      width: 14px;
+      height: 6px;
+      position: relative;
+      overflow: visible;
+    }
+
+    #desk-companion .blob-mouth svg {
+      overflow: visible;
+    }
+
+    #desk-companion .blob-mini {
+      position: absolute;
+      border-radius: 50% 40% 55% 45% / 45% 55% 40% 55%;
+      background: var(--dark);
+      animation: miniFloat var(--mspeed, 4.5s) ease-in-out infinite;
+      opacity: 0.85;
+    }
+
+    #desk-companion .blob-mini.m1 {
+      width: 20px;
+      height: 20px;
+      top: 20px;
+      left: 12px;
+      animation-delay: -1.2s;
+    }
+
+    #desk-companion .blob-mini.m2 {
+      width: 13px;
+      height: 13px;
+      top: 60%;
+      left: 65%;
+      animation-delay: -2.5s;
+      animation-direction: alternate-reverse;
+    }
+
+    /* Streak accessory */
+    #desk-companion .blob-accessory {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #desk-companion .blob-accessory svg {
+      display: block;
+      animation: accessoryFloat var(--speed, 3.2s) ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+
+    /* Desk shadow — flattened ellipse to match perspective */
+    .sanctuary-blob-shadow {
+      width: 42px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.3);
+      margin-top: -3px;
+      filter: blur(4px);
+      animation: sanctuaryShadowBreath var(--speed, 3.2s) ease-in-out infinite;
+    }
+
+    @keyframes sanctuaryShadowBreath {
+      0%, 100% { transform: scaleX(1);    opacity: 0.30; }
+      30%       { transform: scaleX(0.72); opacity: 0.14; }
+      60%       { transform: scaleX(0.82); opacity: 0.22; }
+    }
+
+    /* Shared keyframes */
+    @keyframes blobFloat {
+      0%   { transform: translateY(0px)   translateX(0px);  }
+      30%  { transform: translateY(-6px)  translateX(1.5px); }
+      60%  { transform: translateY(-4px)  translateX(-1.5px); }
+      100% { transform: translateY(0px)   translateX(0px);  }
+    }
+
+    @keyframes blobMorph {
+      0%   { border-radius: 50% 40% 60% 40% / 40% 50% 40% 60%; }
+      50%  { border-radius: 42% 55% 45% 58% / 55% 42% 60% 38%; }
+      100% { border-radius: 58% 38% 52% 46% / 44% 60% 38% 52%; }
+    }
+
+    @keyframes miniFloat {
+      0%   { transform: translateY(0)    rotate(0deg);  }
+      50%  { transform: translateY(-4px) rotate(5deg);  }
+      100% { transform: translateY(0)    rotate(0deg);  }
+    }
+
+    @keyframes accessoryFloat {
+      0%, 100% { transform: translateY(0)    scale(1);    }
+      50%       { transform: translateY(-2px) scale(1.04); }
+    }

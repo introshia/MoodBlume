@@ -9,6 +9,7 @@
         padding: 52px 48px 80px;
         padding-right: 88px;
         max-width: 1200px;
+        margin: 0 auto;
     }
 
     .yc-topbar {
@@ -218,9 +219,14 @@
         </div>
     </div>
 
-    <div class="yc-topbar">
-        <h1>Your Collections</h1>
-        <div class="yc-view-toggle">
+    <div class="yc-topbar" style="align-items: flex-start;">
+        <div>
+            <h1>Your Collections</h1>
+            <p class="yc-stats-msg" style="font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-style: italic; color: var(--text-gray, rgba(75, 46, 31, 0.55)); margin-top: 6px; margin-bottom: 0;">
+                {{ stats_msg }}
+            </p>
+        </div>
+        <div class="yc-view-toggle" style="margin-top: 4px;">
             <button class="yc-view-btn active" id="yc-grid-btn" title="Grid view" type="button">
                 <i class="ti ti-layout-grid"></i>
             </button>
