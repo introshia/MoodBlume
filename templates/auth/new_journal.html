@@ -33,11 +33,11 @@
   /* Header area */
   .header-area {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 
   .welcome-logo {
-    height: 56px;
+    height: 52px;
     width: auto;
     opacity: 0.8;
     margin-bottom: 8px;
@@ -46,7 +46,7 @@
 
   .welcome-heading {
     font-family: 'Lora', Georgia, serif;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 400;
     color: #2b1a11;
     line-height: 1.3;
@@ -56,7 +56,7 @@
   /* Main 2-Column workspace */
   .workspace {
     display: flex;
-    gap: 40px;
+    gap: 48px;
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -70,15 +70,46 @@
   .preview-col {
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    perspective: 1000px;
+    gap: 16px;
+  }
+
+  /* Toggle for Preview View modes */
+  .view-toggle-wrap {
+    display: flex;
+    gap: 4px;
+    background: rgba(43, 26, 17, 0.05);
+    padding: 3px;
+    border-radius: 8px;
+  }
+
+  .view-toggle-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9c8676;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .view-toggle-btn.active {
+    background: #FFFDF8;
+    color: #2b1a11;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
   }
 
   /* Right column: Form card */
   .form-col {
     width: 420px;
-    background: rgba(255, 253, 248, 0.7);
+    background: rgba(255, 253, 248, 0.75);
     border: 1px solid rgba(133, 172, 201, 0.25);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -87,61 +118,88 @@
     box-shadow: 0 12px 36px rgba(43, 26, 17, 0.04);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
   }
 
-  /* 3D-ish Book Spread Preview */
-  .book-spread {
-    width: 320px;
-    height: 220px;
+  /* The Premium Closed Journal Preview */
+  .journal-container {
+    width: 220px;
+    height: 300px;
     position: relative;
-    display: flex;
-    border-radius: 4px;
-    transform: rotateX(12deg) rotateY(-12deg);
-    transform-style: preserve-3d;
-    box-shadow: 0 16px 36px rgba(43, 26, 17, 0.12);
+    border-radius: 0 24px 24px 0;
+    box-shadow: 12px 16px 36px rgba(43, 26, 17, 0.16);
     transition: transform 0.5s ease;
-  }
-  
-  .book-spread:hover {
-    transform: rotateX(6deg) rotateY(-6deg);
+    overflow: hidden;
   }
 
-  /* Left Page: Cover */
-  .book-cover-preview {
-    flex: 1;
+  /* Cover View specific styles */
+  .journal-cover-view {
+    width: 100%;
     height: 100%;
-    border-radius: 6px 0 0 6px;
-    position: relative;
-    box-shadow: inset -10px 0 20px rgba(0,0,0,0.18), -2px 0 5px rgba(0,0,0,0.1);
-    transition: background-color 0.4s ease;
-    overflow: hidden;
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.3s ease;
+    background: #3D2B1F; /* Default base cover color */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: 20px;
+    border-radius: 0 24px 24px 0;
   }
 
-  .cover-inside-shadow {
+  /* Spine shadowing (matching front-cover-design) */
+  .journal-cover-spine {
     position: absolute;
-    right: 0;
+    left: 0;
     top: 0;
     bottom: 0;
-    width: 14px;
-    background: linear-gradient(to left, rgba(0,0,0,0.22), transparent);
-    z-index: 5;
+    width: 28px;
+    background: linear-gradient(to right,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(255, 255, 255, 0.05) 15%,
+      transparent 35%,
+      rgba(0, 0, 0, 0.2) 65%,
+      rgba(0, 0, 0, 0.4) 80%,
+      transparent 100%);
+    z-index: 4;
   }
 
+  /* Vertical Elastic Band */
+  .journal-cover-elastic {
+    position: absolute;
+    right: 18px;
+    top: 0;
+    bottom: 0;
+    width: 7px;
+    background: linear-gradient(to right, #0a0a0a, #1c1c1c 50%, #0a0a0a);
+    z-index: 3;
+  }
+
+  /* Cover pattern overlays */
+  .pattern-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0.65;
+    z-index: 2;
+    pointer-events: none;
+  }
+  
+  .pattern-overlay svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Cover label block */
   .cover-label-preview {
     background: rgba(255, 253, 248, 0.85);
     border: 1px solid rgba(43, 26, 17, 0.15);
-    padding: 6px 10px;
+    padding: 10px 14px;
     border-radius: 2px;
     text-align: center;
-    z-index: 6;
-    max-width: 90%;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    z-index: 5;
+    max-width: 80%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
 
   .lbl-small-preview {
@@ -164,60 +222,45 @@
     display: block;
   }
 
-  /* Pattern overlays */
-  .pattern-overlay {
-    position: absolute;
-    inset: 0;
-    opacity: 0.65;
-    z-index: 2;
-    pointer-events: none;
-  }
-  
-  .pattern-overlay svg {
+  /* Inside Pages View */
+  .journal-pages-view {
     width: 100%;
     height: 100%;
+    position: absolute;
+    inset: 0;
+    background: #FFFDF8;
+    border-radius: 0 24px 24px 0;
+    box-shadow: inset 16px 0 24px rgba(0,0,0,0.08);
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+    padding: 24px;
   }
 
-  /* Spine Crease / Binding shadow */
-  .book-spine-crease {
+  .journal-pages-spine {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     top: 0;
     bottom: 0;
-    width: 6px;
-    background: linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(255,255,255,0.08) 50%, rgba(0,0,0,0.2) 100%);
-    z-index: 10;
+    width: 12px;
+    background: linear-gradient(to right, rgba(0,0,0,0.2), transparent);
   }
 
-  /* Right Page: Paper style inside */
-  .book-page-preview {
-    flex: 1;
-    height: 100%;
-    background: #FFFDF8;
-    border-radius: 0 6px 6px 0;
-    position: relative;
-    box-shadow: inset 10px 0 20px rgba(0,0,0,0.08), 2px 0 5px rgba(0,0,0,0.05);
-    overflow: hidden;
-    padding: 16px;
-  }
-
-  /* Paper line generators */
   .paper-pattern {
     position: absolute;
-    inset: 12px;
+    inset: 20px;
     pointer-events: none;
     opacity: 0.45;
   }
 
   .paper-pattern.lined {
-    background: repeating-linear-gradient(transparent, transparent 11px, #c4b5a8 11px, #c4b5a8 12px);
+    background: repeating-linear-gradient(transparent, transparent 12px, #c4b5a8 12px, #c4b5a8 13px);
   }
 
   .paper-pattern.grid {
     background: 
-      repeating-linear-gradient(transparent, transparent 10px, #c4b5a8 10px, #c4b5a8 11px),
-      repeating-linear-gradient(90deg, transparent, transparent 10px, #c4b5a8 10px, #c4b5a8 11px);
+      repeating-linear-gradient(transparent, transparent 11px, #c4b5a8 11px, #c4b5a8 12px),
+      repeating-linear-gradient(90deg, transparent, transparent 11px, #c4b5a8 11px, #c4b5a8 12px);
   }
 
   .paper-pattern.blank {
@@ -405,19 +448,30 @@
   </div>
 
   <div class="workspace">
-    <!-- Left Column: Live 3D Spread Preview -->
+    <!-- Left Column: Live Closed/Inside Preview -->
     <div class="preview-col">
-      <div class="book-spread" id="bookPreview">
-        <div class="book-cover-preview" id="coverPreview" style="background-color: #C8D898;">
+      <!-- Toggle buttons -->
+      <div class="view-toggle-wrap">
+        <button class="view-toggle-btn active" id="btnShowCover" type="button">Cover</button>
+        <button class="view-toggle-btn" id="btnShowInside" type="button">Inside Page</button>
+      </div>
+      
+      <!-- The Closed Journal structure matching journal page -->
+      <div class="journal-container" id="journalPreview">
+        <!-- Cover view panel -->
+        <div class="journal-cover-view" id="coverView" style="background-color: #C8D898;">
           <div class="pattern-overlay" id="patternOverlay"></div>
-          <div class="cover-inside-shadow"></div>
+          <div class="journal-cover-spine"></div>
+          <div class="journal-cover-elastic"></div>
           <div class="cover-label-preview">
-            <span class="lbl-small-preview">volume</span>
-            <span class="lbl-big-preview" id="labelName">My Chronicle</span>
+            <span class="lbl-small-preview">a memory from</span>
+            <span class="lbl-big-preview" id="labelName">today</span>
           </div>
         </div>
-        <div class="book-spine-crease"></div>
-        <div class="book-page-preview">
+        
+        <!-- Inside page view panel -->
+        <div class="journal-pages-view" id="pagesView">
+          <div class="journal-pages-spine"></div>
           <div class="paper-pattern lined" id="paperPattern"></div>
         </div>
       </div>
@@ -610,9 +664,9 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     // 1. Live color updating
-    const coverPreview = document.getElementById('coverPreview');
+    const coverView = document.getElementById('coverView');
     setupSelectionGroup('colorGrid', (colorVal) => {
-      coverPreview.style.backgroundColor = colorVal;
+      coverView.style.backgroundColor = colorVal;
     });
 
     // 2. Live pattern updating
@@ -637,18 +691,42 @@
       paperPattern.className = 'paper-pattern ' + paperVal;
     });
 
-    // 4. Volume schedule setup (doesn't change preview but updates styles)
+    // 4. Volume schedule setup
     setupSelectionGroup('pageGrid', () => {});
 
-    // 5. Live Name updating
+    // 5. Live Name updating (syncing name field and label on closed cover)
     const nameInput = document.getElementById('journal_name');
     const labelName = document.getElementById('labelName');
     const createBtn = document.getElementById('createBtn');
 
     nameInput.addEventListener('input', () => {
       const val = nameInput.value.trim();
-      labelName.textContent = val ? val : "My Chronicle";
+      labelName.textContent = val ? val : "today";
       createBtn.disabled = !val;
+    });
+
+    // 6. View Mode Toggle (Cover / Inside Pages)
+    const btnShowCover = document.getElementById('btnShowCover');
+    const btnShowInside = document.getElementById('btnShowInside');
+    const coverViewEl = document.getElementById('coverView');
+    const pagesViewEl = document.getElementById('pagesView');
+
+    btnShowCover.addEventListener('click', () => {
+      btnShowCover.classList.add('active');
+      btnShowInside.classList.remove('active');
+      coverViewEl.style.opacity = '1';
+      coverViewEl.style.pointerEvents = 'all';
+      pagesViewEl.style.opacity = '0';
+      pagesViewEl.style.pointerEvents = 'none';
+    });
+
+    btnShowInside.addEventListener('click', () => {
+      btnShowInside.classList.add('active');
+      btnShowCover.classList.remove('active');
+      pagesViewEl.style.opacity = '1';
+      pagesViewEl.style.pointerEvents = 'all';
+      coverViewEl.style.opacity = '0';
+      coverViewEl.style.pointerEvents = 'none';
     });
   });
 </script>
