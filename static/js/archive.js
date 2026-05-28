@@ -13,7 +13,7 @@ const FEATURED = JSON.parse(document.getElementById('featured-data').textContent
 
     function generateSVG(art, bg) {
         const darkBg = darken(bg, 40);
-        const linenLines = Array.from({ length: 26 }, (_, i) => `<line x1="0" y1="${i * 8 + 6}" x2="${BW}" y2="${i * 8 + 6}" stroke="#D4CCBA" stroke-width="0.6" opacity="0.6" />`).join('');
+        const linenLines = Array.from({ length: Math.ceil(BH / 8) + 1 }, (_, i) => `<line x1="0" y1="${i * 8 + 6}" x2="${BW}" y2="${i * 8 + 6}" stroke="#D4CCBA" stroke-width="0.6" opacity="0.6" />`).join('');
         const woodPaths = Array.from({ length: 14 }, (_, i) => {
             const y = i * 16 + 8;
             const w = Math.sin(i * 0.78) * 5;

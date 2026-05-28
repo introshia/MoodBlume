@@ -24,27 +24,27 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 20px;
+    justify-content: flex-start;
+    padding: 8vh 20px 20px;
   }
 
   /* Header area */
   .header-area {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 6vh;
   }
 
   .welcome-logo {
-    height: 52px;
+    height: 58px;
     width: auto;
     opacity: 0.8;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     animation: fadeUp 0.6s ease forwards;
   }
 
   .welcome-heading {
     font-family: 'Lora', Georgia, serif;
-    font-size: 20px;
+    font-size: 27px;
     font-weight: 400;
     color: #2b1a11;
     line-height: 1.3;
@@ -74,165 +74,67 @@
     gap: 20px;
   }
 
-  /* Toggle for Preview View modes */
-  .view-toggle-wrap {
-    display: flex;
-    gap: 4px;
-    background: rgba(43, 26, 17, 0.05);
-    padding: 3px;
-    border-radius: 8px;
-    z-index: 100;
-  }
-
-  .view-toggle-btn {
-    border: none;
-    background: transparent;
-    padding: 6px 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #9c8676;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-  }
-
-  .view-toggle-btn.active {
-    background: #FFFDF8;
-    color: #2b1a11;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-  }
-
-  /* Right column: Form card */
+  /* Right column: Form (no card box) */
   .form-col {
     width: 420px;
-    background: rgba(255, 253, 248, 0.75);
-    border: 1px solid rgba(133, 172, 201, 0.25);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 16px;
+    background: transparent;
+    border: none;
     padding: 24px;
-    box-shadow: 0 12px 36px rgba(43, 26, 17, 0.04);
+    box-shadow: none;
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
 
-  /* 3D Journal Custom Scaling & Overrides */
-  .preview-col .scene {
-    --journal-w: 300px !important;
-    --journal-h: 220px !important;
-    --journal-scale: 1.0 !important;
-    --page-w: calc(var(--journal-w) / 2) !important;
-    --page-inner-w: calc(var(--page-w) - 6px) !important;
-    width: var(--journal-w) !important;
-    height: var(--journal-h) !important;
-    perspective: 1500px !important;
-    perspective-origin: 50% 10px !important;
+  /* ── Front Cover Preview (reuses the real journal's .front-cover-design) ── */
+  /* Neutralize the journal-spotlight flex layout so it just hosts the static cover */
+  .preview-col .cover-preview-wrap {
+    height: auto !important;
+    width: auto !important;
+    flex-grow: 0 !important;
+    gap: 0 !important;
     margin: 0 !important;
-    padding: 0 !important;
   }
 
-  .preview-col .journal {
-    transform: scale(var(--journal-scale)) translateX(calc(-1 * var(--page-w) / 2)) rotateX(0deg) !important;
+  /* Sized box = the native cover (400×550) scaled down */
+  .cover-preview-stage {
+    position: relative;
+    width: 288px;   /* 400 * 0.72 */
+    height: 396px;  /* 550 * 0.72 */
   }
 
-  .preview-col .journal.spread-open {
-    transform: scale(var(--journal-scale)) rotateX(0deg) !important;
+  .cover-preview-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 550px;
+    transform: scale(0.72);
+    transform-origin: top left;
   }
 
-  .preview-col .left-half {
-    border-radius: 16px 0 0 16px !important;
-    transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
-  }
-
+  /* Flatten the 3D front cover so it faces forward as a static preview */
   .preview-col .front-cover-design {
-    border-radius: 0 16px 16px 0 !important;
+    transform: none !important;
+    -webkit-backface-visibility: visible !important;
+    backface-visibility: visible !important;
+    box-shadow: 10px 0 24px rgba(0, 0, 0, 0.2) !important;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Spine detail painted over the pattern (same gradient as journal.css cover) */
+  .preview-col .cover-spine-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
     background: linear-gradient(to right,
-      rgba(0, 0, 0, 0.25) 0%,
-      rgba(255, 255, 255, 0.04) 2%,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(255, 255, 255, 0.05) 2%,
       transparent 5%,
-      rgba(0, 0, 0, 0.15) 6%,
-      rgba(0, 0, 0, 0.3) 7%,
-      transparent 9%), var(--cover-color, #C8D898) !important;
-    box-shadow: 8px 0 20px rgba(0,0,0,0.35) !important;
-    transition: background 0.3s ease;
-  }
-
-  .preview-col .right-wing {
-    border-radius: 0 16px 16px 0 !important;
-    transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
-  }
-
-  .preview-col .back-cover-design {
-    border-radius: 0 16px 16px 0 !important;
-  }
-
-  .preview-col .cover-inside {
-    border-radius: 12px 0 0 12px !important;
-    top: 6px !important;
-    bottom: 6px !important;
-  }
-
-  .preview-col .left-half .cover-inside {
-    left: 4px !important;
-    right: 0 !important;
-  }
-
-  .preview-col .right-wing .cover-inside {
-    right: 4px !important;
-    left: 0 !important;
-    border-radius: 0 12px 12px 0 !important;
-  }
-
-  .preview-col .elastic {
-    right: 8px !important;
-    width: 7px !important;
-    top: 3px !important;
-    bottom: 3px !important;
-    border-radius: 2px !important;
-  }
-
-  .preview-col .cover-label {
-    padding: 0 !important;
-  }
-
-  .preview-col .lbl-small {
-    font-size: 5.5px !important;
-    letter-spacing: 0.1em !important;
-  }
-
-  .preview-col .lbl-big {
-    font-size: 10px !important;
-  }
-
-  .preview-col .page {
-    top: 6px !important;
-    bottom: 6px !important;
-    height: calc(100% - 12px) !important;
-  }
-
-  /* Paper line and style tweaks inside the scaled 3D book */
-  .preview-col .page-front, .preview-col .page-back {
-    padding: 10px !important;
-  }
-
-  .preview-col .style-lined {
-    background-size: 100% 12px !important;
-    background-image: linear-gradient(rgba(75,46,31,0.08) 1px, transparent 1px) !important;
-  }
-
-  .preview-col .style-grid {
-    background-size: 11px 11px !important;
-    background-image: 
-      linear-gradient(rgba(75,46,31,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(75,46,31,0.06) 1px, transparent 1px) !important;
-  }
-
-  .preview-col .style-blank {
-    background-image: none !important;
+      rgba(0, 0, 0, 0.2) 6%,
+      rgba(0, 0, 0, 0.4) 7%,
+      transparent 9%);
   }
 
   /* Form components */
@@ -244,7 +146,7 @@
 
   .welcome-label {
     font-family: 'DM Sans', sans-serif;
-    font-size: 8px;
+    font-size: 9.5px;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -258,7 +160,7 @@
     border-bottom: 1.5px solid #c4b5a8;
     padding: 4px 0;
     font-family: 'Lora', Georgia, serif;
-    font-size: 16px;
+    font-size: 17.5px;
     color: #2b1a11;
     outline: none;
     transition: border-color 0.25s;
@@ -267,7 +169,7 @@
   .welcome-input::placeholder {
     color: #c4b5a8;
     font-style: italic;
-    font-size: 13.5px;
+    font-size: 15px;
   }
 
   .welcome-input:focus {
@@ -312,10 +214,10 @@
   .grid-option {
     border: 1.2px solid #c4b5a8;
     border-radius: 6px;
-    padding: 6px 2px;
+    padding: 7px 2px;
     text-align: center;
     font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
+    font-size: 11.5px;
     color: #9c8676;
     cursor: pointer;
     transition: all 0.18s ease;
@@ -339,6 +241,22 @@
     pointer-events: none;
   }
 
+  /* Paper options with quick-view thumbnails */
+  .paper-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 4px;
+  }
+
+  .paper-option .style-icon {
+    width: 34px;
+    height: 28px;
+    border-radius: 6px;
+    pointer-events: none;
+  }
+
   /* Submit */
   .welcome-btn {
     margin-top: 8px;
@@ -346,11 +264,11 @@
     border: 1.5px solid #85acc9;
     color: #85acc9;
     font-family: 'DM Sans', sans-serif;
-    font-size: 9px;
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    padding: 10px 0;
+    padding: 11px 0;
     width: 100%;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
@@ -389,7 +307,7 @@
 
   .welcome-notice {
     font-family: 'Lora', Georgia, serif;
-    font-size: 10.5px;
+    font-size: 12px;
     font-style: italic;
     color: #9c8676;
     text-align: center;
@@ -414,55 +332,19 @@
 <div class="screen-wrap">
   <div class="header-area">
     <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}" class="welcome-logo" alt="MoodBlume">
-    <h1 class="welcome-heading">Begin a new chronicle in your digital sanctuary.</h1>
+    <h1 class="welcome-heading">create your first digital journal</h1>
   </div>
 
   <div class="workspace">
     
     <div class="preview-col">
-      <div class="journal-spotlight" style="display: flex; align-items: center; justify-content: center; width: 100%;">
-        <div class="scene">
-          <div class="journal" id="journal3d">
-            
-            <div class="wing left-half" id="leftHalf">
-              <div class="cover-inside">
-                <div class="spine-shadow"></div>
-              </div>
-              <div class="front-cover-design" id="frontCoverDesign" style="position: relative; overflow: hidden;">
-                <div class="cover-pattern-container" id="coverPatternContainer" style="position: absolute; inset: 0; z-index: 1;"></div>
-                <div class="elastic" style="z-index: 3;"></div>
-                <div class="cover-label" style="z-index: 2;">
-                  <div class="lbl-small">a memory from</div>
-                  <div class="lbl-big" id="cover-date">today</div>
-                </div>
-              </div>
-            </div>
-            <div class="wing right-wing" id="rightWing">
-              <div class="back-cover-design" id="backCoverDesign"></div>
-              <div class="cover-inside">
-                <div class="spine-shadow"></div>
-              </div>
-            </div>
-
-            <div class="page" style="z-index: 10;" data-page="1">
-              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
-            </div>
-            <div class="page" style="z-index: 9;" data-page="2">
-              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
-            </div>
-            <div class="page" style="z-index: 8;" data-page="3">
-              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
-            </div>
-            <div class="page" style="z-index: 7;" data-page="4">
-              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
-            </div>
-            <div class="page" style="z-index: 6;" data-page="5">
-              <div class="page-front style-lined"><div class="spine-shadow"></div></div>
-              <div class="page-back style-lined"><div class="spine-shadow"></div></div>
+      <div class="journal-spotlight cover-preview-wrap">
+        <div class="cover-preview-stage">
+          <div class="cover-preview-inner">
+            <div class="front-cover-design" id="frontCoverDesign">
+              <div class="cover-pattern-container" id="coverPatternContainer" style="position: absolute; inset: 0; z-index: 1;"></div>
+              <div class="cover-spine-overlay"></div>
+              <div class="elastic"></div>
             </div>
           </div>
         </div>
@@ -512,6 +394,9 @@
             <label class="color-option" style="background-color: #e6c387;" title="Warm Amber">
               <input type="radio" name="cover_color" value="#e6c387">
             </label>
+            <label class="color-option" style="background-color: #3D2B1F;" title="Espresso">
+              <input type="radio" name="cover_color" value="#3D2B1F">
+            </label>
           </div>
         </div>
 
@@ -538,29 +423,36 @@
               Clouds
               <input type="radio" name="art_style" value="clouds">
             </label>
+            <label class="grid-option" data-val="none">
+              No Cover
+              <input type="radio" name="art_style" value="none">
+            </label>
           </div>
         </div>
 
         <div class="form-group">
           <label class="welcome-label">Select Paper</label>
-          <div class="selection-grid" id="paperGrid">
-            <label class="grid-option selected" data-val="lined">
-              Lined
+          <div class="selection-grid" id="paperGrid" style="grid-template-columns: repeat(3, 1fr);">
+            <label class="grid-option paper-option selected" data-val="lined">
+              <span class="style-icon style-icon--lined"></span>
+              <span>Lined</span>
               <input type="radio" name="paper_type" value="lined" checked>
             </label>
-            <label class="grid-option" data-val="grid">
-              Grid
+            <label class="grid-option paper-option" data-val="grid">
+              <span class="style-icon style-icon--grid"></span>
+              <span>Grid</span>
               <input type="radio" name="paper_type" value="grid">
             </label>
-            <label class="grid-option" data-val="blank">
-              Blank
+            <label class="grid-option paper-option" data-val="blank">
+              <span class="style-icon style-icon--blank"></span>
+              <span>Blank</span>
               <input type="radio" name="paper_type" value="blank">
             </label>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="welcome-label">Select Volume Schedule</label>
+          <label class="welcome-label">Select Journal Format</label>
           <div class="selection-grid" id="pageGrid" style="grid-template-columns: repeat(3, 1fr);">
             <label class="grid-option selected">
               By Month
@@ -609,7 +501,7 @@
 
   function generateSVG(art, bg) {
       const BW = 170, BH = 240;
-      const linenLines = Array.from({ length: 26 }, (_, i) => `<line x1="0" y1="${i * 8 + 6}" x2="${BW}" y2="${i * 8 + 6}" stroke="#FAF6EE" stroke-width="0.8" opacity="0.8" />`).join('');
+      const linenLines = Array.from({ length: Math.ceil(BH / 8) + 1 }, (_, i) => `<line x1="0" y1="${i * 8 + 6}" x2="${BW}" y2="${i * 8 + 6}" stroke="#FAF6EE" stroke-width="0.8" opacity="0.8" />`).join('');
       const woodPaths = Array.from({ length: 14 }, (_, i) => {
           const y = i * 16 + 8;
           const w = Math.sin(i * 0.78) * 5;
@@ -662,15 +554,15 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Elements references
-    const leftHalf = document.getElementById('leftHalf');
     const frontCoverDesign = document.getElementById('frontCoverDesign');
-    const rightWing = document.getElementById('rightWing');
-    const backCoverDesign = document.getElementById('backCoverDesign');
-    const allPagesFrontBack = document.querySelectorAll('.page-front, .page-back');
 
     let currentColor = '#C8D898';
     let currentPattern = 'botanical';
+
+    function updateCoverColor() {
+      // Mirrors the real journal: override the solid color behind the spine gradient
+      if (frontCoverDesign) frontCoverDesign.style.backgroundColor = currentColor;
+    }
 
     function updateCoverPattern() {
       const container = document.getElementById('coverPatternContainer');
@@ -679,10 +571,10 @@
       }
     }
 
-    // 1. Live color updating (only updates the visible front cover face)
+    // 1. Live color updating
     setupSelectionGroup('colorGrid', (colorVal) => {
       currentColor = colorVal;
-      document.querySelector('.preview-col').style.setProperty('--cover-color', colorVal);
+      updateCoverColor();
       updateCoverPattern();
     });
 
@@ -692,30 +584,22 @@
       updateCoverPattern();
     });
 
-    // 3. Live paper style updating (lined / grid / blank class name swap)
-    setupSelectionGroup('paperGrid', (paperVal) => {
-      allPagesFrontBack.forEach(page => {
-        page.classList.remove('style-lined', 'style-grid', 'style-blank');
-        page.classList.add('style-' + paperVal);
-      });
-    });
+    // 3. Paper style — no visual on cover, keep for form submission
+    setupSelectionGroup('paperGrid', () => {});
 
     // 4. Volume schedule setup
     setupSelectionGroup('pageGrid', () => {});
 
-    // 5. Live Name updating (syncing name field and label on closed cover)
+    // 5. Name field gates the create button
     const nameInput = document.getElementById('journal_name');
-    const labelName = document.getElementById('cover-date');
     const createBtn = document.getElementById('createBtn');
 
     nameInput.addEventListener('input', () => {
-      const val = nameInput.value.trim();
-      labelName.textContent = val ? val : "today";
-      createBtn.disabled = !val;
+      createBtn.disabled = !nameInput.value.trim();
     });
 
-    // Initialize cover color and pattern
-    document.querySelector('.preview-col').style.setProperty('--cover-color', currentColor);
+    // Initialize
+    updateCoverColor();
     updateCoverPattern();
   });
 </script>

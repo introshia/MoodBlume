@@ -183,7 +183,7 @@
 
   function generateSVG(art, bg) {
       const BW = 170, BH = 240;
-      const linenLines = Array.from({ length: 26 }, (_, i) => `<line x1="0" y1="${i * 8 + 6}" x2="${BW}" y2="${i * 8 + 6}" stroke="#FAF6EE" stroke-width="0.8" opacity="0.8" />`).join('');
+      const linenLines = Array.from({ length: Math.ceil(BH / 8) + 1 }, (_, i) => `<line x1="0" y1="${i * 8 + 6}" x2="${BW}" y2="${i * 8 + 6}" stroke="#FAF6EE" stroke-width="0.8" opacity="0.8" />`).join('');
       const woodPaths = Array.from({ length: 14 }, (_, i) => {
           const y = i * 16 + 8;
           const w = Math.sin(i * 0.78) * 5;
