@@ -212,8 +212,9 @@ main {
 }
 
 .btn-collaborate:hover {
-    background: var(--text-black);
-    color: var(--bg-canvas);
+    background: #85acc9;
+    color: #FFFDF8;
+    border-color: #85acc9;
     transform: translateY(-1px);
 }
 
