@@ -10,99 +10,234 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body, html {
-    height: 100%;
-    overflow-x: hidden;
+    height: 100vh;
+    overflow: hidden;
     font-family: 'DM Sans', 'Inter', sans-serif;
     background:
-      radial-gradient(ellipse 70% 55% at 75% 25%, rgba(193,210,160,0.25) 0%, transparent 65%),
-      radial-gradient(ellipse 55% 45% at 18% 85%, rgba(220,190,140,0.18) 0%, transparent 65%),
+      radial-gradient(ellipse 70% 55% at 75% 25%, rgba(193,210,160,0.22) 0%, transparent 65%),
+      radial-gradient(ellipse 55% 45% at 18% 85%, rgba(220,190,140,0.15) 0%, transparent 65%),
       #F6F3EE;
     color: #2b1a11;
   }
 
-  .welcome-wrap {
-    min-height: 100vh;
+  .screen-wrap {
+    height: 100vh;
     width: 100vw;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 60px 24px;
+    padding: 20px;
   }
 
-  /* Logo */
+  /* Header area */
+  .header-area {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
   .welcome-logo {
-    height: 72px;
+    height: 56px;
     width: auto;
     opacity: 0.8;
-    margin-bottom: 24px;
-    opacity: 0;
-    transform: translateY(-8px);
-    animation: fadeUp 0.6s ease forwards 0.1s;
+    margin-bottom: 8px;
+    animation: fadeUp 0.6s ease forwards;
   }
 
-  /* Heading */
   .welcome-heading {
     font-family: 'Lora', Georgia, serif;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 400;
     color: #2b1a11;
-    text-align: center;
-    line-height: 1.4;
-    max-width: 500px;
-    margin-bottom: 32px;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeUp 0.65s ease forwards 0.25s;
+    line-height: 1.3;
+    animation: fadeUp 0.65s ease forwards 0.1s;
   }
 
-  /* Form Container Card */
-  .new-journal-card {
+  /* Main 2-Column workspace */
+  .workspace {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    max-height: 480px;
+    animation: fadeUp 0.65s ease forwards 0.2s;
+  }
+
+  /* Left column: Live preview */
+  .preview-col {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+  }
+
+  /* Right column: Form card */
+  .form-col {
+    width: 420px;
     background: rgba(255, 253, 248, 0.7);
     border: 1px solid rgba(133, 172, 201, 0.25);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 16px;
-    padding: 36px;
-    width: 100%;
-    max-width: 480px;
+    padding: 24px;
     box-shadow: 0 12px 36px rgba(43, 26, 17, 0.04);
-    opacity: 0;
-    transform: translateY(12px);
-    animation: fadeUp 0.65s ease forwards 0.4s;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
   }
 
-  /* Error Alert */
-  .welcome-error {
-    color: #B23C30;
-    font-size: 13px;
-    font-family: 'Lora', Georgia, serif;
-    font-style: italic;
+  /* 3D-ish Book Spread Preview */
+  .book-spread {
+    width: 320px;
+    height: 220px;
+    position: relative;
+    display: flex;
+    border-radius: 4px;
+    transform: rotateX(12deg) rotateY(-12deg);
+    transform-style: preserve-3d;
+    box-shadow: 0 16px 36px rgba(43, 26, 17, 0.12);
+    transition: transform 0.5s ease;
+  }
+  
+  .book-spread:hover {
+    transform: rotateX(6deg) rotateY(-6deg);
+  }
+
+  /* Left Page: Cover */
+  .book-cover-preview {
+    flex: 1;
+    height: 100%;
+    border-radius: 6px 0 0 6px;
+    position: relative;
+    box-shadow: inset -10px 0 20px rgba(0,0,0,0.18), -2px 0 5px rgba(0,0,0,0.1);
+    transition: background-color 0.4s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .cover-inside-shadow {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 14px;
+    background: linear-gradient(to left, rgba(0,0,0,0.22), transparent);
+    z-index: 5;
+  }
+
+  .cover-label-preview {
+    background: rgba(255, 253, 248, 0.85);
+    border: 1px solid rgba(43, 26, 17, 0.15);
+    padding: 6px 10px;
+    border-radius: 2px;
     text-align: center;
-    margin-bottom: 12px;
+    z-index: 6;
+    max-width: 90%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   }
 
+  .lbl-small-preview {
+    font-size: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #9c8676;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .lbl-big-preview {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 11px;
+    font-style: italic;
+    color: #2b1a11;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  /* Pattern overlays */
+  .pattern-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0.65;
+    z-index: 2;
+    pointer-events: none;
+  }
+  
+  .pattern-overlay svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Spine Crease / Binding shadow */
+  .book-spine-crease {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(255,255,255,0.08) 50%, rgba(0,0,0,0.2) 100%);
+    z-index: 10;
+  }
+
+  /* Right Page: Paper style inside */
+  .book-page-preview {
+    flex: 1;
+    height: 100%;
+    background: #FFFDF8;
+    border-radius: 0 6px 6px 0;
+    position: relative;
+    box-shadow: inset 10px 0 20px rgba(0,0,0,0.08), 2px 0 5px rgba(0,0,0,0.05);
+    overflow: hidden;
+    padding: 16px;
+  }
+
+  /* Paper line generators */
+  .paper-pattern {
+    position: absolute;
+    inset: 12px;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+
+  .paper-pattern.lined {
+    background: repeating-linear-gradient(transparent, transparent 11px, #c4b5a8 11px, #c4b5a8 12px);
+  }
+
+  .paper-pattern.grid {
+    background: 
+      repeating-linear-gradient(transparent, transparent 10px, #c4b5a8 10px, #c4b5a8 11px),
+      repeating-linear-gradient(90deg, transparent, transparent 10px, #c4b5a8 10px, #c4b5a8 11px);
+  }
+
+  .paper-pattern.blank {
+    background: transparent;
+  }
+
+  /* Form layouts */
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
   }
 
   .welcome-label {
     font-family: 'DM Sans', sans-serif;
-    font-size: 9px;
+    font-size: 8px;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #9c8676;
-  }
-
-  .welcome-input-wrap {
-    position: relative;
-    width: 100%;
   }
 
   .welcome-input {
@@ -110,77 +245,69 @@
     background: transparent;
     border: none;
     border-bottom: 1.5px solid #c4b5a8;
-    padding: 6px 0;
+    padding: 4px 0;
     font-family: 'Lora', Georgia, serif;
-    font-size: 18px;
+    font-size: 16px;
     color: #2b1a11;
     outline: none;
     transition: border-color 0.25s;
-    text-align: left;
-    caret-color: #85acc9;
   }
 
   .welcome-input::placeholder {
     color: #c4b5a8;
     font-style: italic;
-    font-size: 15px;
+    font-size: 13.5px;
   }
 
   .welcome-input:focus {
     border-bottom-color: #85acc9;
   }
 
-  /* Color Swatches Grid */
+  /* Color Swatches */
   .color-grid {
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 4px;
+    gap: 10px;
   }
 
   .color-option {
     position: relative;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     cursor: pointer;
-    border: 2px solid transparent;
+    border: 1.5px solid transparent;
     transition: all 0.2s ease;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
   }
 
   .color-option.selected {
     border-color: #2b1a11;
-    transform: scale(1.1);
+    transform: scale(1.15);
   }
 
   .color-option input {
     position: absolute;
     opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
+    pointer-events: none;
   }
 
-  /* Option Select Cards Grid */
+  /* Buttons grids */
   .selection-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 8px;
-    margin-top: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 6px;
   }
 
   .grid-option {
-    border: 1.5px solid #c4b5a8;
-    border-radius: 8px;
-    padding: 8px 4px;
+    border: 1.2px solid #c4b5a8;
+    border-radius: 6px;
+    padding: 6px 2px;
     text-align: center;
     font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
+    font-size: 10px;
     color: #9c8676;
     cursor: pointer;
-    transition: all 0.2s ease;
-    background: transparent;
+    transition: all 0.18s ease;
   }
 
   .grid-option:hover {
@@ -198,30 +325,29 @@
   .grid-option input {
     position: absolute;
     opacity: 0;
-    height: 0;
-    width: 0;
+    pointer-events: none;
   }
 
-  /* Submit Button */
+  /* Submit */
   .welcome-btn {
-    margin-top: 16px;
+    margin-top: 8px;
     background: transparent;
     border: 1.5px solid #85acc9;
     color: #85acc9;
     font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    padding: 12px 0;
+    padding: 10px 0;
     width: 100%;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    border-radius: 8px;
+    gap: 6px;
+    border-radius: 6px;
   }
 
   .welcome-btn:hover:not(:disabled) {
@@ -233,12 +359,11 @@
     border-color: #c4b5a8;
     color: #c4b5a8;
     cursor: not-allowed;
-    background: transparent;
   }
 
   .welcome-btn svg {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     stroke: currentColor;
     fill: none;
     stroke-width: 2;
@@ -248,16 +373,24 @@
   }
 
   .welcome-btn:hover:not(:disabled) svg {
-    transform: translateX(3px);
+    transform: translateX(2px);
   }
 
   .welcome-notice {
     font-family: 'Lora', Georgia, serif;
-    font-size: 11.5px;
+    font-size: 10.5px;
     font-style: italic;
     color: #9c8676;
     text-align: center;
-    margin-top: 8px;
+    margin-top: 4px;
+  }
+
+  .welcome-error {
+    color: #B23C30;
+    font-size: 12px;
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    text-align: center;
   }
 
   @keyframes fadeUp {
@@ -265,140 +398,200 @@
   }
 </style>
 
-<div class="welcome-wrap">
-  <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}" class="welcome-logo" alt="MoodBlume">
+<div class="screen-wrap">
+  <div class="header-area">
+    <img src="{{ url_for('static', filename='images/moodblume_logo.png') }}" class="welcome-logo" alt="MoodBlume">
+    <h1 class="welcome-heading">Begin a new chronicle in your digital sanctuary.</h1>
+  </div>
 
-  <h1 class="welcome-heading">Begin a new chronicle in your digital sanctuary.</h1>
+  <div class="workspace">
+    <!-- Left Column: Live 3D Spread Preview -->
+    <div class="preview-col">
+      <div class="book-spread" id="bookPreview">
+        <div class="book-cover-preview" id="coverPreview" style="background-color: #C8D898;">
+          <div class="pattern-overlay" id="patternOverlay"></div>
+          <div class="cover-inside-shadow"></div>
+          <div class="cover-label-preview">
+            <span class="lbl-small-preview">volume</span>
+            <span class="lbl-big-preview" id="labelName">My Chronicle</span>
+          </div>
+        </div>
+        <div class="book-spine-crease"></div>
+        <div class="book-page-preview">
+          <div class="paper-pattern lined" id="paperPattern"></div>
+        </div>
+      </div>
+    </div>
 
-  <div class="new-journal-card">
-    {% if error %}
-      <p class="welcome-error">{{ error }}</p>
-    {% endif %}
+    <!-- Right Column: Options & Controls -->
+    <div class="form-col">
+      {% if error %}
+        <p class="welcome-error">{{ error }}</p>
+      {% endif %}
 
-    <form method="POST" action="{{ url_for('collections.new_journal') }}" id="newJournalForm" style="display:flex;flex-direction:column;gap:20px;">
-      
-      <!-- Journal Name -->
-      <div class="form-group">
-        <label class="welcome-label" for="journal_name">Journal name</label>
-        <div class="welcome-input-wrap">
+      <form method="POST" action="{{ url_for('collections.new_journal') }}" id="newJournalForm" style="display:flex;flex-direction:column;gap:12px;">
+        
+        <!-- Journal Name -->
+        <div class="form-group">
+          <label class="welcome-label" for="journal_name">Journal name</label>
           <input
             type="text"
             id="journal_name"
             name="name"
             class="welcome-input"
-            placeholder="e.g. Dream Diary, Forest Thoughts…"
-            maxlength="60"
+            placeholder="e.g. My Chronicle, Dream Diary…"
+            maxlength="40"
             autocomplete="off"
             required
             autofocus
           >
         </div>
-      </div>
 
-      <!-- Select Cover Color -->
-      <div class="form-group">
-        <label class="welcome-label">Cover Color</label>
-        <div class="color-grid" id="colorGrid">
-          <!-- Premium Swatches -->
-          <label class="color-option selected" style="background-color: #C8D898;" title="Sage Green">
-            <input type="radio" name="cover_color" value="#C8D898" checked>
-          </label>
-          <label class="color-option" style="background-color: #85acc9;" title="Dusty Blue">
-            <input type="radio" name="cover_color" value="#85acc9">
-          </label>
-          <label class="color-option" style="background-color: #d37c69;" title="Terracotta">
-            <input type="radio" name="cover_color" value="#d37c69">
-          </label>
-          <label class="color-option" style="background-color: #e6dfd3;" title="Oatmeal">
-            <input type="radio" name="cover_color" value="#e6dfd3">
-          </label>
-          <label class="color-option" style="background-color: #7a667a;" title="Cozy Plum">
-            <input type="radio" name="cover_color" value="#7a667a">
-          </label>
-          <label class="color-option" style="background-color: #e6c387;" title="Warm Amber">
-            <input type="radio" name="cover_color" value="#e6c387">
-          </label>
+        <!-- Select Cover Color -->
+        <div class="form-group">
+          <label class="welcome-label">Cover Color</label>
+          <div class="color-grid" id="colorGrid">
+            <label class="color-option selected" style="background-color: #C8D898;" title="Sage Green">
+              <input type="radio" name="cover_color" value="#C8D898" checked>
+            </label>
+            <label class="color-option" style="background-color: #85acc9;" title="Dusty Blue">
+              <input type="radio" name="cover_color" value="#85acc9">
+            </label>
+            <label class="color-option" style="background-color: #d37c69;" title="Terracotta">
+              <input type="radio" name="cover_color" value="#d37c69">
+            </label>
+            <label class="color-option" style="background-color: #e6dfd3;" title="Oatmeal">
+              <input type="radio" name="cover_color" value="#e6dfd3">
+            </label>
+            <label class="color-option" style="background-color: #7a667a;" title="Cozy Plum">
+              <input type="radio" name="cover_color" value="#7a667a">
+            </label>
+            <label class="color-option" style="background-color: #e6c387;" title="Warm Amber">
+              <input type="radio" name="cover_color" value="#e6c387">
+            </label>
+          </div>
         </div>
-      </div>
 
-      <!-- Cover Art Pattern -->
-      <div class="form-group">
-        <label class="welcome-label">Cover Pattern</label>
-        <div class="selection-grid" id="artGrid">
-          <label class="grid-option selected">
-            Botanical
-            <input type="radio" name="art_style" value="botanical" checked>
-          </label>
-          <label class="grid-option">
-            Linen
-            <input type="radio" name="art_style" value="linen">
-          </label>
-          <label class="grid-option">
-            Face
-            <input type="radio" name="art_style" value="face">
-          </label>
-          <label class="grid-option">
-            Wood
-            <input type="radio" name="art_style" value="wood">
-          </label>
-          <label class="grid-option">
-            Clouds
-            <input type="radio" name="art_style" value="clouds">
-          </label>
+        <!-- Cover Art Pattern -->
+        <div class="form-group">
+          <label class="welcome-label">Cover Pattern</label>
+          <div class="selection-grid" id="artGrid">
+            <label class="grid-option selected" data-val="botanical">
+              Botanical
+              <input type="radio" name="art_style" value="botanical" checked>
+            </label>
+            <label class="grid-option" data-val="linen">
+              Linen
+              <input type="radio" name="art_style" value="linen">
+            </label>
+            <label class="grid-option" data-val="face">
+              Face
+              <input type="radio" name="art_style" value="face">
+            </label>
+            <label class="grid-option" data-val="wood">
+              Wood
+              <input type="radio" name="art_style" value="wood">
+            </label>
+            <label class="grid-option" data-val="clouds">
+              Clouds
+              <input type="radio" name="art_style" value="clouds">
+            </label>
+          </div>
         </div>
-      </div>
 
-      <!-- Select Paper Type -->
-      <div class="form-group">
-        <label class="welcome-label">Select Paper</label>
-        <div class="selection-grid" id="paperGrid">
-          <label class="grid-option selected">
-            Lined
-            <input type="radio" name="paper_type" value="lined" checked>
-          </label>
-          <label class="grid-option">
-            Grid
-            <input type="radio" name="paper_type" value="grid">
-          </label>
-          <label class="grid-option">
-            Blank
-            <input type="radio" name="paper_type" value="blank">
-          </label>
+        <!-- Select Paper Type -->
+        <div class="form-group">
+          <label class="welcome-label">Select Paper</label>
+          <div class="selection-grid" id="paperGrid">
+            <label class="grid-option selected" data-val="lined">
+              Lined
+              <input type="radio" name="paper_type" value="lined" checked>
+            </label>
+            <label class="grid-option" data-val="grid">
+              Grid
+              <input type="radio" name="paper_type" value="grid">
+            </label>
+            <label class="grid-option" data-val="blank">
+              Blank
+              <input type="radio" name="paper_type" value="blank">
+            </label>
+          </div>
         </div>
-      </div>
 
-      <!-- Page Schedule Type -->
-      <div class="form-group">
-        <label class="welcome-label">Select Volume Schedule</label>
-        <div class="selection-grid" id="pageGrid" style="grid-template-columns: repeat(3, 1fr);">
-          <label class="grid-option selected" title="Organizes entries in monthly volumes">
-            By Month
-            <input type="radio" name="page_type" value="month" checked>
-          </label>
-          <label class="grid-option" title="Organizes entries in yearly volumes">
-            By Year
-            <input type="radio" name="page_type" value="year">
-          </label>
-          <label class="grid-option" title="Single continuous endless book with no date bounds">
-            Endless Pages
-            <input type="radio" name="page_type" value="endless">
-          </label>
+        <!-- Page Schedule Type -->
+        <div class="form-group">
+          <label class="welcome-label">Select Volume Schedule</label>
+          <div class="selection-grid" id="pageGrid" style="grid-template-columns: repeat(3, 1fr);">
+            <label class="grid-option selected">
+              By Month
+              <input type="radio" name="page_type" value="month" checked>
+            </label>
+            <label class="grid-option">
+              By Year
+              <input type="radio" name="page_type" value="year">
+            </label>
+            <label class="grid-option">
+              Endless Pages
+              <input type="radio" name="page_type" value="endless">
+            </label>
+          </div>
         </div>
-      </div>
 
-      <button type="submit" class="welcome-btn" id="createBtn" disabled>
-        Create My Journal
-        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </button>
+        <button type="submit" class="welcome-btn" id="createBtn" disabled>
+          Create My Journal
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
 
-      <p class="welcome-notice">You can manage all your journals in the Archive.</p>
-    </form>
+        <p class="welcome-notice">You can manage all your journals in the Archive.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Embedded SVGs for Patterns -->
+<div style="display: none;">
+  <div id="svg-botanical">
+    <svg viewBox="0 0 170 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="44" cy="107" rx="26" ry="46" fill="#6A9040" transform="rotate(-18 44 107)" opacity="0.45"/>
+      <ellipse cx="77" cy="82" rx="20" ry="38" fill="#8AAA58" transform="rotate(12 77 82)" opacity="0.55"/>
+      <ellipse cx="112" cy="118" rx="23" ry="42" fill="#6A9040" transform="rotate(-8 112 118)" opacity="0.45"/>
+      <line x1="44" y1="140" x2="44" y2="190" stroke="#4A7028" stroke-width="1.8" opacity="0.5"/>
+      <line x1="77" y1="115" x2="77" y2="190" stroke="#4A7028" stroke-width="1.8" opacity="0.5"/>
+      <line x1="112" y1="152" x2="112" y2="190" stroke="#4A7028" stroke-width="1.8" opacity="0.5"/>
+    </svg>
+  </div>
+  <div id="svg-linen">
+    <svg viewBox="0 0 170 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,8 L170,8 M0,24 L170,24 M0,40 L170,40 M0,56 L170,56 M0,72 L170,72 M0,88 L170,88 M0,104 L170,104 M0,120 L170,120 M0,136 L170,136 M0,152 L170,152 M0,168 L170,168 M0,184 L170,184 M0,200 L170,200 M0,216 L170,216 M0,232 L170,232" stroke="rgba(255,255,255,0.22)" stroke-width="0.8"/>
+      <path d="M8,0 L8,240 M24,0 L24,240 M40,0 L40,240 M56,0 L56,240 M72,0 L72,240 M88,0 L88,240 M104,0 L104,240 M120,0 L120,240 M136,0 L136,240 M152,0 L152,240 M168,0 L168,240" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+    </svg>
+  </div>
+  <div id="svg-face">
+    <svg viewBox="0 0 170 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="85" cy="85" rx="28" ry="34" fill="#1E0E06" opacity="0.75" />
+      <ellipse cx="85" cy="145" rx="22" ry="28" fill="#E07828" opacity="0.65" />
+      <circle cx="73" cy="74" r="5" fill="#B84818" opacity="0.8" />
+      <circle cx="97" cy="76" r="5" fill="#B84818" opacity="0.8" />
+      <path d="M72 96 Q85 106 98 96" stroke="#3C1808" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.85" />
+    </svg>
+  </div>
+  <div id="svg-wood">
+    <svg viewBox="0 0 170 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,20 C40,24 80,16 170,22 M0,50 C50,45 100,55 170,48 M0,90 C30,95 90,85 170,92 M0,130 C60,125 110,135 170,128 M0,170 C40,175 100,165 170,172 M0,210 C50,205 120,215 170,208" stroke="rgba(0,0,0,0.14)" stroke-width="1.8" fill="none"/>
+    </svg>
+  </div>
+  <div id="svg-clouds">
+    <svg viewBox="0 0 170 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="70" rx="30" ry="16" fill="white" opacity="0.35" />
+      <ellipse cx="70" cy="62" rx="22" ry="14" fill="white" opacity="0.4" />
+      <ellipse cx="110" cy="130" rx="26" ry="14" fill="white" opacity="0.3" />
+    </svg>
   </div>
 </div>
 
 <script>
-  // Dynamic Option Styling Selection Logic
-  function setupSelectionGroup(containerId) {
+  // Selection Logic with Preview Updating
+  function setupSelectionGroup(containerId, updateFn) {
     const container = document.getElementById(containerId);
     if (!container) return;
     const options = container.querySelectorAll('.color-option, .grid-option');
@@ -406,30 +599,57 @@
       opt.addEventListener('click', () => {
         options.forEach(o => o.classList.remove('selected'));
         opt.classList.add('selected');
-        // Find input inside and check it
         const input = opt.querySelector('input');
-        if (input) input.checked = true;
+        if (input) {
+          input.checked = true;
+          updateFn(input.value, opt);
+        }
       });
     });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    setupSelectionGroup('colorGrid');
-    setupSelectionGroup('artGrid');
-    setupSelectionGroup('paperGrid');
-    setupSelectionGroup('pageGrid');
+    // 1. Live color updating
+    const coverPreview = document.getElementById('coverPreview');
+    setupSelectionGroup('colorGrid', (colorVal) => {
+      coverPreview.style.backgroundColor = colorVal;
+    });
 
-    // Enable/Disable button based on name input
+    // 2. Live pattern updating
+    const patternOverlay = document.getElementById('patternOverlay');
+    function updatePattern(patternVal) {
+      const sourceSvg = document.getElementById('svg-' + patternVal);
+      if (sourceSvg) {
+        patternOverlay.innerHTML = sourceSvg.innerHTML;
+      } else {
+        patternOverlay.innerHTML = '';
+      }
+    }
+    setupSelectionGroup('artGrid', (patternVal) => {
+      updatePattern(patternVal);
+    });
+    // Set initial pattern
+    updatePattern('botanical');
+
+    // 3. Live paper updating
+    const paperPattern = document.getElementById('paperPattern');
+    setupSelectionGroup('paperGrid', (paperVal) => {
+      paperPattern.className = 'paper-pattern ' + paperVal;
+    });
+
+    // 4. Volume schedule setup (doesn't change preview but updates styles)
+    setupSelectionGroup('pageGrid', () => {});
+
+    // 5. Live Name updating
     const nameInput = document.getElementById('journal_name');
+    const labelName = document.getElementById('labelName');
     const createBtn = document.getElementById('createBtn');
 
-    function toggleBtn() {
-      createBtn.disabled = !nameInput.value.trim();
-    }
-
-    nameInput.addEventListener('input', toggleBtn);
-    toggleBtn();
-    nameInput.focus();
+    nameInput.addEventListener('input', () => {
+      const val = nameInput.value.trim();
+      labelName.textContent = val ? val : "My Chronicle";
+      createBtn.disabled = !val;
+    });
   });
 </script>
 {% endblock %}
