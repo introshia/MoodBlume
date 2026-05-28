@@ -1,6 +1,6 @@
 
     :root {
-        --bg: #f4f3f1;
+        --bg: #FFFDF4;
         --surface: #FFFFFF;
         --text: #4B2E1F;
         --muted: rgba(75, 46, 31, 0.55);
@@ -13,7 +13,7 @@
     }
 
     body {
-        background: radial-gradient(circle at top left, #dbe4eb 0%, #eae3d7 55%, #f6e7db 100%) !important;
+        background: #FFFDF4 !important;
     }
 
     /* Lock html & body height/overflow to prevent window scrolling */
@@ -32,7 +32,7 @@
         width: 100% !important;
         box-sizing: border-box !important;
         overflow: hidden !important;
-        background: radial-gradient(circle at top left, #dbe4eb 0%, #eae3d7 55%, #f6e7db 100%) !important;
+        background: #FFFDF4 !important;
     }
 
     /* ── 3D Journal Spotlight ── */
