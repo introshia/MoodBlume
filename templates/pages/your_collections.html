@@ -191,21 +191,18 @@
     /* ── Hero: greeting + current journal (left), mood calendar (right) ── */
     .yc-hero {
         display: flex;
-        gap: 48px;
+        gap: 56px;
         align-items: flex-start;
-        justify-content: space-between;
         flex-wrap: wrap;
         margin-bottom: 44px;
     }
 
     .yc-hero-left {
-        flex: 1 1 280px;
-        min-width: 240px;
+        flex: 0 0 auto;
     }
 
     .yc-hero-right {
         flex: 0 0 auto;
-        margin-left: auto;
     }
 
     .yc-hero-right .cal-wrap {
@@ -240,6 +237,22 @@
         font-size: 15px;
         color: var(--text, #4B2E1F);
         margin-top: 14px;
+    }
+
+    .yc-cover-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .yc-cover-link:hover {
+        transform: translateY(-3px);
+    }
+
+    .yc-cover-link:hover .front-cover-design {
+        box-shadow: 14px 4px 30px rgba(0, 0, 0, 0.26) !important;
     }
 
     /* Static front cover (mirrors the customizer preview) */
@@ -316,13 +329,13 @@
 {% block content %}
 <div class="yc-page">
 
-    <div class="yc-hero">
-        <div class="yc-hero-left">
-            <div class="yc-greeting"><span class="greeting-text">Hello.</span></div>
+    <div class="yc-greeting"><span class="greeting-text">Hello.</span></div>
 
-            {% if active_journal %}
-            <div class="yc-current">
-                <div class="yc-current-label">Currently writing in</div>
+    <div class="yc-hero">
+        {% if active_journal %}
+        <div class="yc-hero-left">
+            <div class="yc-current-label">Currently writing in</div>
+            <a href="/journal" class="yc-cover-link" title="Open {{ active_journal.name }}">
                 <div class="yc-cover">
                     <div class="yc-cover-stage">
                         <div class="yc-cover-inner">
@@ -335,9 +348,9 @@
                     </div>
                 </div>
                 <div class="yc-current-name">{{ active_journal.name }}</div>
-            </div>
-            {% endif %}
+            </a>
         </div>
+        {% endif %}
 
         <div class="yc-hero-right">
             <div class="cal-wrap" id="aw" style="margin-top: 0 !important; width: 270px !important; max-width: 270px !important;">

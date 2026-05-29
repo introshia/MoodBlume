@@ -836,8 +836,6 @@ var lampOn = true, time = 0, hov = null;
       
       if (hov) drawUIHalo(hov);
 
-      var tLab = { dawn: 'pale morning light', day: 'afternoon at your desk', dusk: 'golden hour fading', night: 'deep evening quiet' };
-      document.getElementById('timebadge').textContent = tLab[getTOD()] || 'a quiet moment';
       var wLab = { rain: 'soft rain outside', snow: 'snow falling quietly' };
       document.getElementById('weatherbadge').textContent = wLab[weatherType] || (anyOpen ? 'a gentle breeze' : '');
     }

@@ -294,7 +294,7 @@ def archive():
 def writing():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
-    return redirect(url_for('main.sanctuary', open='journal'))
+    return redirect(url_for('main.sanctuary', open_journal='true'))
 
 
 @main_bp.route('/install')
