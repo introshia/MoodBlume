@@ -279,6 +279,23 @@ def archive():
 
     clean_username = session.get('username', 'friend').replace('_', ' ').title()
 
+    # Lightweight mood-trend insight, shown under the greeting once there's
+    # enough data: compare the average mood of recent entries vs earlier ones.
+    # mood_score runs 1 (heaviest) to 9 (brightest).
+    mood_scores_chrono = [e['mood_score'] for e in reversed(entries_for_folders) if e.get('mood_score')]
+    mood_insight = None
+    if len(mood_scores_chrono) >= 5:
+        half = len(mood_scores_chrono) // 2
+        earlier = mood_scores_chrono[:half]
+        recent = mood_scores_chrono[half:]
+        diff = (sum(recent) / len(recent)) - (sum(earlier) / len(earlier))
+        if diff >= 0.6:
+            mood_insight = "your mood has been brightening over your recent entries"
+        elif diff <= -0.6:
+            mood_insight = "a few heavier days lately — be gentle with yourself"
+        else:
+            mood_insight = "your mood has held fairly steady lately"
+
     return render_template('pages/your_collections.html',
         monthly_groups=monthly_groups,
         mood_groups=mood_groups,
@@ -287,7 +304,8 @@ def archive():
         user_collections_json=user_collections_json,
         stats_msg=stats_msg,
         active_journal=active_journal,
-        username=clean_username)
+        username=clean_username,
+        mood_insight=mood_insight)
 
 
 @main_bp.route('/writing')

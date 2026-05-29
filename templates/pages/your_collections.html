@@ -200,6 +200,9 @@
 
     .yc-hero-left {
         flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 32px;
     }
 
     .yc-hero-right {
@@ -212,6 +215,10 @@
         margin: 0 !important;
     }
 
+    .yc-greeting-block {
+        margin-bottom: 36px;
+    }
+
     .yc-greeting {
         font-family: 'Lora', Georgia, serif;
         font-style: italic;
@@ -219,7 +226,22 @@
         font-weight: 400;
         color: var(--text, #4B2E1F);
         line-height: 1.2;
-        margin: 0 0 28px;
+        margin: 0;
+    }
+
+    .yc-mood-insight {
+        font-family: 'Lora', Georgia, serif;
+        font-style: italic;
+        font-size: 14px;
+        color: var(--muted, #9c8676);
+        margin: 8px 0 0;
+    }
+
+    /* Label + name sit beside the cover to balance the row */
+    .yc-current-meta {
+        display: flex;
+        flex-direction: column;
+        max-width: 220px;
     }
 
     .yc-current-label {
@@ -229,15 +251,34 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--muted, #9c8676);
-        margin-bottom: 12px;
+        position: relative;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+    }
+
+    .yc-current-label::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 30px;
+        height: 2px;
+        background: var(--text, #4B2E1F);
+        opacity: 0.3;
     }
 
     .yc-current-name {
         font-family: 'Lora', Georgia, serif;
         font-style: italic;
-        font-size: 15px;
+        font-size: 19px;
+        line-height: 1.3;
         color: var(--text, #4B2E1F);
-        margin-top: 14px;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .yc-current-name:hover {
+        color: #85acc9;
     }
 
     .yc-cover-link {
@@ -330,12 +371,16 @@
 {% block content %}
 <div class="yc-page">
 
-    <div class="yc-greeting"><span class="greeting-text">Hello.</span></div>
+    <div class="yc-greeting-block">
+        <div class="yc-greeting"><span class="greeting-text">Hello.</span></div>
+        {% if mood_insight %}
+        <div class="yc-mood-insight">{{ mood_insight }}</div>
+        {% endif %}
+    </div>
 
     <div class="yc-hero">
         {% if active_journal %}
         <div class="yc-hero-left">
-            <div class="yc-current-label">Currently writing in</div>
             <a href="/journal" class="yc-cover-link" title="Open {{ active_journal.name }}">
                 <div class="yc-cover">
                     <div class="yc-cover-stage">
@@ -348,8 +393,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="yc-current-name">{{ active_journal.name }}</div>
             </a>
+            <div class="yc-current-meta">
+                <div class="yc-current-label">Currently writing in</div>
+                <a href="/journal" class="yc-current-name">{{ active_journal.name }}</a>
+            </div>
         </div>
         {% endif %}
 
