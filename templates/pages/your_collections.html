@@ -114,10 +114,10 @@
         }
     }
 
-    /* Mini MoodBlob Calendar Cells styling */
-    .cal-day.e-joy, .cal-day.e-sadness, .cal-day.e-anger, .cal-day.e-fear, .cal-day.e-disgust, .cal-day.e-confuse {
-        border-radius: 52% 48% 55% 45% / 45% 55% 42% 58% !important;
-        box-shadow: 0 2px 4px rgba(75, 46, 31, 0.05) !important;
+    /* Mini Calendar Cells - rectangular */
+    .cal-day.e-joy, .cal-day.e-sadness, .cal-day.e-anger, .cal-day.e-calm {
+        border-radius: 6px !important;
+        box-shadow: 0 1px 3px rgba(75, 46, 31, 0.06) !important;
         position: relative !important;
         overflow: hidden !important;
         display: flex !important;
@@ -392,6 +392,7 @@
                             </div>
                         </div>
                     </div>
+                    <div style="text-align: center; margin-top: 6px; font-family: 'DM Sans', sans-serif; font-size: 10px; color: rgba(75,46,31,0.45); letter-spacing: 0.08em;">click to continue →</div>
                 </div>
             </a>
             <div class="yc-current-meta">
@@ -402,30 +403,29 @@
         {% endif %}
 
         <div class="yc-hero-right">
-            <div class="cal-wrap" id="aw" style="margin-top: 0 !important; width: 270px !important; max-width: 270px !important;">
-                <h2 class="sr-only">Navigable emotion calendar</h2>
-                <div class="cal-header">
-                    <div class="cal-title">
-                        <span class="cal-month-label" id="monthLabel"></span>
-                        <span class="cal-year-label" id="yearLabel"></span>
+            <div style="display: flex; align-items: flex-start; gap: 14px;">
+                <div class="cal-wrap" id="aw" style="margin-top: 0 !important; width: 240px !important; max-width: 240px !important;">
+                    <h2 class="sr-only">Navigable emotion calendar</h2>
+                    <div class="cal-header">
+                        <div class="cal-title">
+                            <span class="cal-month-label" id="monthLabel"></span>
+                            <span class="cal-year-label" id="yearLabel"></span>
+                        </div>
+                        <div class="cal-nav">
+                            <button class="nav-btn" id="prevBtn" type="button">‹</button>
+                            <button class="today-pill" id="todayBtn" type="button">Today</button>
+                            <button class="nav-btn" id="nextBtn" type="button">›</button>
+                        </div>
                     </div>
-                    <div class="cal-nav">
-                        <button class="nav-btn" id="prevBtn" type="button">‹</button>
-                        <button class="today-pill" id="todayBtn" type="button">Today</button>
-                        <button class="nav-btn" id="nextBtn" type="button">›</button>
-                    </div>
+                    <div class="cal-grid" id="calGrid"></div>
                 </div>
 
-                <div class="cal-grid" id="calGrid"></div>
-
-                <div class="legend" style="margin-top: 15px;">
-                    <div class="legend-grid">
+                <div class="legend" style="margin-top: 0; flex-shrink: 0;">
+                    <div class="legend-grid" style="grid-template-columns: 1fr !important;">
                         <div class="legend-row"><div class="legend-dot" style="background:#F5E6B0"></div><div class="legend-text">Joy</div></div>
                         <div class="legend-row"><div class="legend-dot" style="background:#BDDDF0"></div><div class="legend-text">Sadness</div></div>
                         <div class="legend-row"><div class="legend-dot" style="background:#F5C0BE"></div><div class="legend-text">Anger</div></div>
-                        <div class="legend-row"><div class="legend-dot" style="background:#DBC8F0"></div><div class="legend-text">Fear</div></div>
-                        <div class="legend-row"><div class="legend-dot" style="background:#B8EACC"></div><div class="legend-text">Disgust</div></div>
-                        <div class="legend-row"><div class="legend-dot" style="background:#D8D4C0"></div><div class="legend-text">Confusion</div></div>
+                        <div class="legend-row"><div class="legend-dot" style="background:#B8EACC"></div><div class="legend-text">Calm</div></div>
                     </div>
                 </div>
             </div>
