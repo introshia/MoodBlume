@@ -279,13 +279,14 @@ def archive():
 
     clean_username = session.get('username', 'friend').replace('_', ' ').title()
 
-    # Advanced ML mood-trend insight using Linear Regression over recent entries
+    # Mood-trend insight: a Linear Regression trend once there are a few entries,
+    # or a single-entry read for the very first one.
     mood_insight = None
-    if len(entries_for_folders) >= 5:
+    if len(entries_for_folders) >= 2:
         # Pass the 10 most recent entries (in chronological order) to the model
         recent_for_model = list(reversed(entries_for_folders[:10]))
         trend_data = calculate_mood_trend(recent_for_model)
-        
+
         # Map the model's 'status' to the UI text
         status = trend_data.get('status', 'Steady')
         if status == 'Bluming':
@@ -294,6 +295,16 @@ def archive():
             mood_insight = "a few heavier days lately — be gentle with yourself"
         else:
             mood_insight = "your mood has held fairly steady lately"
+    elif len(entries_for_folders) == 1:
+        score = entries_for_folders[0].get('mood_score') or 5
+        if score >= 7:
+            mood_insight = "today's entry sounds bright and hopeful"
+        elif score >= 5:
+            mood_insight = "your mood seems okay today"
+        elif score >= 3:
+            mood_insight = "today carries a little weight — be gentle with yourself"
+        else:
+            mood_insight = "a heavier note today — be kind to yourself"
 
     return render_template('pages/your_collections.html',
         monthly_groups=monthly_groups,
