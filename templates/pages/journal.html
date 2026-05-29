@@ -202,5 +202,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/journal.js') }}?v=20260528"></script>
+<script id="latest-entry-data" type="application/json">{% if latest_entry %}{{ {'id': latest_entry.id, 'content': latest_entry.content} | tojson }}{% else %}null{% endif %}</script>
+<script src="{{ url_for('static', filename='js/journal.js') }}?v=20260530"></script>
 {% endblock %}

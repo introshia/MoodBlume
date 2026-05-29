@@ -144,6 +144,25 @@ let isOpen3D = false;
     });
 
     (function initWritingAreas() {
+        // Load the user's latest saved entry (exposed by the page) when there's
+        // no in-progress local draft, so the journal shows what was written.
+        // "New Entry" sets a flag to start blank instead.
+        let LATEST_ENTRY = null;
+        try {
+            const dataEl = document.getElementById('latest-entry-data');
+            if (dataEl) LATEST_ENTRY = JSON.parse(dataEl.textContent || 'null');
+        } catch (e) { LATEST_ENTRY = null; }
+        const forceNew = localStorage.getItem('journal-force-new') === '1';
+        if (forceNew) localStorage.removeItem('journal-force-new');
+        function entryText(content) {
+            if (!content) return '';
+            const t = String(content).trim();
+            if (t.startsWith('{') && t.endsWith('}')) {
+                try { const o = JSON.parse(t); if (typeof o.text === 'string') return o.text; } catch (e) { /* not JSON */ }
+            }
+            return content;
+        }
+
         function addWritingArea(el, id, placeholderText, isBack) {
             const ph = document.createElement('div');
             ph.className = 'page-writing-placeholder';
@@ -160,6 +179,11 @@ let isOpen3D = false;
             if (saved) {
                 area.innerHTML = saved;
                 rebindImageBlocks(area);
+            } else if (!forceNew && id === 'p1-front' && LATEST_ENTRY && LATEST_ENTRY.content) {
+                area.textContent = entryText(LATEST_ENTRY.content);
+                currentEntryId = LATEST_ENTRY.id;
+                localStorage.setItem('journal-current-entry-id', String(LATEST_ENTRY.id));
+                localStorage.setItem('journal-page-' + id, area.innerHTML);
             }
 
             const isEmpty = () => area.textContent.trim() === '';

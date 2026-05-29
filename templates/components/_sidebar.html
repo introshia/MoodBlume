@@ -119,12 +119,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const newJournalBtn = document.getElementById('sidebar-new-journal-btn');
 
     function handleNewJournal() {
-        // Start a fresh entry: clear the current journal draft + tracked entry id
+        // Start a fresh entry: clear the current journal draft + tracked entry
+        // id, and flag the editor to open blank (not reload the latest entry).
         try {
             Object.keys(localStorage)
                 .filter(k => k.indexOf('journal-page-') === 0)
                 .forEach(k => localStorage.removeItem(k));
             localStorage.removeItem('journal-current-entry-id');
+            localStorage.setItem('journal-force-new', '1');
         } catch (e) { /* ignore */ }
 
         if (window.location.pathname === '/sanctuary') {
