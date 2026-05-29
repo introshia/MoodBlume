@@ -13,7 +13,7 @@ These are the core applications installed on the MacBook to make development and
 * **MySQL Community Server (Version 8.4.8):** The local relational database used to store journal entries and user accounts.
 * **Secret Management (.env):** Implementation of `python-dotenv` to isolate sensitive database credentials from the source code.
 * **Database Name:** `moodblume_db`
-* **Tables:** Includes `users` (storing hashed credentials) and `journal_entries` (storing content linked to specific user IDs).
+* **Tables:** `users` (storing hashed credentials), `journal_entries` (content linked to specific user IDs), `collections` (groupings of entries), `user_media` (uploaded media stored as BLOBs), and `quotes` (reflection quotes).
 
 ## 3. Python Backend & Machine Learning
 The core logic engine running the web server and performing data analysis.
@@ -22,13 +22,16 @@ The core logic engine running the web server and performing data analysis.
 * **Flask:** The lightweight web framework used to route requests and connect the backend to the UI.
 * **Werkzeug Security:** A library utilized for secure password hashing and authentication verification.
 * **MySQL Connector:** The bridge library that allows Python to execute SQL commands within the local database.
-* **AI Logic Engine:** Powered by **Scikit-learn (Linear Regression)** and **NumPy** to calculate emotional scores and predict mood trends.
+* **Sentiment Engine (VADER):** **vaderSentiment** analyzes the text of each journal entry to calculate its emotional mood score.
+* **Trend Prediction:** **Scikit-learn (Linear Regression)** and **NumPy** model those mood scores over time to predict emotional trends and surface insights.
 
 ## 4. Frontend Architecture (via CDN)
 The user interface was built using external libraries to ensure a responsive and aesthetically pleasing experience:
 * **Bootstrap 5.3:** For the responsive layout, grid system, and the frosted-glass navigation bar.
 * **FontAwesome 6.4.0:** For the vintage-inspired icons used throughout the almanac features.
 * **AOS (Animate On Scroll) 2.3.1:** For the smooth, sophisticated fade-up animations on the landing page.
+* **GSAP (GreenSock):** For high-performance, timeline-based animations and transitions across the interface.
+* **Tabler Icons:** A supplementary icon set used alongside FontAwesome throughout the UI.
 * **Chart.js:** A JavaScript library used to render the "Emotional Cartography" mood trend graph on the dashboard.
 * **Google Fonts:**
     * *Pinyon Script*: For the primary branding and elegant almanac-style headings.

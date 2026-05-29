@@ -11,13 +11,13 @@ MoodBlume is a full-stack digital journaling application crafted to help users u
 * **Secure Authentication:** Implementation of a robust user registration and login system using hashed passwords (via `Werkzeug`) for maximum security.
 * **Private Almanac Lockers:** Individualized database sessions ensure users only ever see their own private entries, turning the database into a secure multi-user platform.
 * **Immersive Cozy Aesthetic:** A high-fidelity aesthetic redesign featuring a cozy, interactive room environment (Sanctuary) with a desk view, premium dark-mode stitched binder journal, and elegant typography.
-* **AI Sentiment Engine:** Real-time analysis of entry text to categorize moods and provide predictive "Emotional Cartography" using Linear Regression.
+* **AI Sentiment Engine:** Real-time analysis of entry text using **VADER** to categorize moods, paired with **Linear Regression** to power the predictive "Emotional Cartography" trend forecasting.
 * **Security Protocols:** Full integration of environment variables (`.env`) to protect sensitive database credentials from public exposure.
 
 ## 🛠️ Tech Stack & Architecture
 
-* **Frontend:** HTML5, CSS3, Bootstrap 5.3, FontAwesome 6, AOS (Animate on Scroll), Chart.js
-* **Backend:** Python 3, Flask, Scikit-learn, NumPy
+* **Frontend:** HTML5, CSS3, Bootstrap 5.3, FontAwesome 6, Tabler Icons, AOS (Animate on Scroll), GSAP, Chart.js
+* **Backend:** Python 3, Flask, VADER (vaderSentiment), Scikit-learn, NumPy
 * **Database:** MySQL Community Server
 * **Security:** Python-Dotenv, Werkzeug Security (Password Hashing)
 * **Version Control:** Git & GitHub
