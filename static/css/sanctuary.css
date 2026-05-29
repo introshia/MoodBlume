@@ -337,7 +337,8 @@
 
     #window-greeting {
       position: fixed;
-      bottom: 80px;
+      top: 67%;
+      bottom: auto;
       left: 18%;
       z-index: 15;
       pointer-events: none;

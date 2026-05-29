@@ -142,7 +142,8 @@ def sanctuary():
         streak_days=streak, recent_entries=processed_entries,
         active_bg=active_bg, active_art=active_art,
         open_journal=open_journal, target_entry_id=target_entry_id,
-        greeting=greeting, companion=calculate_energy_data(latest_text),
+        greeting=greeting, username=clean_username,
+        companion=calculate_energy_data(latest_text),
         streak_stage=streak_stage, has_journals=True)
 
 

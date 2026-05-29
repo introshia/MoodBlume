@@ -75,10 +75,22 @@
   <script id="active-art-data" type="application/json">
     {{ active_art | default('botanical') | tojson }}
   </script>
+  <script id="user-name-data" type="application/json">
+    {{ username | default('friend') | tojson }}
+  </script>
   <script>
     window.hasJournals = JSON.parse(document.getElementById('has-journals-data').textContent);
     window.activeBg = JSON.parse(document.getElementById('active-bg-data').textContent);
     window.activeArt = JSON.parse(document.getElementById('active-art-data').textContent);
+    window.userName = JSON.parse(document.getElementById('user-name-data').textContent);
+
+    // Build greeting from the user's LOCAL time so it matches the time-of-day badge
+    (function () {
+      var h = new Date().getHours();
+      var prefix = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+      var el = document.querySelector('#window-greeting .greeting-text');
+      if (el) el.textContent = prefix + ', ' + window.userName + '.';
+    })();
   </script>
   <script src="/static/js/sanctuary.js"></script>
 
