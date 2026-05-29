@@ -119,6 +119,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const newJournalBtn = document.getElementById('sidebar-new-journal-btn');
 
     function handleNewJournal() {
+        // Start a fresh entry: clear the current journal draft + tracked entry id
+        try {
+            Object.keys(localStorage)
+                .filter(k => k.indexOf('journal-page-') === 0)
+                .forEach(k => localStorage.removeItem(k));
+            localStorage.removeItem('journal-current-entry-id');
+        } catch (e) { /* ignore */ }
+
         if (window.location.pathname === '/sanctuary') {
             if (typeof startOpenJournal === 'function') {
                 startOpenJournal();

@@ -1,6 +1,9 @@
 let isOpen3D = false;
     let isAnimating3D = false;
     let activeWritingArea = null;
+    // The entry currently being written; once saved, further saves update it
+    // instead of creating duplicates. Persisted so reopening keeps editing it.
+    let currentEntryId = localStorage.getItem('journal-current-entry-id') || null;
     const journal3d = document.getElementById('journal3d');
     const leftHalf3d = document.getElementById('leftHalf');
     const rightWing3d = document.getElementById('rightWing');
@@ -822,24 +825,24 @@ let isOpen3D = false;
         fetch('/save_entry', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: fullText.trim() })
+            body: JSON.stringify({ content: fullText.trim(), id: currentEntryId })
         })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
                 if (statusInd) statusInd.textContent = 'SAVED';
+                // Remember this entry so re-saving updates it (no duplicates),
+                // and keep the words on the page instead of wiping them.
+                if (data.id) {
+                    currentEntryId = data.id;
+                    localStorage.setItem('journal-current-entry-id', String(data.id));
+                }
                 if (window.parent) {
                     window.parent.postMessage('journal_saved', '*');
                 }
                 shouldFlipAfterEnvelope = true;
                 const letter = data.letter || 'Thank you for writing today.';
                 showEnvelope(letter);
-                areas.forEach(area => {
-                    area.innerHTML = '';
-                    area.dispatchEvent(new Event('input'));
-                    const pageId = area.dataset.pageId;
-                    if (pageId) localStorage.removeItem('journal-page-' + pageId);
-                });
             } else {
                 if (statusInd) statusInd.textContent = 'SAVED';
                 alert('Could not save: ' + (data.message || 'Unknown error'));
