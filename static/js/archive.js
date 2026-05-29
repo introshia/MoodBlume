@@ -257,7 +257,7 @@ const FEATURED = JSON.parse(document.getElementById('featured-data').textContent
         return entriesByDate[dateStr];
     }
 
-    const EMOTIONS = ['e-joy', 'e-sadness', 'e-anger', 'e-fear', 'e-disgust', 'e-confuse'];
+    const EMOTIONS = ['e-joy', 'e-sadness', 'e-anger', 'e-calm'];
 
     function hash(y, m, d) {
         let s = y * 10000 + m * 100 + d;
@@ -270,15 +270,13 @@ const FEATURED = JSON.parse(document.getElementById('featured-data').textContent
     function emotionClassForEntry(entry, y, m, d) {
         if (entry) {
             const score = entry.mood_score;
-            if (score >= 7) return 'e-joy';
-            if (score === 6) return 'e-disgust';
-            if (score === 5) return 'e-none';
-            if (score === 4) return 'e-confuse';
-            if (score === 3) return 'e-fear';
-            if (score === 2) return 'e-sadness';
-            if (score === 1) return 'e-anger';
+            if (score >= 7) return 'e-joy';      // Hopeful / Grateful / Excited
+            if (score === 6) return 'e-calm';    // Calm
+            if (score === 5) return 'e-none';    // Neutral — no face
+            if (score >= 2) return 'e-sadness';  // Sad / Anxious / Confused
+            return 'e-anger';                    // Angry
         }
-        
+
         return 'e-none';
     }
 
@@ -330,9 +328,9 @@ const FEATURED = JSON.parse(document.getElementById('featured-data').textContent
                 el.classList.add(emoClass);
                 if (emoClass !== 'e-none') {
                     let mouthStyle = 'm-smile';
-                    if (emoClass === 'e-sadness' || emoClass === 'e-anger' || emoClass === 'e-fear') {
+                    if (emoClass === 'e-sadness' || emoClass === 'e-anger') {
                         mouthStyle = 'm-frown';
-                    } else if (emoClass === 'e-confuse') {
+                    } else if (emoClass === 'e-calm') {
                         mouthStyle = 'm-flat';
                     }
                     el.innerHTML = `

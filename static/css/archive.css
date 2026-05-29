@@ -749,9 +749,7 @@
     .e-joy { background: #F5E6B0 !important; color: #7A6020 !important; }
     .e-sadness { background: #BDDDF0 !important; color: #2C5A72 !important; }
     .e-anger { background: #F5C0BE !important; color: #7A3030 !important; }
-    .e-fear { background: #DBC8F0 !important; color: #523878 !important; }
-    .e-disgust { background: #B8EACC !important; color: #2A6045 !important; }
-    .e-confuse { background: #D8D4C0 !important; color: #5A5440 !important; }
+    .e-calm { background: #B8EACC !important; color: #2A6045 !important; }
     .e-none { background: transparent !important; color: #3A3A3C !important; }
     .e-future { background: transparent !important; color: #C7C7CC !important; font-weight: 400 !important; font-size: 13px !important; }
     
