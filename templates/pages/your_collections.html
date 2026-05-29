@@ -590,6 +590,12 @@
         if (params.get('mood')) activateYcPanel('bymood');
         else if (params.get('volume')) activateYcPanel('volumes');
         else if (params.get('month')) activateYcPanel('monthly');
+        else {
+            // If Monthly panel is empty but Volumes has content, default to Volumes
+            const hasMonthly = {{ 'true' if monthly_groups else 'false' }};
+            const hasVolumes = {{ 'true' if custom_collections else 'false' }};
+            if (!hasMonthly && hasVolumes) activateYcPanel('volumes');
+        }
     })();
 
     // Greeting built from the user's LOCAL time
