@@ -335,32 +335,6 @@
       pointer-events: none
     }
 
-    #window-greeting {
-      position: fixed;
-      top: 67%;
-      bottom: auto;
-      left: 18%;
-      z-index: 15;
-      pointer-events: none;
-      animation: greetingFadeIn 2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
-    }
-
-    .greeting-text {
-      font-family: 'Lora', Georgia, serif;
-      font-style: italic;
-      font-size: 19px;
-      font-weight: 400;
-      letter-spacing: 0.03em;
-      color: rgba(200, 140, 60, 0.55);
-      display: block;
-      line-height: 1;
-    }
-
-    @keyframes greetingFadeIn {
-      0%   { opacity: 0; transform: translateY(4px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
     #desk-companion {
       position: fixed;
       

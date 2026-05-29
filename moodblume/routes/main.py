@@ -33,6 +33,27 @@ def journal():
     cursor  = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM journal_entries WHERE user_id = %s ORDER BY entry_date DESC LIMIT 1", (user_id,))
     latest_entry = cursor.fetchone()
+
+    # Default the topbar title to the journal the user is currently writing in:
+    # the collection of their latest entry, falling back to their newest journal.
+    if not title:
+        cursor.execute("""
+            SELECT c.name
+            FROM journal_entries e
+            JOIN collections c ON e.collection_id = c.id
+            WHERE e.user_id = %s AND e.collection_id IS NOT NULL
+            ORDER BY e.entry_date DESC LIMIT 1
+        """, (user_id,))
+        row = cursor.fetchone()
+        if not row:
+            cursor.execute(
+                "SELECT name FROM collections WHERE user_id = %s ORDER BY created_at DESC LIMIT 1",
+                (user_id,)
+            )
+            row = cursor.fetchone()
+        if row and row.get('name'):
+            title = row['name']
+
     conn.close()
     return render_template('pages/journal.html', latest_entry=latest_entry, title=title)
 
@@ -245,13 +266,28 @@ def archive():
 
     stats_msg = f"You've inscribed {len(entries_for_folders)} memories in your Archive this year."
 
+    # Journal the user is currently writing in: the collection of their most
+    # recent entry, falling back to their most recently created journal.
+    active_journal = None
+    for e in entries_for_folders:  # already ordered entry_date DESC
+        if e.get('collection_id'):
+            active_journal = next((c for c in custom_collections if c['id'] == e['collection_id']), None)
+            if active_journal:
+                break
+    if not active_journal and custom_collections:
+        active_journal = custom_collections[0]
+
+    clean_username = session.get('username', 'friend').replace('_', ' ').title()
+
     return render_template('pages/your_collections.html',
         monthly_groups=monthly_groups,
         mood_groups=mood_groups,
         custom_collections=custom_collections,
         all_entries_json=all_entries_json,
         user_collections_json=user_collections_json,
-        stats_msg=stats_msg)
+        stats_msg=stats_msg,
+        active_journal=active_journal,
+        username=clean_username)
 
 
 @main_bp.route('/writing')
