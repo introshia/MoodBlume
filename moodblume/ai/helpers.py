@@ -16,14 +16,15 @@ def analyze_sentiment(content):
     vs = analyzer.polarity_scores(content)
     compound = vs['compound']
 
-    if compound >= 0.8:   final_score = 9
-    elif compound >= 0.5: final_score = 8
-    elif compound >= 0.2: final_score = 7
-    elif compound > -0.1: final_score = 5
-    elif compound > -0.3: final_score = 4
-    elif compound > -0.5: final_score = 3
-    elif compound > -0.8: final_score = 2
-    else:                 final_score = 1
+    if compound >= 0.8:    final_score = 9
+    elif compound >= 0.5:  final_score = 8
+    elif compound >= 0.25: final_score = 7
+    elif compound >= 0.05: final_score = 6   # Calm — gently positive
+    elif compound > -0.1:  final_score = 5
+    elif compound > -0.3:  final_score = 4
+    elif compound > -0.5:  final_score = 3
+    elif compound > -0.8:  final_score = 2
+    else:                  final_score = 1
 
     text = content.lower()
     pillar = "Peace"
