@@ -99,15 +99,20 @@ def get_quote_for_entry(content):
     if any(word in content for word in ['sad', 'down', 'cry']):    category = 'sad'
     elif any(word in content for word in ['stress', 'hard', 'exam']): category = 'stressed'
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute(
-        "SELECT * FROM quotes WHERE category = %s ORDER BY RAND() LIMIT 1",
-        (category,)
-    )
-    quote = cursor.fetchone()
-    conn.close()
-    return quote
+    # The quotes table is optional (it may not exist in every environment).
+    # A missing/empty quotes table must never block saving an entry.
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT * FROM quotes WHERE category = %s ORDER BY RAND() LIMIT 1",
+            (category,)
+        )
+        quote = cursor.fetchone()
+        conn.close()
+        return quote
+    except Exception:
+        return None
 
 def calculate_mood_trend(entries):
     if len(entries) < 2:
