@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .filter(k => k.indexOf('journal-page-') === 0)
                 .forEach(k => localStorage.removeItem(k));
             localStorage.removeItem('journal-current-entry-id');
+            localStorage.removeItem('journal-entry-ids');
             localStorage.setItem('journal-force-new', '1');
         } catch (e) { /* ignore */ }
 

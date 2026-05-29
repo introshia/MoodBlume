@@ -664,6 +664,27 @@
         padding: 4px 38px 16px 22px;
     }
 
+    .journal-spotlight .page-writing-area.entry-locked {
+        cursor: default;
+        caret-color: transparent;
+    }
+
+    .journal-spotlight .page-writing-area.entry-locked::after {
+        content: "\2713\00a0saved";
+        position: absolute;
+        top: 4px;
+        right: 50%;
+        transform: translateX(50%);
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        color: rgba(138, 154, 112, 0.9);
+        background: rgba(138, 154, 112, 0.14);
+        padding: 1px 9px;
+        border-radius: 10px;
+        pointer-events: none;
+    }
+
     .journal-spotlight .page-writing-area img {
         max-width: 100%;
         height: auto;

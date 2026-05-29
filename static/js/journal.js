@@ -1,9 +1,6 @@
 let isOpen3D = false;
     let isAnimating3D = false;
     let activeWritingArea = null;
-    // The entry currently being written; once saved, further saves update it
-    // instead of creating duplicates. Persisted so reopening keeps editing it.
-    let currentEntryId = localStorage.getItem('journal-current-entry-id') || null;
     const journal3d = document.getElementById('journal3d');
     const leftHalf3d = document.getElementById('leftHalf');
     const rightWing3d = document.getElementById('rightWing');
@@ -11,6 +8,26 @@ let isOpen3D = false;
     const allPages = document.querySelectorAll('.journal-spotlight .page');
 
     const OPEN_DUR = 1200;
+
+    // Each saved page is its own read-only entry. We remember which page surface
+    // maps to which DB entry id so re-saving updates the right one and so the
+    // lock can be restored after a reload.
+    function loadEntryIds() {
+        try { return JSON.parse(localStorage.getItem('journal-entry-ids') || '{}') || {}; }
+        catch (e) { return {}; }
+    }
+    function saveEntryIds(map) {
+        try { localStorage.setItem('journal-entry-ids', JSON.stringify(map)); }
+        catch (e) { /* ignore */ }
+    }
+    function lockArea(area) {
+        if (!area) return;
+        area.setAttribute('contenteditable', 'false');
+        area.classList.add('entry-locked');
+        const parent = area.parentElement;
+        const ph = parent && parent.querySelector('.page-writing-placeholder');
+        if (ph) ph.style.display = 'none';
+    }
 
     window.toggleJournal3D = function () {
         if (isAnimating3D) return;
@@ -176,14 +193,18 @@ let isOpen3D = false;
             area.dataset.pageId = id;
 
             const saved = localStorage.getItem('journal-page-' + id);
-            if (saved) {
+            const entryIds = loadEntryIds();
+            if (!forceNew && id === 'p1-front' && LATEST_ENTRY && LATEST_ENTRY.content) {
+                // Page 1 always shows the most recent saved entry, kept read-only.
+                area.textContent = entryText(LATEST_ENTRY.content);
+                area.dataset.entryId = String(LATEST_ENTRY.id);
+                entryIds[id] = LATEST_ENTRY.id;
+                saveEntryIds(entryIds);
+                localStorage.setItem('journal-page-' + id, area.innerHTML);
+            } else if (saved) {
                 area.innerHTML = saved;
                 rebindImageBlocks(area);
-            } else if (!forceNew && id === 'p1-front' && LATEST_ENTRY && LATEST_ENTRY.content) {
-                area.textContent = entryText(LATEST_ENTRY.content);
-                currentEntryId = LATEST_ENTRY.id;
-                localStorage.setItem('journal-current-entry-id', String(LATEST_ENTRY.id));
-                localStorage.setItem('journal-page-' + id, area.innerHTML);
+                if (entryIds[id]) area.dataset.entryId = String(entryIds[id]);
             }
 
             const isEmpty = () => area.textContent.trim() === '';
@@ -206,6 +227,8 @@ let isOpen3D = false;
 
             el.appendChild(ph);
             el.appendChild(area);
+            // A surface tied to a saved entry can't be edited again.
+            if (area.dataset.entryId) lockArea(area);
             return { area, ph, isEmpty };
         }
 
@@ -831,14 +854,20 @@ let isOpen3D = false;
     let shouldFlipAfterEnvelope = false;
 
     function saveEntryAndShowEnvelope() {
-        const areas = document.querySelectorAll('.page-writing-area');
-        let fullText = '';
-        areas.forEach(area => {
-            const text = area.innerText.trim();
-            if (text) fullText += text + '\n\n';
-        });
+        // Save only the page the user is currently writing on; each page is its
+        // own entry. Already-saved pages are locked and can't be re-saved.
+        const targetArea = getVisibleWritingArea();
+        if (!targetArea) {
+            alert('Open the journal to a page before saving.');
+            return;
+        }
+        if (targetArea.classList.contains('entry-locked')) {
+            alert('This entry is already saved. Flip to a fresh page to keep writing.');
+            return;
+        }
 
-        if (!fullText.trim()) {
+        const fullText = targetArea.innerText.trim();
+        if (!fullText) {
             alert('Write something first before saving.');
             return;
         }
@@ -846,21 +875,25 @@ let isOpen3D = false;
         const statusInd = document.getElementById('save-status');
         if (statusInd) statusInd.textContent = 'SAVING...';
 
+        const existingId = targetArea.dataset.entryId || null;
+
         fetch('/save_entry', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: fullText.trim(), id: currentEntryId })
+            body: JSON.stringify({ content: fullText, id: existingId })
         })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
                 if (statusInd) statusInd.textContent = 'SAVED';
-                // Remember this entry so re-saving updates it (no duplicates),
-                // and keep the words on the page instead of wiping them.
                 if (data.id) {
-                    currentEntryId = data.id;
-                    localStorage.setItem('journal-current-entry-id', String(data.id));
+                    targetArea.dataset.entryId = String(data.id);
+                    const map = loadEntryIds();
+                    map[targetArea.dataset.pageId] = data.id;
+                    saveEntryIds(map);
                 }
+                // Lock the page we just saved so it stays a finished entry.
+                lockArea(targetArea);
                 if (window.parent) {
                     window.parent.postMessage('journal_saved', '*');
                 }
@@ -1021,7 +1054,11 @@ let isOpen3D = false;
             if (btnEdit) btnEdit.classList.remove('active');
             if (btnPreview) btnPreview.classList.add('active');
         } else {
-            areas.forEach(area => area.setAttribute('contenteditable', 'true'));
+            areas.forEach(area => {
+                if (!area.classList.contains('entry-locked')) {
+                    area.setAttribute('contenteditable', 'true');
+                }
+            });
             if (btnEdit) btnEdit.classList.add('active');
             if (btnPreview) btnPreview.classList.remove('active');
         }
