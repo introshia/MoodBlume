@@ -279,19 +279,18 @@ def archive():
 
     clean_username = session.get('username', 'friend').replace('_', ' ').title()
 
-    # Lightweight mood-trend insight, shown under the greeting once there's
-    # enough data: compare the average mood of recent entries vs earlier ones.
-    # mood_score runs 1 (heaviest) to 9 (brightest).
-    mood_scores_chrono = [e['mood_score'] for e in reversed(entries_for_folders) if e.get('mood_score')]
+    # Advanced ML mood-trend insight using Linear Regression over recent entries
     mood_insight = None
-    if len(mood_scores_chrono) >= 5:
-        half = len(mood_scores_chrono) // 2
-        earlier = mood_scores_chrono[:half]
-        recent = mood_scores_chrono[half:]
-        diff = (sum(recent) / len(recent)) - (sum(earlier) / len(earlier))
-        if diff >= 0.6:
+    if len(entries_for_folders) >= 5:
+        # Pass the 10 most recent entries (in chronological order) to the model
+        recent_for_model = list(reversed(entries_for_folders[:10]))
+        trend_data = calculate_mood_trend(recent_for_model)
+        
+        # Map the model's 'status' to the UI text
+        status = trend_data.get('status', 'Steady')
+        if status == 'Bluming':
             mood_insight = "your mood has been brightening over your recent entries"
-        elif diff <= -0.6:
+        elif status == 'Cloudy':
             mood_insight = "a few heavier days lately — be gentle with yourself"
         else:
             mood_insight = "your mood has held fairly steady lately"
