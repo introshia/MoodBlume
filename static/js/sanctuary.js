@@ -40,7 +40,106 @@ var lampOn = true, time = 0, hov = null;
     initWeather();
 
     function toggleLamp() { lampOn = !lampOn; var b = document.getElementById('lamptgl'); if (b) b.innerHTML = lampOn ? '&#9789; lamp' : '&#9788; lamp'; }
-    function toggleMusic() { musicOn = !musicOn; document.getElementById('btn-music').classList.toggle('on', musicOn); }
+
+    // --- Ambient music: a soft, looping soundscape synthesized in the browser
+    // (Web Audio API) so there's no file to host. Fades in/out on toggle. ---
+    var audioCtx = null, musicMaster = null, musicNodes = [], twinkleTimer = null;
+
+    function ensureAudioCtx() {
+      if (!audioCtx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        audioCtx = new AC();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function startMusic() {
+      var ctx = ensureAudioCtx();
+      if (!ctx) return;
+
+      musicMaster = ctx.createGain();
+      musicMaster.gain.setValueAtTime(0.0001, ctx.currentTime);
+      musicMaster.gain.exponentialRampToValueAtTime(0.16, ctx.currentTime + 2.5);
+
+      var filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 900;
+      filter.Q.value = 0.6;
+      filter.connect(ctx.destination);
+      musicMaster.connect(filter);
+
+      // Warm sustained pad chord (D major), gently shifting in volume.
+      var chord = [146.83, 220.0, 293.66, 369.99];
+      chord.forEach(function (freq, i) {
+        var osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        osc.detune.value = (i - 1.5) * 4;
+
+        var g = ctx.createGain();
+        g.gain.value = (0.18 / chord.length) * (i === 0 ? 1.4 : 1);
+
+        var lfo = ctx.createOscillator();
+        lfo.type = 'sine';
+        lfo.frequency.value = 0.05 + i * 0.02;
+        var lfoGain = ctx.createGain();
+        lfoGain.gain.value = 0.04;
+        lfo.connect(lfoGain);
+        lfoGain.connect(g.gain);
+
+        osc.connect(g);
+        g.connect(musicMaster);
+        osc.start();
+        lfo.start();
+        musicNodes.push(osc, lfo);
+      });
+
+      // Occasional soft bell tones from a high pentatonic scale for movement.
+      var pent = [587.33, 659.25, 880.0, 987.77, 1174.66];
+      twinkleTimer = setInterval(function () {
+        if (!musicMaster || Math.random() > 0.7) return;
+        var t = ctx.currentTime;
+        var note = pent[Math.floor(Math.random() * pent.length)];
+        var osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = note;
+        var g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.05, t + 0.4);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6);
+        osc.connect(g);
+        g.connect(musicMaster);
+        osc.start(t);
+        osc.stop(t + 3);
+      }, 2600);
+    }
+
+    function stopMusic() {
+      if (twinkleTimer) { clearInterval(twinkleTimer); twinkleTimer = null; }
+      if (musicMaster && audioCtx) {
+        var t = audioCtx.currentTime;
+        try {
+          musicMaster.gain.cancelScheduledValues(t);
+          musicMaster.gain.setValueAtTime(musicMaster.gain.value, t);
+          musicMaster.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
+        } catch (e) { /* ignore */ }
+        var nodes = musicNodes, master = musicMaster;
+        setTimeout(function () {
+          nodes.forEach(function (n) { try { n.stop(); } catch (e) {} });
+          try { master.disconnect(); } catch (e) {}
+        }, 1700);
+      }
+      musicNodes = [];
+      musicMaster = null;
+    }
+
+    function toggleMusic() {
+      musicOn = !musicOn;
+      document.getElementById('btn-music').classList.toggle('on', musicOn);
+      if (musicOn) startMusic(); else stopMusic();
+    }
     function toggleRain() { rainSoundOn = !rainSoundOn; var b = document.getElementById('btn-rain'); if (b) b.classList.toggle('on', rainSoundOn); }
     window.toggleLamp = toggleLamp; window.toggleMusic = toggleMusic; window.toggleRain = toggleRain;
 
