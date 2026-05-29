@@ -168,6 +168,13 @@ let isOpen3D = false;
             area.addEventListener('focus', () => {
                 activeWritingArea = area;
             });
+            // Paste as plain text so pasted content doesn't carry over the
+            // source's formatting (background highlight, fonts, colors, etc.).
+            area.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const text = ((e.clipboardData || window.clipboardData).getData('text/plain') || '');
+                document.execCommand('insertText', false, text);
+            });
             syncPh();
 
             el.appendChild(ph);
