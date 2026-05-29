@@ -56,7 +56,7 @@ def save_entry():
 
         if not entry_id:
             cursor.execute(
-                "INSERT INTO journal_entries (content, mood_score, theme, user_id, collection_id) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO journal_entries (content, mood_score, theme, user_id, collection_id, entry_date) VALUES (%s, %s, %s, %s, %s, NOW())",
                 (content, mood_score, 'Default', user_id, collection_id)
             )
             conn.commit()
