@@ -9,7 +9,7 @@
     href="https://fonts.googleapis.com/css2?family=Sunshiney&family=Balsamiq+Sans:wght@400;700&family=Lora:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/static/css/sanctuary.css">
+  <link rel="stylesheet" href="/static/css/sanctuary.css?v=20260531">
 </head>
 
 <body>
@@ -49,10 +49,8 @@
     </div>
   </div>
 
-  <button id="lamptgl" onclick="toggleLamp(); event.stopPropagation();">&#9789; lamp</button>
   <div id="sound-ctrl">
     <button class="s-btn" id="btn-music" onclick="toggleMusic()" title="Music">&#9835;</button>
-    <button class="s-btn" id="btn-rain" onclick="toggleRain()" title="Rain">&#9748;</button>
   </div>
   <div id="weatherbadge"></div>
 
@@ -73,7 +71,7 @@
     window.activeBg = JSON.parse(document.getElementById('active-bg-data').textContent);
     window.activeArt = JSON.parse(document.getElementById('active-art-data').textContent);
   </script>
-  <script src="/static/js/sanctuary.js"></script>
+  <script src="/static/js/sanctuary.js?v=20260531"></script>
 
   {% include 'components/journal_overlay.html' %}
 </body>

@@ -39,9 +39,9 @@ var lampOn = true, time = 0, hov = null;
     function newSnow() { return { x: Math.random(), y: Math.random() - .1, spd: 0.0008 + Math.random() * 0.0007, drift: Math.random() * 6, a: 0.4 + Math.random() * 0.4, r: 1 + Math.random() * 2 }; }
     initWeather();
 
-    function toggleLamp() { lampOn = !lampOn; document.getElementById('lamptgl').innerHTML = lampOn ? '&#9789; lamp' : '&#9788; lamp'; }
+    function toggleLamp() { lampOn = !lampOn; var b = document.getElementById('lamptgl'); if (b) b.innerHTML = lampOn ? '&#9789; lamp' : '&#9788; lamp'; }
     function toggleMusic() { musicOn = !musicOn; document.getElementById('btn-music').classList.toggle('on', musicOn); }
-    function toggleRain() { rainSoundOn = !rainSoundOn; document.getElementById('btn-rain').classList.toggle('on', rainSoundOn); }
+    function toggleRain() { rainSoundOn = !rainSoundOn; var b = document.getElementById('btn-rain'); if (b) b.classList.toggle('on', rainSoundOn); }
     window.toggleLamp = toggleLamp; window.toggleMusic = toggleMusic; window.toggleRain = toggleRain;
 
     var MODALS = {
